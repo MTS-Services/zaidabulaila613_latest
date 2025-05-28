@@ -1,0 +1,58 @@
+/* Cart button animation styles */
+.cart-button {
+  background-color: #cc9765;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.cart-button .text {
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+}
+
+.cart-button .icon {
+  position: absolute;
+  right: 1rem;
+  transform: translateX(30px);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.cart-button:hover .text {
+  transform: translateX(-10px);
+}
+
+.cart-button:hover .icon {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.cart-button:hover {
+  background-color: #d9a97c;
+}
+
+.cart-button:active {
+  transform: scale(0.95);
+  background-color: #b07845;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

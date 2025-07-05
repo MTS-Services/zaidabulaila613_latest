@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Tag } from "lucide-react"
 import { motion } from "framer-motion"
 import useEmblaCarousel from "embla-carousel-react"
 import { categoryContent } from "@/constants/categories/category"
+import { useTranslation } from "@/hooks/use-translation"
 
 export default function CategorySection() {
   const { carousel, categories } = categoryContent
@@ -125,12 +126,12 @@ export default function CategorySection() {
       flexGrow: 0,
     }
   }
-
+  const {t} = useTranslation();
   return (
     <section className="py-12 md:py-16">
       <div className="container px-2 md:px-4">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold tracking-tighter font-playfair">{categoryContent.title}</h2>
+          <h2 className="text-2xl font-bold tracking-tighter font-playfair">{t('categorySelection.title')}</h2>
           <div className="flex gap-2">
             <button
               onClick={scrollPrev}

@@ -14,8 +14,10 @@ import AnimatedLoader from "@/components/animated-loader"
 import NeumorphicButton from "@/components/neumorphic-button"
 import { ctaContent } from "@/constants/cta/cta"
 import { Footer } from "@/components/Footer"
+import { useTranslation } from "@/hooks/use-translation"
 
 export default function Home() {
+  const {t} = useTranslation();
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1">
@@ -70,16 +72,16 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h2 className={`${ctaContent.styles.title.fontSize} ${ctaContent.styles.title.fontWeight} ${ctaContent.styles.title.tracking} ${ctaContent.styles.title.color} ${ctaContent.styles.title.font}`}>
-                  {ctaContent.title}
+                  {t('ready.title')}
                 </h2>
                 <p className={`${ctaContent.styles.description.maxWidth} ${ctaContent.styles.description.color} ${ctaContent.styles.description.responsive}`}>
-                  {ctaContent.description}
+                  {t('ready.description')}
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <NeumorphicButton 
                   href={ctaContent.button.href} 
-                  text={ctaContent.button.text} 
+                  text={t('ready.button')}
                   variant={ctaContent.button.variant} 
                 />
               </div>

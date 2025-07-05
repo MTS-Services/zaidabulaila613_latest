@@ -1,6 +1,8 @@
+import { useTranslation } from "@/hooks/use-translation";
 import Link from "next/link"
 
 export const Footer = () => {
+  const {t} = useTranslation();
   return (
     <footer className="border-t border-gray-700" style={{ backgroundColor: "#323332" }}>
     <div className="container px-4 py-8 md:px-6">
@@ -54,114 +56,114 @@ export const Footer = () => {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
         <div>
-          <h3 className="font-bold mb-4 text-white">Shop</h3>
+          <h3 className="font-bold mb-4 text-white">{t('footer.shop')}</h3>
           <ul className="space-y-2">
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                New Arrivals
+                {t('footer.newarrival')}
               </Link>
             </li>
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Used Dresses
+                {t('footer.useddresses')}
               </Link>
             </li>
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Rental Options
+                {t('footer.rentaloptions')}
               </Link>
             </li>
             <li>
               <Link href="/vendors" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Vendors
+                {t('footer.vendors')}
               </Link>
             </li>
           </ul>
         </div>
         <div>
-          <h3 className="font-bold mb-4 text-white">Help</h3>
+          <h3 className="font-bold mb-4 text-white">{t('footer.help')}</h3>
           <ul className="space-y-2">
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                FAQ
+                {t('footer.faq')}
               </Link>
             </li>
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Shipping
+                {t('footer.shipping')}
               </Link>
             </li>
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Returns
+                {t('footer.returns')}
               </Link>
             </li>
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Contact Us
+                {t('footer.contactus')}
               </Link>
             </li>
           </ul>
         </div>
         <div>
-          <h3 className="font-bold mb-4 text-white">About</h3>
+          <h3 className="font-bold mb-4 text-white">{t('footer.about')}</h3>
           <ul className="space-y-2">
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Our Story
+                {t('footer.ourstory')}
               </Link>
             </li>
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Vendors
+                {t('footer.vendors')}
               </Link>
             </li>
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Careers
+                {t('footer.careers')}
               </Link>
             </li>
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Press
+                {t('footer.press')}
               </Link>
             </li>
           </ul>
         </div>
         <div>
-          <h3 className="font-bold mb-4 text-white">Connect</h3>
+          <h3 className="font-bold mb-4 text-white">{t('footer.connect')}</h3>
           <ul className="space-y-2">
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Instagram
+                {t('footer.instagram')}
               </Link>
             </li>
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Facebook
+                {t('footer.facebook')}
               </Link>
             </li>
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Pinterest
+                {t('footer.pinterest')}
               </Link>
             </li>
             <li>
               <Link href="#" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Twitter
+                {t('footer.twitter')}
               </Link>
             </li>
           </ul>
         </div>
       </div>
       <div className="flex flex-col md:flex-row justify-between items-center mt-8 pt-8 border-t border-gray-700">
-        <p className="text-sm text-gray-400">© 2025 DressMarket. All rights reserved.</p>
+        <p className="text-sm text-gray-400">{t('footer.copyright')}</p>
         <div className="flex gap-4 mt-4 md:mt-0">
           <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
-            Privacy Policy
+            {t('footer.privacypolicy')}
           </Link>
           <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">
-            Terms of Service
+            {t('footer.termservice')}
           </Link>
         </div>
       </div>

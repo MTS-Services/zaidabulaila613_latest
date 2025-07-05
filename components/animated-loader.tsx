@@ -1,9 +1,13 @@
 "use client"
 
 import { animatedLoaderContent } from "@/constants/loaders/animated-loader"
+import { useTranslation } from "@/hooks/use-translation"
+import { any } from "zod"
 
 const AnimatedLoader = () => {
   const { prefix, words, styles } = animatedLoaderContent
+const {t} = useTranslation()
+const animatedWords = [t('animatedloaderContent.buy'), t('animatedloaderContent.sell'), t('animatedloaderContent.rent'), t('animatedloaderContent.browse')];
 
   return (
     <div className="card bg-white w-full max-w-none mx-auto flex justify-center items-center h-[60px]">
@@ -71,9 +75,9 @@ const AnimatedLoader = () => {
       `}</style>
 
       <div className="loader px-4 md:px-12 lg:px-24">
-        <p className="text-black font-bold m-0 p-0">{prefix}</p>
+        <p className="text-black font-bold m-0 p-0">{t('animatedloaderContent.prefix')}</p>
         <div className="words">
-          {words.map((word, index) => (
+          {animatedWords.map((word, index) => (
             <div key={index} className="word">{word}</div>
           ))}
         </div>

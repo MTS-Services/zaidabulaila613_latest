@@ -1,6 +1,7 @@
 "use client"
 import { TruckIcon, RefreshCw, ShieldCheck, ArrowRight } from "lucide-react"
 import { benefitsContent } from "@/constants/benefits/benefits"
+import { useTranslation } from "@/hooks/use-translation"
 
 const BenefitsSection = () => {
   const { title, benefits } = benefitsContent
@@ -10,12 +11,12 @@ const BenefitsSection = () => {
     RefreshCw,
     ShieldCheck,
   }
-
+const {t} = useTranslation();
   return (
     <section className="py-12 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12">
-          {title}
+          {t('benefit.title')}
         </h2>
 
         <div className="grid gap-8 sm:grid-cols-3 place-items-center">

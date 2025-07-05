@@ -170,7 +170,7 @@
         "view": "View",
         "edit": "Edit",
         "delete": "Delete",
-        "import":"Import"
+        "import": "Import"
     },
     "updateProduct": {
         "title": "Update Your Dress",
@@ -182,5 +182,66 @@
         "new": "New",
         "used": "Used",
         "rental": "Rental"
+    },
+    "hero": {
+        "subtitle": "SubTittle",
+        "tittle": "Upload your dress and WIN",
+        "description": "Win a $100 gift by registering on our website",
+        "button": "Register Now"
+    },
+    "animatedloaderContent": {
+        "prefix": "You Can",
+        "buy": "BUY",
+        "sell": "SELL",
+        "rent": "RENT",
+        "browse": "BROWSE"
+    },
+    "vendorSelection": {
+        "title": "Featured Vendors & Boutiques",
+        "description": "Discover independent designers and exclusive collections",
+        "button": "VIEW ALL VENDORS"
+    },
+    "categorySelection": {
+        "title": "Shop By Category"
+    },
+    "shopByType": {
+        "title": "Featured Dresses",
+        "description": "Discover our most popular dresses across all categories",
+        "button": "View All Dresses"
+    },
+    "benefit": {
+        "title": "Why Choose Us?"
+    },
+    "ready": {
+        "title": "Ready to Find Your Perfect Dress?",
+        "description": "Start your search now and discover thousands of options from trusted vendors",
+        "button": "Start Shopping"
+    },
+    "footer": {
+        "shop": "Shop",
+        "help": "Help",
+        "about": "About",
+        "connect": "Connect",
+        "newarrival": "New Arrivals",
+        "useddresses": "Used Dresses",
+        "rentaloptions": "Rental Options",
+        "vendors": "Vendors",
+        "faq": "FAQ",
+        "shipping": "Shipping",
+        "returns": "Returns",
+        "contactus": "Contact Us",
+        "ourstory": "Our Story",
+        "careers": "Careers",
+        "press": "Press",
+        "instagram": "Instagram",
+        "facebook": "Facebook",
+        "pinterest": "Pinterest",
+        "twitter": "Twitter",
+        "copyright": "© 2025 DressMarket. All rights reserved.",
+        "privacypolicy": "Privacy Policy",
+        "termservice": "Terms of Service"
+    },
+    "backtotop" :{
+        "text": "Back to Top"
     }
 }

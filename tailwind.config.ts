@@ -3,9 +3,10 @@ import type { Config } from "tailwindcss"
 const config = {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
+    "./pages/**/*.{ts,tsx}",
+    "./interfaces/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
@@ -19,6 +20,10 @@ const config = {
       },
     },
     extend: {
+      spacing: {
+        100: '25rem', // 400px
+        200: '50rem', // 800px
+      },
       screens: {
         sm: "640px",
         md: "768px",
@@ -99,6 +104,12 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
         "slide-right": "slide-right 0.6s ease-out both",
       },
+      margin: {
+        100: '200px',
+      },
+      padding: {
+        100: '100px'
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],

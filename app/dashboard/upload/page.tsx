@@ -4,7 +4,7 @@ import Link from "next/link"
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Upload, X, Info, DollarSign } from "lucide-react"
@@ -21,14 +21,22 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/use-toast"
 import UploadButton from "@/components/upload-button"
+import { useMutation } from "@apollo/client"
+import { CREATE_PRODUCT } from "@/graphql/mutation"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function UploadPage() {
   const router = useRouter()
+  const { user } = useAuth()
+
+
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [images, setImages] = useState<string[]>([])
   const [dressType, setDressType] = useState("New")
   const [showSizeGuide, setShowSizeGuide] = useState(false)
-
+  const [files, setFiles] = useState<File[]>([]);
+  const [createProduct] = useMutation(CREATE_PRODUCT);
   // Form state
   const [formData, setFormData] = useState({
     name: "",
@@ -43,6 +51,10 @@ export default function UploadPage() {
     condition: "Excellent",
     vendorName: "",
   })
+
+  if (!user) {
+    return
+  }
 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -103,7 +115,11 @@ export default function UploadPage() {
         }
       }
       reader.readAsDataURL(file)
+      setFiles((prev) => [...prev, file])
     })
+    // if (e.target.files) {
+    //   setFiles(Array.from(e.target.files));
+    // }
   }
 
   // Remove image
@@ -112,22 +128,64 @@ export default function UploadPage() {
   }
 
   // Handle form submission
-  const handleSubmit = () => {
-    setIsSubmitting(true)
+  // const handleSubmit = () => {
+  //   setIsSubmitting(true)
 
-    // Show success message after animation completes
-    setTimeout(() => {
-      toast({
-        title: "Dress uploaded successfully!",
-        description: "Your dress has been submitted for review.",
-      })
+  //   // Show success message after animation completes
+  //   setTimeout(() => {
+  //     toast({
+  //       title: "Dress uploaded successfully!",
+  //       description: "Your dress has been submitted for review.",
+  //     })
 
-      // Redirect to home page
-      setTimeout(() => {
-        router.push("/")
-      }, 1000)
-    }, 5500)
-  }
+  //     // Redirect to home page
+  //     setTimeout(() => {
+  //       router.push("/")
+  //     }, 1000)
+  //   }, 5500)
+  // }
+
+  const handleSubmit = async () => {
+    console.log(files, "Files")
+    const result = await createProduct({
+      variables: {
+        product: {
+          name: "ABC",
+          user: user.user.id,
+          description: "Test desc",
+          price: 120,
+          oldPrice: 220,
+          type: 'new',
+          color: ['yellow', 'brown'],
+          selectedColor: 'brown',
+          chest: 10,
+          waist: 2,
+          hip: 1,
+          shoulder: null,
+          high: 12,
+          length: 1,
+          sleeve: false,
+          underlay: false,
+          qty: 12,
+          ref: 'fghj',
+          rent: true,
+          sell: false,
+          rentPerHur: 120,
+          state: 'UU',
+          size: [{ value: 'S', label: 'Small' }],
+          shape: [{ value: 'SHS', label: 'snsn' }],
+          category: 'wedding',
+          material: 'sdfghjk',
+          careInstructions: 'poiuytre',
+          vendorShopName: 'cvbnm',
+        },
+        pictures: files,
+
+      },
+    });
+
+    console.log('Created product:', result.data);
+  };
 
   // Size options
   const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "Custom"]

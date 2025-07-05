@@ -27,21 +27,13 @@ import { useWishlist } from "@/hooks/use-wishlist"
 import ReactCountryFlag from "react-country-flag"
 import { useDrawer } from "@/contexts/drawer-context"
 import { contactInfo, shippingInfo } from "@/constants/contact"
+import { useCurrency } from "@/contexts/currency-context"
+import { currencies } from "@/lib/utils"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import { useLanguage } from "@/contexts/language-context"
 
 // Add this currencies array near the top of the file, after the imports
-const currencies = [
-  { id: 'jod', code: "JOD", countryCode: "JO", name: "Jordanian Dinar" },
-  { id: 'sar', code: "SAR", countryCode: "SA", name: "Saudi Riyal" },
-  { id: 'qar', code: "QAR", countryCode: "QA", name: "Qatari Riyal" },
-  { id: 'aed', code: "AED", countryCode: "AE", name: "UAE Dirham" },
-  { id: 'kwd', code: "KWD", countryCode: "KW", name: "Kuwaiti Dinar" },
-  { id: 'omr', code: "OMR", countryCode: "OM", name: "Omani Rial" },
-  { id: 'egp', code: "EGP", countryCode: "EG", name: "Egyptian Pound" },
-  { id: 'usd_lb', code: "USD", countryCode: "LB", name: "US Dollar (Lebanon)" },
-  { id: 'bhd', code: "BHD", countryCode: "BH", name: "Bahraini Dinar" },
-  { id: 'iqd', code: "IQD", countryCode: "IQ", name: "Iraqi Dinar" },
-  { id: 'usd', code: "USD", countryCode: "US", name: "US Dollar" },
-]
+
 
 // Add a state variable for the selected currency in the Navbar component
 export default function Navbar() {
@@ -51,9 +43,19 @@ export default function Navbar() {
   const [activeTab, setActiveTab] = useState("menu")
   const [expandedMenus, setExpandedMenus] = useState<string[]>([])
   const [searchExpanded, setSearchExpanded] = useState(false)
-  const [selectedCurrency, setSelectedCurrency] = useState(currencies[0])
+  // const [selectedCurrency, setSelectedCurrency] = useState(currencies[0])
   const { isDrawerOpen, setIsDrawerOpen } = useDrawer()
   const [isArabic, setIsArabic] = useState(false)
+
+  const { selectedCurrency, setSelectedCurrency } = useCurrency();
+  const { language, setLanguage } = useLanguage();
+
+  const [open, setOpen] = useState(false);
+
+  const handleSelect = (lang: "EN" | "AR") => {
+    setLanguage(lang);
+    setOpen(false);
+  };
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen)
@@ -128,19 +130,18 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
-        scrolled ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-background"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${scrolled ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-background"
+        }`}
     >
       <div className="container px-4 lg:px-6 flex h-16 items-center justify-between">
         {/* Left - Logo and Navigation Links */}
         <div className="flex items-center gap-8">
           {/* Hamburger Menu - Mobile Only */}
           <label className="hamburger cursor-pointer lg:hidden mr-2">
-            <input 
-              type="checkbox" 
-              checked={isDrawerOpen} 
-              onChange={toggleDrawer} 
+            <input
+              type="checkbox"
+              checked={isDrawerOpen}
+              onChange={toggleDrawer}
             />
             <svg viewBox="0 0 32 32" className="text-slate-700">
               <path
@@ -303,7 +304,7 @@ export default function Navbar() {
           </div>
 
           {/* Upload Icon Button - Updated size and position */}
-          <Link href="/upload" className="hidden lg:flex flex-col items-center justify-center relative p-2 rounded-full transition-colors">
+          <Link href="/dashboard/upload" className="hidden lg:flex flex-col items-center justify-center relative p-2 rounded-full transition-colors">
             <div className="group cursor-pointer outline-none hover:rotate-90 duration-300">
               <svg
                 className="stroke-gold fill-none group-hover:fill-black/20 group-hover:stroke-gold group-active:stroke-gold/50 group-active:fill-gold group-active:duration-0 duration-300 h-10 w-10"
@@ -347,20 +348,61 @@ export default function Navbar() {
           </Link>
 
           {/* Account Icon */}
-            <Link
-            href="/account"
+          <Link
+            href="/dashboard"
             className="text-slate-700 hover:text-slate-900 relative p-2 rounded-full hover:bg-slate-100 transition-colors hidden lg:flex"
           >
             <User className="h-5 w-5" />
           </Link>
 
           {/* Arabic Language Toggle */}
-          <button
+          {/* <button
             onClick={() => setIsArabic(!isArabic)}
             className="text-slate-700 hover:text-slate-900 relative p-2 rounded-full hover:bg-slate-100 transition-colors hidden lg:flex items-center justify-center"
           >
             <span className="text-sm font-medium">العربية</span>
-          </button>
+          </button> */}
+          <div className="relative inline-block text-left">
+            <button
+              onClick={() => setOpen(!open)}
+              className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+            >
+               {language === "EN" ? "English" : "العربية"}
+              <svg
+                className="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.23 7.21a.75.75 0 011.06.02L10 11.187l3.71-3.955a.75.75 0 011.08 1.04l-4.25 4.52a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+
+            {open && (
+              <div className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                <div className="py-1">
+                  <button
+                    onClick={() => handleSelect("EN")}
+                    className={`w-full text-left px-4 py-2 text-sm ${language === "EN" ? "bg-gray-100 text-gray-900 font-medium" : "text-gray-700"
+                      }`}
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => handleSelect("AR")}
+                    className={`w-full text-left px-4 py-2 text-sm ${language === "AR" ? "bg-gray-100 text-gray-900 font-medium" : "text-gray-700"
+                      }`}
+                  >
+                    العربية
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
 
@@ -416,9 +458,8 @@ export default function Navbar() {
               {currencies.map((currency) => (
                 <button
                   key={currency.id}  // Changed from currency.code to currency.id
-                  className={`block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 ${
-                    selectedCurrency.code === currency.code ? "text-gold font-medium" : "text-slate-700"
-                  }`}
+                  className={`block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 ${selectedCurrency.code === currency.code ? "text-gold font-medium" : "text-slate-700"
+                    }`}
                   onClick={() => setSelectedCurrency(currency)}
                 >
                   <span className="flex items-center gap-2">
@@ -435,24 +476,22 @@ export default function Navbar() {
 
       {/* Mobile Drawer - Custom implementation without using Radix UI */}
       <div
-        className={`fixed inset-0 top-16 bg-black/50 z-40 transition-opacity duration-300 ${
-          isDrawerOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 top-16 bg-black/50 z-40 transition-opacity duration-300 ${isDrawerOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
         onClick={() => setIsDrawerOpen(false)}
       />
 
       {/* Drawer */}
       <div
-        className={`fixed inset-y-0 left-0 w-[300px] bg-white z-50 shadow-xl mt-16 transition-transform duration-300 ease-in-out ${
-          isDrawerOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 w-[300px] bg-white z-50 shadow-xl mt-16 transition-transform duration-300 ease-in-out ${isDrawerOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         {/* Search in Drawer */}
         <div className="p-4 border-b">
           <div className="search-container w-full">
-            <input 
+            <input
               checked={!searchExpanded}
-              className="search-checkbox" 
+              className="search-checkbox"
               type="checkbox"
               onChange={() => setSearchExpanded(!searchExpanded)}
             />
@@ -617,13 +656,12 @@ export default function Navbar() {
                   {currencies.map((currency) => (
                     <button
                       key={currency.id}
-                      className={`block w-full text-left py-2 px-4 hover:bg-slate-100 ${
-                        selectedCurrency.code === currency.code ? "text-gold font-medium" : ""
-                      }`}
+                      className={`block w-full text-left py-2 px-4 hover:bg-slate-100 ${selectedCurrency.code === currency.code ? "text-gold font-medium" : ""
+                        }`}
                       onClick={() => {
                         setSelectedCurrency(currency)
                         toggleSubmenu(
-                          { preventDefault: () => {}, stopPropagation: () => {} } as React.MouseEvent,
+                          { preventDefault: () => { }, stopPropagation: () => { } } as React.MouseEvent,
                           "Currency"
                         )
                       }}

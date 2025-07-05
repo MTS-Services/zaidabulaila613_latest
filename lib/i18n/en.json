@@ -1,0 +1,186 @@
+{
+    "createProduct": {
+        "title": "Create New Product",
+        "description": "Share your beautiful dress with our community",
+        "perDay": "Per Day",
+        "images": {
+            "title": "Dress Images",
+            "description": "Upload up to 5 images of your dress",
+            "uploadText": "Click to upload",
+            "uploadHint": "PNG, JPG, WEBP up to 5MB",
+            "uploadedImages": "Uploaded Images"
+        },
+        "dressType": {
+            "title": "Dress Type",
+            "description": "Select the type of listing",
+            "new": {
+                "label": "New",
+                "description": "Brand new dress with tags"
+            },
+            "used": {
+                "label": "Used",
+                "description": "Pre-owned dress in good condition"
+            },
+            "rental": {
+                "label": "Rental",
+                "description": "Available for rental only"
+            }
+        },
+        "basicInfo": {
+            "title": "Basic Information",
+            "subtitle": "Enter the details of your dress",
+            "name": {
+                "label": "Dress Name",
+                "placeholder": "e.g., Elegant Silk Wedding Gown"
+            },
+            "description": {
+                "label": "Description",
+                "placeholder": "Describe your dress, including details about style, fit, and any special features"
+            },
+            "category": {
+                "label": "Category",
+                "placeholder": "Select a category"
+            },
+            "price": {
+                "label": "Price ",
+                "placeholder": "0.00"
+            },
+            "oldPrice": {
+                "label": "Original Price ",
+                "tooltip": "For used or rental items, specify the original retail price to show the discount"
+            }
+        },
+        "specifications": {
+            "title": "Specifications",
+            "description": "Add details about size, color, and materials",
+            "sizes": {
+                "label": "Available Sizes",
+                "guide": "Size Guide",
+                "guideContent": {
+                    "title": "Size Guide",
+                    "xs": "XS: US 0-2",
+                    "s": "S: US 4-6",
+                    "m": "M: US 8-10",
+                    "l": "L: US 12-14",
+                    "xl": "XL: US 16-18",
+                    "xxl": "XXL: US 20-22"
+                }
+            },
+            "colors": {
+                "label": "Available Colors",
+                "selectedColor": {
+                    "label": "Selected Color",
+                    "placeholder": "Select the main color"
+                }
+            },
+            "material": {
+                "label": "Material",
+                "placeholder": "e.g., 100% Silk, Polyester blend"
+            },
+            "careInstructions": {
+                "label": "Care Instructions",
+                "placeholder": "e.g., Dry clean only"
+            },
+            "measurements": {
+                "chest": "Chest (in)",
+                "waist": "Waist (in)",
+                "hip": "Hip (in)",
+                "shoulder": "Shoulder (in)",
+                "height": "Height (in)",
+                "length": "Length (in)"
+            },
+            "options": {
+                "sleeve": "Has Sleeves",
+                "underlay": "Has Underlay"
+            },
+            "quantity": {
+                "label": "Quantity"
+            },
+            "reference": {
+                "label": "Reference",
+                "placeholder": "e.g., Designer reference number"
+            },
+            "state": {
+                "label": "State",
+                "placeholder": "e.g., New York"
+            }
+        },
+        "terms": {
+            "agree": "I agree to the",
+            "terms": "terms and conditions",
+            "privacy": "privacy policy"
+        },
+        "actions": {
+            "cancel": "Cancel",
+            "publish": "Publish"
+        },
+        "messages": {
+            "success": "Your dress has been submitted for review.",
+            "minImages": "Please upload minimum 2 images.",
+            "maxImages": "Maximum 5 images allowed, upgrade your subscription to add more."
+        },
+        "errors": {
+            "REQUIRED_NAME": "Please provide a name for your product",
+            "REQUIRED_DESCRIPTION": "Please provide a description",
+            "MIN_PRICE": "Price must be positive",
+            "MIN_OLD_PRICE": "Original price must be positive",
+            "REQUIRED_CATEGORY": "Please select a category",
+            "REQUIRED_COLORS": "Please select at least one color",
+            "REQUIRED_SELECTED_COLOR": "Please select the main color",
+            "REQUIRED_SIZES": "Please select at least one size",
+            "REQUIRED_MATERIAL": "Please specify the material",
+            "REQUIRED_CARE_INSTRUCTIONS": "Please provide care instructions",
+            "MIN_QUANTITY": "Quantity must be at least 1",
+            "REQUIRED_REFERENCE": "Please provide a reference",
+            "REQUIRED_STATE": "Please specify the state",
+            "MIN_CHEST": "Chest measurement must be positive",
+            "MIN_WAIST": "Waist measurement must be positive",
+            "MIN_HIP": "Hip measurement must be positive",
+            "MIN_SHOULDER": "Shoulder measurement must be positive",
+            "MIN_HEIGHT": "Height measurement must be positive",
+            "MIN_LENGTH": "Length measurement must be positive",
+            "generic": "Please fix the errors in the form"
+        }
+    },
+    "userProducts": {
+        "products": "Products",
+        "image": "Image",
+        "name": "Name",
+        "price": "Price",
+        "type": "Type",
+        "quantity": "Quantity",
+        "category": "Category",
+        "approved": "Approved",
+        "notApproved": "Not approved",
+        "actions": "Actions",
+        "noImage": "No Image",
+        "searchProducts": "Search products...",
+        "addDress": "Add Dress",
+        "loading": "Loading...",
+        "error": "Error",
+        "deleteSuccess": "Your dress has been deleted successfully.",
+        "deleteFailed": "Something went wrong during deleting dress.",
+        "createFirstDress": "Create your first dress",
+        "approvedStatus": {
+            "true": "Approved",
+            "false": "Not approved"
+        }
+    },
+    "common": {
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "import":"Import"
+    },
+    "updateProduct": {
+        "title": "Update Your Dress",
+        "description": "Update your dress listing with the latest information",
+        "current_images": "Current Images",
+        "new_images": "New Images"
+    },
+    "productTypes": {
+        "new": "New",
+        "used": "Used",
+        "rental": "Rental"
+    }
+}

@@ -5,7 +5,7 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 
 type CartItem = {
-  id: number
+  id: string
   name: string
   price: number
   originalPrice?: number
@@ -23,8 +23,8 @@ type CartItem = {
 type CartContextType = {
   cart: CartItem[]
   addToCart: (item: CartItem) => void
-  removeFromCart: (id: number) => void
-  updateQuantity: (id: number, quantity: number) => void
+  removeFromCart: (id: string) => void
+  updateQuantity: (id: string, quantity: number) => void
   clearCart: () => void
   cartTotal: () => number
   cartCount: () => number
@@ -76,12 +76,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }
 
   // Remove item from cart
-  const removeFromCart = (id: number) => {
+  const removeFromCart = (id: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id))
   }
 
   // Update item quantity
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (id: string, quantity: number) => {
     setCart((prevCart) => prevCart.map((item) => (item.id === id ? { ...item, quantity } : item)))
   }
 

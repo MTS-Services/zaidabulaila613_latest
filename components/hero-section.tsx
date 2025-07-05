@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react"
 import Image from "next/image"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { heroContent } from "@/constants/hero/hero-section"
+import { useTranslation } from "@/hooks/use-translation"
 
 export default function HeroSection() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
@@ -12,6 +13,8 @@ export default function HeroSection() {
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([])
   const isMobile = useIsMobile()
   const [scrollY, setScrollY] = useState(0)
+
+  const {t} = useTranslation()
 
   // const slides = [
   //   {
@@ -113,7 +116,7 @@ export default function HeroSection() {
         <div className="container px-4 md:px-6">
           <div className="max-w-2xl space-y-4">
             <div className="space-y-2">
-              <p className="text-white/80 font-great-vibes text-2xl md:text-3xl">{heroContent.tagline}</p>
+              <p className="text-white/80 font-great-vibes text-2xl md:text-3xl">{t('hero.subtitle')}</p>
               <h1 className="font-playfair text-4xl font-bold tracking-tight text-white sm:text-5xl xl:text-6xl/none elegant-letter-spacing hero-text-shadow">
                 {heroContent.heading}
               </h1>

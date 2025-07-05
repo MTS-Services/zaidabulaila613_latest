@@ -10,11 +10,14 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { useCart } from "@/hooks/use-cart"
 import { useWishlist } from "@/hooks/use-wishlist"
+import { useRouter } from "next/navigation"
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart()
   const { addToWishlist } = useWishlist()
   const [promoCode, setPromoCode] = useState("")
+
+  const router = useRouter()
 
   // Calculate subtotal
   const subtotal = cartTotal()
@@ -23,13 +26,13 @@ export default function CartPage() {
   const total = subtotal + shipping + tax
 
   // Handle move to wishlist
-  const handleMoveToWishlist = (item) => {
+  const handleMoveToWishlist = (item: any) => {
     addToWishlist(item)
     removeFromCart(item.id)
   }
 
   // Handle quantity change
-  const handleQuantityChange = (id, newQuantity) => {
+  const handleQuantityChange = (id: any, newQuantity: any) => {
     if (newQuantity < 1) return
     updateQuantity(id, newQuantity)
   }
@@ -188,7 +191,7 @@ export default function CartPage() {
                   </Button>
                 </div>
 
-                <Button className="w-full bg-gold hover:bg-gold/90 text-white">
+                <Button className="w-full bg-gold hover:bg-gold/90 text-white" onClick={() => router.push('/checkout')}>
                   <CreditCard className="h-4 w-4 mr-2" />
                   Checkout
                 </Button>

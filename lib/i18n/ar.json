@@ -1,0 +1,192 @@
+{
+    "createProduct": {
+        "title": "إنشاء منتج جديد",
+        "description": "شارك فستانك الجميل مع مجتمعنا",
+        "perDay": "في اليوم",
+        "images": {
+            "title": "صور الفستان",
+            "description": "قم بتحميل ما يصل إلى 5 صور للفستان",
+            "uploadText": "انقر للتحميل",
+            "uploadHint": "PNG, JPG, WEBP بحد أقصى 5MB",
+            "uploadedImages": "الصور المرفوعة"
+        },
+        "dressType": {
+            "title": "نوع الفستان",
+            "description": "اختر نوع القائمة",
+            "new": {
+                "label": "جديد",
+                "description": "فستان جديد بالكامل مع البطاقة"
+            },
+            "used": {
+                "label": "مستعمل",
+                "description": "فستان مستعمل بحالة جيدة"
+            },
+            "rental": {
+                "label": "الإيجار",
+                "description": "متاح للإيجار فقط"
+            }
+        },
+        "basicInfo": {
+            "title": "المعلومات الأساسية",
+            "subtitle": "أدخل تفاصيل الفستان الخاص بك",
+            "name": {
+                "label": "اسم الفستان",
+                "placeholder": "مثال: فستان زفاف حريري أنيق"
+            },
+            "description": {
+                "label": "الوصف",
+                "placeholder": "صف فستانك، بما في ذلك التفاصيل حول النمط والمقاس وأي ميزات خاصة"
+            },
+            "category": {
+                "label": "الفئة",
+                "placeholder": "اختر فئة"
+            },
+            "price": {
+                "label": "السعر",
+                "placeholder": "0.00"
+            },
+            "oldPrice": {
+                "label": "السعر الأصلي",
+                "tooltip": "للعناصر المستعملة أو المعروضة للإيجار، حدد سعر التجزئة الأصلي لإظهار الخصم"
+            }
+        },
+        "specifications": {
+            "title": "المواصفات",
+            "description": "أضف تفاصيل حول المقاس واللون والمواد",
+            "sizes": {
+                "label": "المقاسات المتاحة",
+                "guide": "دليل المقاسات",
+                "guideContent": {
+                    "title": "دليل المقاسات",
+                    "xs": "XS: المقاس الأمريكي 0-2",
+                    "s": "S: المقاس الأمريكي 4-6",
+                    "m": "M: المقاس الأمريكي 8-10",
+                    "l": "L: المقاس الأمريكي 12-14",
+                    "xl": "XL: المقاس الأمريكي 16-18",
+                    "xxl": "XXL: المقاس الأمريكي 20-22"
+                }
+            },
+            "colors": {
+                "label": "الألوان المتاحة",
+                "selectedColor": {
+                    "label": "اللون المختار",
+                    "placeholder": "اختر اللون الأساسي"
+                }
+            },
+            "material": {
+                "label": "المادة",
+                "placeholder": "مثال: 100% حرير، خليط بوليستر"
+            },
+            "careInstructions": {
+                "label": "تعليمات العناية",
+                "placeholder": "مثال: تنظيف جاف فقط"
+            },
+            "measurements": {
+                "chest": "الصدر (بوصة)",
+                "waist": "الخصر (بوصة)",
+                "hip": "الورك (بوصة)",
+                "shoulder": "الكتف (بوصة)",
+                "height": "الطول (بوصة)",
+                "length": "الطول (بوصة)"
+            },
+            "options": {
+                "sleeve": "به أكمام",
+                "underlay": "به بطانة"
+            },
+            "quantity": {
+                "label": "الكمية"
+            },
+            "reference": {
+                "label": "المرجع",
+                "placeholder": "مثال: رقم المرجع للمصمم"
+            },
+            "state": {
+                "label": "الولاية/المحافظة",
+                "placeholder": "مثال: نيويورك"
+            }
+        },
+        "terms": {
+            "agree": "أوافق على",
+            "terms": "الشروط والأحكام",
+            "privacy": "سياسة الخصوصية"
+        },
+        "actions": {
+            "cancel": "إلغاء",
+            "publish": "نشر"
+        },
+        "messages": {
+            "success": "تم إرسال فستانك للمراجعة.",
+            "minImages": "الرجاء تحميل ما لا يقل عن صورتين.",
+            "maxImages": "الحد الأقصى 5 صور مسموح بها، قم بترقية اشتراكك لإضافة المزيد."
+        },
+        "errors": {
+            "REQUIRED_NAME": "الرجاء إدخال اسم للمنتج",
+            "REQUIRED_DESCRIPTION": "الرجاء إدخال وصف",
+            "MIN_PRICE": "يجب أن يكون السعر رقم موجب",
+            "MIN_OLD_PRICE": "يجب أن يكون السعر الأصلي رقم موجب",
+            "REQUIRED_CATEGORY": "الرجاء اختيار فئة",
+            "REQUIRED_COLORS": "الرجاء اختيار لون واحد على الأقل",
+            "REQUIRED_SELECTED_COLOR": "الرجاء اختيار اللون الأساسي",
+            "REQUIRED_SIZES": "الرجاء اختيار مقاس واحد على الأقل",
+            "REQUIRED_MATERIAL": "الرجاء تحديد المادة",
+            "REQUIRED_CARE_INSTRUCTIONS": "الرجاء إدخال تعليمات العناية",
+            "MIN_QUANTITY": "يجب أن تكون الكمية 1 على الأقل",
+            "REQUIRED_REFERENCE": "الرجاء إدخال مرجع",
+            "REQUIRED_STATE": "الرجاء تحديد الولاية/المحافظة",
+            "MIN_CHEST": "يجب أن يكون قياس الصدر رقم موجب",
+            "MIN_WAIST": "يجب أن يكون قياس الخصر رقم موجب",
+            "MIN_HIP": "يجب أن يكون قياس الورك رقم موجب",
+            "MIN_SHOULDER": "يجب أن يكون قياس الكتف رقم موجب",
+            "MIN_HEIGHT": "يجب أن يكون قياس الطول رقم موجب",
+            "MIN_LENGTH": "يجب أن يكون قياس الطول رقم موجب",
+            "generic": "الرجاء تصحيح الأخطاء في النموذج"
+        }
+    },
+    "userProducts": {
+        "products": "المنتجات",
+        "image": "صورة",
+        "name": "الاسم",
+        "price": "السعر",
+        "type": "النوع",
+        "quantity": "الكمية",
+        "category": "الفئة",
+        "approved": "تمت الموافقة",
+        "notApproved": "لم تتم الموافقة",
+        "actions": "الإجراءات",
+        "noImage": "لا توجد صورة",
+        "searchProducts": "البحث عن المنتجات...",
+        "addDress": "إضافة فستان",
+        "loading": "جار التحميل...",
+        "error": "حدث خطأ",
+        "deleteSuccess": "تم حذف الفستان بنجاح.",
+        "deleteFailed": "حدث خطأ أثناء حذف الفستان.",
+        "createFirstDress": "قم بإنشاء أول فستان لك",
+        "approvedStatus": {
+            "true": "تمت الموافقة",
+            "false": "لم تتم الموافقة"
+        }
+    },
+    "common": {
+        "view": "عرض",
+        "edit": "تعديل",
+        "delete": "حذف",
+        "import":"Import"
+    },
+    "updateProduct": {
+        "title": "تحديث الفستان الخاص بك",
+        "description": "قم بتحديث قائمة الفستان الخاصة بك بأحدث المعلومات",
+        "current_images":"Current Images",
+        "new_images":"New Images"
+    },
+    "productTypes": {
+        "new": "جديد",
+        "used": "مستعمل",
+        "rental": "الإيجار"
+    },
+    "hero":{
+"title":"",
+"description":"",
+"subtitle":""
+    }
+
+}

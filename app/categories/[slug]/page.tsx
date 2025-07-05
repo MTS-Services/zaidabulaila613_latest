@@ -12,11 +12,27 @@ import { useWishlist } from "@/hooks/use-wishlist"
 import { useCart } from "@/hooks/use-cart"
 import FilterModal from "@/components/filter-modal"
 import HeartButton from "@/components/heart-button"
+import { gql, useQuery } from "@apollo/client"
+
+const GET_CATEGORIES = gql`
+  query GetCategories {
+  categories {
+    name{
+      en
+    }
+  }
+}
+`;
 
 export default function CategoryPage({ params }: { params: { slug: string } }) {
   // Find the category based on the slug
   const category = categories.find((c) => c.slug === params.slug) || categories[0]
+  const { data, loading, error } = useQuery(GET_CATEGORIES)
 
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error: {error.message}</p>
+
+  console.log(data, "DATA")
   // State for filters
   const [productType, setProductType] = useState<string[]>([])
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000])
@@ -150,6 +166,8 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
       setSelectedVendors((prev) => prev.filter((vendor) => vendor !== filter))
     }
   }
+
+
 
   return (
     <div className="min-h-screen bg-slate-50">

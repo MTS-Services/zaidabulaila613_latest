@@ -9,13 +9,15 @@ import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { enqueueSnackbar } from 'notistack';
 import { useAuth } from '@/contexts/auth-context';
+import { useTranslation } from '@/hooks/use-translation';
 
-const formFields: Field[] = [
-    { type: "Input", name: 'email', label: 'Email', inputType: 'email' },
-];
 
 export default function ForgetPassword() {
-
+        const {t} = useTranslation();
+    
+    const formFields: Field[] = [
+        { type: "Input", name: 'email', label: t('forgetpassword.email'), inputType: 'email' },
+    ];
     const router = useRouter()
     const [forgetPassword, { data, loading, error }] = useMutation(FORGET_PASSWORD_MUTATION)
     const handleSubmit = async (values: any) => {
@@ -49,7 +51,7 @@ export default function ForgetPassword() {
             <div className='bg-slate-50'>
                 <div className="container pt-[100px]">
                     <div className="flex items-center justify-center mb-5">
-                        <h1 className="text-2xl md:text-3xl font-bold">Forget Password</h1>
+                        <h1 className="text-2xl md:text-3xl font-bold">{t('forgetpassword.title')}</h1>
                         {/* <Link href="/" className="flex items-center text-sm text-slate-600 hover:text-slate-900">
                                 <ChevronLeft className="h-4 w-4 mr-1" />
                                 Continue Shopping
@@ -67,7 +69,7 @@ export default function ForgetPassword() {
                                 email: '',
                             }}
                             fieldDir='column'
-                            buttonTitle='Submit'
+                            buttonTitle={t('forgetpassword.button')}
                         />
 
                     </div>

@@ -10,13 +10,17 @@ import { ChevronLeft } from 'lucide-react';
 import { enqueueSnackbar } from 'notistack';
 import { useAuth } from '@/contexts/auth-context';
 import { useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/hooks/use-translation';
 
-const formFields: Field[] = [
-    { type: "Input", name: 'username', label: 'Email / phone', inputType: 'text' },
-    { type: "Input", name: 'password', label: 'Password', inputType: 'password' },
-];
+
 
 export default function SignIn() {
+const {t} = useTranslation();
+
+    const formFields: Field[] = [
+        { type: "Input", name: 'username', label: t('login.phonelabel'), inputType: 'text' },
+        { type: "Input", name: 'password', label: t('login.password'), inputType: 'password' },
+    ];
 
     const router = useRouter()
     const { login } = useAuth();
@@ -59,12 +63,13 @@ export default function SignIn() {
 
         }
     }
+
     return (
         <>
             <div className='bg-slate-50'>
                 <div className="container pt-[100px]">
                     <div className="flex items-center justify-center mb-5">
-                        <h1 className="text-2xl md:text-3xl font-bold">Login</h1>
+                        <h1 className="text-2xl md:text-3xl font-bold">{t('login.title')}</h1>
                         {/* <Link href="/" className="flex items-center text-sm text-slate-600 hover:text-slate-900">
                                 <ChevronLeft className="h-4 w-4 mr-1" />
                                 Continue Shopping
@@ -83,12 +88,12 @@ export default function SignIn() {
                                 password: ''
                             }}
                             fieldDir='column'
-                            buttonTitle='Login'
+                            buttonTitle={t('login.button')}
                         />
                         <div className='mt-4 flex justify-center gap-5'>
 
-                            <Link href={'/signup'}>Signup</Link>
-                            <Link href={'/forget-password'}>Forgot Password?</Link>
+                            <Link href={'/signup'}>{t('login.signup')}</Link>
+                            <Link href={'/forget-password'}>{t('login.forgot')}</Link>
 
                         </div>
 

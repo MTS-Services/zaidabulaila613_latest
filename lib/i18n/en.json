@@ -210,7 +210,28 @@
         "button": "View All Dresses"
     },
     "benefit": {
-        "title": "Why Choose Us?"
+        "title": "Why Choose Us?",
+        "fast": {
+            "title": "Fast Delivery",
+            "description": "Get your dress delivered quickly, even for rentals",
+            "fasticon": "TruckIcon",
+            "fasticonbgcolor": "bg-gold/10",
+            "fasticoncolor": "text-gold"
+        },
+        "easy": {
+            "icon": "RefreshCw",
+            "title": "Easy Returns",
+            "description": "Hassle-free return process if the dress isn't perfect",
+            "iconbgcolor": "bg-gold/10",
+            "iconcolor": "text-gold"
+        },
+        "quantity": {
+            "icon": "ShieldCheck",
+            "title": "Quality Guarantee",
+            "description": "All dresses are verified for quality and condition",
+            "iconbgcolor": "bg-gold/10",
+            "iconcolor": "text-gold"
+        }
     },
     "ready": {
         "title": "Ready to Find Your Perfect Dress?",
@@ -241,7 +262,33 @@
         "privacypolicy": "Privacy Policy",
         "termservice": "Terms of Service"
     },
-    "backtotop" :{
+    "backtotop": {
         "text": "Back to Top"
+    },
+    "login": {
+        "title": "Login",
+        "phonelabel": "Email / phone",
+        "password": "Password",
+        "button": "Login",
+        "signup": "Signup",
+        "forgot": "Forgot Password?"
+    },
+    "signup": {
+        "title": "Signup",
+        "firstname": "First Name",
+        "lastname": "Last Name",
+        "email": "Email",
+        "mobile": "Mobile",
+        "country": "Country",
+        "language": "Language",
+        "password": "Password",
+        "confirmpassword": "Confirm Password",
+        "button": "Signup"
+    },
+    "forgetpassword": {
+        "title": "Forget Password",
+        "email": "Email",
+        "button": "Submit"
     }
+
 }

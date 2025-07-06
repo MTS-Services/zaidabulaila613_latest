@@ -5,10 +5,31 @@ import Image from "next/image"
 import useEmblaCarousel from "embla-carousel-react"
 import { AnimatedButton } from "./animated-button"
 import NeumorphicButton from "@/components/neumorphic-button"
+import { carouselSettings, sectionContent } from "@/constants/vendors/vendor-section"
+import { useQuery } from "@apollo/client"
+import { GET_SHOPS } from "@/graphql/query"
+import { ShopItem, ShopsResponse } from "@/types/shop"
+import { config } from "@/constants/app"
+import Loader from "./loader"
 import { carouselSettings, sectionContent, vendors } from "@/constants/vendors/vendor-section"
 import { useTranslation } from "@/hooks/use-translation"
 
 export default function VendorSelection() {
+
+
+  const {language} = useTranslation()
+
+  const { data, loading, error } = useQuery<ShopsResponse>(GET_SHOPS, {
+    variables: {
+      language: language, // or 'AR'
+      search: '',
+      page: 1,
+      limit: 10,
+    },
+  });
+
+  const vendors = data?.shops?.data || []
+
   const [mobileViewportRef, mobileEmblaApi] = useEmblaCarousel({
     ...{
       ...carouselSettings.desktop,
@@ -178,6 +199,8 @@ export default function VendorSelection() {
           </div>
         </div>
 
+        {loading && <Loader />}
+
         {/* Desktop View - Single Row with Larger Cards */}
         <div className="hidden lg:block mt-8">
           <div className="overflow-hidden" ref={desktopRow1Ref}>
@@ -224,6 +247,7 @@ export default function VendorSelection() {
         </div>
 
         <div className="flex justify-center mt-10">
+
           <NeumorphicButton 
             href={sectionContent.viewAllButton.href} 
             text={t('vendorSelection.button')}
@@ -236,9 +260,9 @@ export default function VendorSelection() {
 }
 
 // Vendor Card Component
-function VendorCard({ vendor }: { vendor: (typeof vendors)[0] }) {
+function VendorCard({ vendor }: { vendor: ShopItem }) {
   const handleNavigate = () => {
-    window.location.href = `/vendors/${vendor.slug}`
+    window.location.href = `/vendors/${vendor.id}`
   }
 
   return (
@@ -250,8 +274,8 @@ function VendorCard({ vendor }: { vendor: (typeof vendors)[0] }) {
         {/* Background image instead of gradient */}
         <div className="absolute inset-0 w-full h-full">
           <Image
-            src={vendor.coverImage || "/placeholder.svg?height=280&width=175"}
-            alt={vendor.name}
+            src={vendor.profileImage?.path ? config.API_URL + vendor.profileImage?.path : "/placeholder.svg?height=280&width=175"}
+            alt={vendor.shopName}
             fill
             className="object-cover brightness-[0.85] group-hover:brightness-[0.75] transition-all"
             onError={(e) => {
@@ -267,7 +291,7 @@ function VendorCard({ vendor }: { vendor: (typeof vendors)[0] }) {
           <div className="flex-1 flex flex-col justify-between h-full">
             <div>
               <h3 className="font-medium text-base text-white group-hover:text-gold transition-colors">
-                {vendor.name}
+                {vendor.shopName}
               </h3>
               <div className="bg-gold/80 text-white text-xs font-medium px-2 py-0.5 rounded-lg mt-1 mb-2 inline-block">
                 40% OFF
@@ -278,11 +302,11 @@ function VendorCard({ vendor }: { vendor: (typeof vendors)[0] }) {
               <div className="text-xs text-white/90 line-clamp-3 mb-2">{vendor.description}</div>
               <AnimatedButton
                 text="View Collection"
-                href={`/vendors/${vendor.slug}`}
+                href={`/vendors/${vendor.id}`}
                 size="sm"
                 asDiv={true}
                 onClick={() => {
-                  window.location.href = `/vendors/${vendor.slug}`
+                  window.location.href = `/vendors/${vendor.id}`
                 }}
               />
             </div>
@@ -294,9 +318,9 @@ function VendorCard({ vendor }: { vendor: (typeof vendors)[0] }) {
 }
 
 // Compact Vendor Card Component
-function CompactVendorCard({ vendor }: { vendor: (typeof vendors)[0] }) {
+function CompactVendorCard({ vendor }: { vendor: ShopItem }) {
   const handleNavigate = () => {
-    window.location.href = `/vendors/${vendor.slug}`
+    window.location.href = `/vendors/${vendor.id}`
   }
 
   return (
@@ -308,8 +332,8 @@ function CompactVendorCard({ vendor }: { vendor: (typeof vendors)[0] }) {
         {/* Background image instead of gradient */}
         <div className="absolute inset-0 w-full h-full">
           <Image
-            src={vendor.coverImage || "/placeholder.svg?height=240&width=150"}
-            alt={vendor.name}
+            src={vendor.profileImage?.path ? config.API_URL + vendor.profileImage?.path : "/placeholder.svg?height=240&width=150"}
+            alt={vendor.shopName}
             fill
             className="object-cover brightness-[0.85] group-hover:brightness-[0.75] transition-all"
             onError={(e) => {
@@ -322,7 +346,7 @@ function CompactVendorCard({ vendor }: { vendor: (typeof vendors)[0] }) {
         </div>
 
         <div className="p-3 flex flex-col items-start text-left h-full relative z-10">
-          <h3 className="font-medium text-sm text-white group-hover:text-gold transition-colors">{vendor.name}</h3>
+          <h3 className="font-medium text-sm text-white group-hover:text-gold transition-colors">{vendor.shopName}</h3>
           <div className="bg-gold/80 text-white text-[10px] font-medium px-2 py-0.5 rounded-lg mt-1 mb-1 inline-block">
             40% OFF
           </div>
@@ -330,7 +354,7 @@ function CompactVendorCard({ vendor }: { vendor: (typeof vendors)[0] }) {
           <div className="mt-auto">
             <AnimatedButton
               text="View Collection"
-              href={`/vendors/${vendor.slug}`}
+              href={`/vendors/${vendor.id}`}
               size="sm"
               className="h-[25px] max-w-[120px] w-full text-[9px] px-2"
             />

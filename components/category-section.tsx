@@ -6,16 +6,28 @@ import { ChevronLeft, ChevronRight, Tag } from "lucide-react"
 import { motion } from "framer-motion"
 import useEmblaCarousel from "embla-carousel-react"
 import { categoryContent } from "@/constants/categories/category"
+import { useCategory } from "@/contexts/category-context"
+import { useTranslation } from "@/hooks/use-translation"
+import Loader from "./loader"
 import { useTranslation } from "@/hooks/use-translation"
 
 export default function CategorySection() {
-  const { carousel, categories } = categoryContent
+  const { carousel } = categoryContent
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [cardsPerSlide, setCardsPerSlide] = useState(6) // Default, will be calculated based on container width
   const [containerWidth, setContainerWidth] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
+  const { categories: cat } = useCategory()
+  const { language, t } = useTranslation()
 
+  const catAr = cat.map((el, index) => { return { name: el.name.ar, id: el.id, backgroundColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', hoverColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', textColor: '#FFFFFF' } })
+  const catEn = cat.map((el, index) => { return { name: el.name.en, id: el.id, backgroundColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', hoverColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', textColor: '#FFFFFF' } })
+
+
+  console.log(cat, "cat")
+
+  const categories = language === 'AR' ? catAr : catEn
   // Initialize Embla Carousel for swipeable functionality
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
@@ -126,7 +138,7 @@ export default function CategorySection() {
       flexGrow: 0,
     }
   }
-  const {t} = useTranslation();
+  
   return (
     <section className="py-12 md:py-16">
       <div className="container px-2 md:px-4">
@@ -152,54 +164,59 @@ export default function CategorySection() {
 
         <div className="relative">
           {/* Embla Carousel Container */}
-          <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex">
-              {categories.map((category, index) => (
-                <div
-                  key={index}
-                  className="flex-shrink-0 mx-1.5 md:mx-3"
-                  style={getCardStyle(index, hoveredIndex === index)}
-                >
-                  <Link
-                    href={`/categories/${category.slug}`}
-                    className={`h-full flex items-center justify-center rounded-lg overflow-hidden relative transition-all duration-300`}
-                    onMouseEnter={() => setHoveredIndex(index)}
-                    onMouseLeave={() => setHoveredIndex(null)}
-                    style={{
-                      backgroundColor: category.backgroundColor,
-                      color: category.textColor,
-                      ['--hover-color' as string]: category.hoverColor,
-                    } as React.CSSProperties}
+          {categories.length === 0 ?
+            <Loader />
+            :
+
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex">
+                {categories.map((category, index) => (
+                  <div
+                    key={index}
+                    className="flex-shrink-0 mx-1.5 md:mx-3"
+                    style={getCardStyle(index, hoveredIndex === index)}
                   >
-                    {/* Content */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      {/* Vertical text (visible when not hovered) */}
-                      <h3
-                        className={`
+                    <Link
+                      href={`/categories/${category.id}`}
+                      className={`h-full flex items-center justify-center rounded-lg overflow-hidden relative transition-all duration-300`}
+                      onMouseEnter={() => setHoveredIndex(index)}
+                      onMouseLeave={() => setHoveredIndex(null)}
+                      style={{
+                        backgroundColor: category.backgroundColor,
+                        color: category.textColor,
+                        ['--hover-color' as string]: category.hoverColor,
+                      } as React.CSSProperties}
+                    >
+                      {/* Content */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        {/* Vertical text (visible when not hovered) */}
+                        <h3
+                          className={`
                          text-xs md:text-base font-medium ${category.textColor} whitespace-nowrap absolute
                          transition-all duration-300 ease-in-out
                          ${hoveredIndex === index ? "opacity-0 rotate-90 transform scale-50" : "opacity-100 rotate-90 transform scale-100"}
                        `}
-                      >
-                        {category.name}
-                      </h3>
+                        >
+                          {category.name}
+                        </h3>
 
-                      {/* Horizontal text (visible when hovered) */}
-                      <h3
-                        className={`
+                        {/* Horizontal text (visible when hovered) */}
+                        <h3
+                          className={`
                          text-sm md:text-2xl font-medium ${category.textColor} text-center px-2 md:px-4 absolute
                          transition-all duration-300 ease-in-out
                          ${hoveredIndex === index ? "opacity-100 transform scale-100" : "opacity-0 transform scale-50"}
                        `}
-                      >
-                        {category.name}
-                      </h3>
-                    </div>
-                  </Link>
-                </div>
-              ))}
+                        >
+                          {category.name}
+                        </h3>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          }
 
           {/* Slide indicators */}
           {totalSlides > 1 && (
@@ -208,9 +225,8 @@ export default function CategorySection() {
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`h-2 rounded-full transition-all ${
-                    currentSlide === index ? "w-6 bg-gold" : "w-2 bg-slate-300"
-                  }`}
+                  className={`h-2 rounded-full transition-all ${currentSlide === index ? "w-6 bg-gold" : "w-2 bg-slate-300"
+                    }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}

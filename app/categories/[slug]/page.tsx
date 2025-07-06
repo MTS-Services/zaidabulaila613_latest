@@ -13,26 +13,25 @@ import { useCart } from "@/hooks/use-cart"
 import FilterModal from "@/components/filter-modal"
 import HeartButton from "@/components/heart-button"
 import { gql, useQuery } from "@apollo/client"
+import { useCategory } from "@/contexts/category-context"
+import { useParams, useRouter } from "next/navigation"
+import { useTranslation } from "@/hooks/use-translation"
+import { ProductsResponse } from "@/types/product"
+import { GET_PRODUCTS } from "@/graphql/query"
+import { useCurrency } from "@/contexts/currency-context"
+import ProductList from "@/interfaces/product/productList"
 
-const GET_CATEGORIES = gql`
-  query GetCategories {
-  categories {
-    name{
-      en
-    }
-  }
-}
-`;
 
-export default function CategoryPage({ params }: { params: { slug: string } }) {
+
+export default function CategoryPage() {
   // Find the category based on the slug
-  const category = categories.find((c) => c.slug === params.slug) || categories[0]
-  const { data, loading, error } = useQuery(GET_CATEGORIES)
+  // const category = categories.find((c) => c.slug === params.slug) || categories[0]
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error: {error.message}</p>
+  const params = useParams(); // ✅ safe
+  const slug = params?.slug as string;
+  if (!slug) return null;
 
-  console.log(data, "DATA")
+  const router = useRouter()
   // State for filters
   const [productType, setProductType] = useState<string[]>([])
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000])
@@ -42,68 +41,70 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [activeFilters, setActiveFilters] = useState<string[]>([])
-
+  const { categories } = useCategory()
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist()
   const { addToCart } = useCart()
+  const { language } = useTranslation()
+  const { selectedCurrency } = useCurrency()
 
   // Apply filters and group by vendor
-  useEffect(() => {
-    // Filter products by category and other filters
-    const filtered = allProducts.filter((product) => {
-      // Filter by category
-      if (product.category.toLowerCase() !== category.name.toLowerCase()) {
-        return false
-      }
+  // useEffect(() => {
+  //   // Filter products by category and other filters
+  //   const filtered = allProducts.filter((product) => {
+  //     // Filter by category
+  //     if (product.category.toLowerCase() !== category.name.toLowerCase()) {
+  //       return false
+  //     }
 
-      // Filter by product type if any selected
-      if (productType.length > 0 && !productType.includes(product.type)) {
-        return false
-      }
+  //     // Filter by product type if any selected
+  //     if (productType.length > 0 && !productType.includes(product.type)) {
+  //       return false
+  //     }
 
-      // Filter by vendor if any selected
-      if (selectedVendors.length > 0 && !selectedVendors.includes(product.vendor.name)) {
-        return false
-      }
+  //     // Filter by vendor if any selected
+  //     if (selectedVendors.length > 0 && !selectedVendors.includes(product.vendor.name)) {
+  //       return false
+  //     }
 
-      // Filter by price range
-      const price = Number.parseFloat(product.price)
-      if (price < priceRange[0] || price > priceRange[1]) {
-        return false
-      }
+  //     // Filter by price range
+  //     const price = Number.parseFloat(product.price)
+  //     if (price < priceRange[0] || price > priceRange[1]) {
+  //       return false
+  //     }
 
-      // Filter by search term
-      if (searchTerm && !product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-        return false
-      }
+  //     // Filter by search term
+  //     if (searchTerm && !product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+  //       return false
+  //     }
 
-      return true
-    })
+  //     return true
+  //   })
 
-    setFilteredProducts(filtered)
+  //   setFilteredProducts(filtered)
 
-    // Group filtered products by vendor
-    const grouped = filtered.reduce(
-      (acc, product) => {
-        const vendorName = product.vendor.name
-        if (!acc[vendorName]) {
-          acc[vendorName] = []
-        }
-        acc[vendorName].push(product)
-        return acc
-      },
-      {} as Record<string, any[]>,
-    )
+  //   // Group filtered products by vendor
+  //   const grouped = filtered.reduce(
+  //     (acc, product) => {
+  //       const vendorName = product.vendor.name
+  //       if (!acc[vendorName]) {
+  //         acc[vendorName] = []
+  //       }
+  //       acc[vendorName].push(product)
+  //       return acc
+  //     },
+  //     {} as Record<string, any[]>,
+  //   )
 
-    setGroupedByVendor(grouped)
+  //   setGroupedByVendor(grouped)
 
-    // Update active filters
-    const filters = []
-    if (productType.length > 0) filters.push(...productType)
-    if (selectedVendors.length > 0) filters.push(...selectedVendors)
-    if (priceRange[0] > 0 || priceRange[1] < 1000) filters.push(`$${priceRange[0]}-$${priceRange[1]}`)
-    if (searchTerm) filters.push(`"${searchTerm}"`)
-    setActiveFilters(filters)
-  }, [category.name, productType, selectedVendors, priceRange, searchTerm])
+  //   // Update active filters
+  //   const filters = []
+  //   if (productType.length > 0) filters.push(...productType)
+  //   if (selectedVendors.length > 0) filters.push(...selectedVendors)
+  //   if (priceRange[0] > 0 || priceRange[1] < 1000) filters.push(`$${priceRange[0]}-$${priceRange[1]}`)
+  //   if (searchTerm) filters.push(`"${searchTerm}"`)
+  //   setActiveFilters(filters)
+  // }, [category.name, productType, selectedVendors, priceRange, searchTerm])
 
   // Handle add to cart
   const handleAddToCart = (product: any) => {
@@ -168,12 +169,18 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
   }
 
 
+  const cat = categories.find((el) => el.id === slug)
+  if (!cat) {
+    // router.push('/404')
+    return null
+  }
+  const catName = language === "AR" ? cat?.name.ar : cat?.name.en
 
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Category Header */}
       <div className="relative h-64 md:h-80">
-        <Image src={category.image || "/placeholder.svg"} alt={category.name} fill className="object-cover" />
+        <Image src={"https://images.unsplash.com/photo-1594612076394-2a31c2e4c726?q=80&w=1000&auto=format&fit=crop"} alt={catName || ""} fill className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/30" />
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
           <div className="flex flex-col">
@@ -184,199 +191,14 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
               <ChevronRight className="h-3 w-3 mx-1" />
               <span>Categories</span>
               <ChevronRight className="h-3 w-3 mx-1" />
-              <span>{category.name}</span>
+              <span>{catName}</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white font-playfair">{category.name}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-white font-playfair">{catName}</h1>
           </div>
         </div>
       </div>
 
-      {/* Products Section */}
-      <div className="container py-8 px-4 md:px-6">
-        <div className="flex flex-col gap-6">
-          {/* Filter Bar */}
-          <div className="bg-white p-4 rounded-lg shadow-sm flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Button variant="outline" className="flex items-center gap-2" onClick={() => setIsFilterModalOpen(true)}>
-                <SlidersHorizontal className="h-4 w-4" />
-                Filter
-              </Button>
-
-              {/* Search Input */}
-              <div className="relative w-full max-w-xs">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <Input
-                  type="search"
-                  placeholder={`Search in ${category.name}...`}
-                  className="pl-8 rounded-lg border-slate-200"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="text-sm text-slate-500">Showing {filteredProducts.length} products</div>
-          </div>
-
-          {/* Active Filters */}
-          {activeFilters.length > 0 && (
-            <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-sm font-medium">Active Filters:</span>
-              {activeFilters.map((filter) => (
-                <Badge key={filter} variant="secondary" className="flex items-center gap-1">
-                  {filter}
-                  <button onClick={() => removeFilter(filter)}>
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
-              <Button variant="link" size="sm" onClick={resetFilters} className="text-sm text-slate-500">
-                Clear All
-              </Button>
-            </div>
-          )}
-
-          {/* Products by Vendor */}
-          {Object.keys(groupedByVendor).length > 0 ? (
-            <div className="space-y-10">
-              {Object.entries(groupedByVendor).map(([vendorName, products]) => (
-                <div key={vendorName} className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-bold">{vendorName}</h2>
-                    <Link href={`/vendors/${products[0].vendor.slug}`} className="text-sm text-gold hover:underline">
-                      View all from this vendor
-                    </Link>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {products.map((product) => (
-                      <div key={product.id} className="group relative">
-                        <div className="relative overflow-hidden rounded-lg">
-                          {/* Discount Badge */}
-                          <div className="absolute top-2 left-2 z-30">
-                            <div className="bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded-md shadow-md flex items-center justify-center gap-1">
-                              <Percent className="h-3 w-3" />
-                              <div className="w-[55px] h-[16px] flex items-center justify-center">40% OFF</div>
-                            </div>
-                          </div>
-
-                          {product.type && (
-                            <div className="absolute top-12 left-2 z-10">
-                              <Badge
-                                className={`rounded-md
-              ${product.type === "New" ? "bg-green-500" : ""}
-              ${product.type === "Used" ? "bg-amber-500" : ""}
-              ${product.type === "Rental" ? "bg-purple-500" : ""}
-            `}
-                              >
-                                {product.type}
-                              </Badge>
-                            </div>
-                          )}
-
-                          <div className="absolute top-2 right-2 z-20">
-                            <div className="h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center">
-                              <HeartButton productId={product.id} size="sm" />
-                              <span className="sr-only">Add to wishlist</span>
-                            </div>
-                          </div>
-
-                          <Link href={`/products/${product.id}`} className="block">
-                            <div className="aspect-[3/4] relative overflow-hidden rounded-lg">
-                              <Image
-                                src={product.image || "/placeholder.svg"}
-                                alt={product.name}
-                                fill
-                                className="object-cover transition-transform group-hover:scale-105"
-                              />
-                            </div>
-                          </Link>
-                        </div>
-
-                        <Link href={`/products/${product.id}`} className="block">
-                          <div className="mt-3 space-y-1">
-                            <h3
-                              className="font-medium group-hover:text-gold transition-colors truncate overflow-hidden"
-                              title={product.name}
-                            >
-                              {product.name}
-                            </h3>
-                            <p className="text-sm text-slate-500">{product.vendor.name}</p>
-
-                            {/* Ratings */}
-                            <div className="flex items-center gap-1 mt-1">
-                              <div className="flex">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className={`h-3.5 w-3.5 ${i < 4 ? "text-yellow-400 fill-yellow-400" : "text-slate-200"}`}
-                                  />
-                                ))}
-                              </div>
-                              <span className="text-xs text-slate-500">(24)</span>
-                            </div>
-
-                            <div className="flex justify-between items-center">
-                              <p className="font-bold">
-                                ${typeof product.price === "number" ? product.price.toFixed(2) : product.price}
-                              </p>
-                              {product.originalPrice && (
-                                <p className="text-sm text-slate-500 line-through">
-                                  $
-                                  {typeof product.originalPrice === "number"
-                                    ? product.originalPrice.toFixed(2)
-                                    : product.originalPrice}
-                                </p>
-                              )}
-                            </div>
-
-                            {/* Total Sales */}
-                            <p className="text-xs text-slate-500">86 sold</p>
-                          </div>
-                        </Link>
-
-                        {/* Cart Button */}
-                        <button
-                          className="cart-button noselect w-full mt-3"
-                          onClick={(e) => {
-                            e.preventDefault()
-                            handleAddToCart(product)
-                          }}
-                        >
-                          <span className="text">Add to Cart</span>
-                          <span className="icon">
-                            <ShoppingBag className="h-5 w-5" />
-                          </span>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-white rounded-lg p-8 text-center">
-              <h3 className="font-bold text-lg">No products found</h3>
-              <p className="text-slate-500 mt-2">Try adjusting your filters to find what you're looking for.</p>
-              <Button variant="outline" className="mt-4" onClick={resetFilters}>
-                Reset Filters
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Filter Modal */}
-      <FilterModal
-        isOpen={isFilterModalOpen}
-        onClose={() => setIsFilterModalOpen(false)}
-        onApplyFilters={handleApplyFilters}
-        initialFilters={{
-          priceRange,
-          searchTerm,
-          vendors: selectedVendors,
-          types: productType,
-        }}
-      />
+      <ProductList categoryId={cat.id} searchPlaceHolder={`Search in ${catName}`} />
     </div>
   )
 }

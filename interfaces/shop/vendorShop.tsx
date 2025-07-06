@@ -3,12 +3,14 @@
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { CREATE_SHOP } from '@/graphql/mutation';
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+import { CREATE_OR_UPDATE_SHOP, CREATE_SHOP } from '@/graphql/mutation';
 import { enqueueSnackbar } from 'notistack';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/use-translation';
+import { GET_SHOP } from '@/graphql/query';
+import { config } from '@/constants/app';
 
 const shopFormSchema = z.object({
     shopName: z.string().min(2, 'Shop name is required'),
@@ -26,6 +28,7 @@ export default function CreateShop() {
         control,
         handleSubmit,
         setValue,
+        reset,
         formState: { errors },
     } = useForm<ShopFormData>({
         resolver: zodResolver(shopFormSchema),
@@ -41,26 +44,54 @@ export default function CreateShop() {
 
     const { language } = useTranslation()
 
+    const { data, loading, refetch, error } = useQuery(GET_SHOP, {
+        variables: { language }, // if required
+    });
+
     const [coverPreview, setCoverPreview] = useState<string | null>(null);
     const [profilePreview, setProfilePreview] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-    const [createShop] = useMutation(CREATE_SHOP, {
-        // refetchQueries: [{ query: GET_PRODUCT_BY_ID, variables: { id: id } }],
-        // awaitRefetchQueries: true
+    const [createShop] = useMutation(CREATE_OR_UPDATE_SHOP, {
+     
     })
 
-    const onSubmit = async (data: ShopFormData) => {
-        const formData = new FormData();
-        formData.append('shopName', data.shopName);
-        formData.append('description', data.description);
-        formData.append('contact', data.contact);
-        formData.append('tags', data.tags);
-        formData.append('coverImage', data.coverImage);
-        formData.append('profileImage', data.profileImage);
+    useEffect(() => {
+        if (data?.findOneShopByUser) {
+            const shop = data.findOneShopByUser;
 
+            reset({
+                shopName: shop.shopName || '',
+                description: shop.description || '',
+                contact: shop.shopPhoneNumber || '',
+                tags: (shop.tags || []).join(', '),
+                coverImage: null,
+                profileImage: null,
+            });
+
+            if (shop.coverImage?.path) setCoverPreview(config.API_URL + shop.coverImage.path);
+            if (shop.profileImage?.path) setProfilePreview(config.API_URL + shop.profileImage.path);
+        }
+    }, [data, reset]);
+
+    const onSubmit = async (data: ShopFormData) => {
         console.log('Form data:', data);
         // You can now POST formData to an API
+        if (!coverPreview) {
+            enqueueSnackbar('Please upload cover image', {
+                variant: 'error',
+                anchorOrigin: { horizontal: "center", vertical: "bottom" },
+            });
+            return
+        }
+        if (!profilePreview) {
+            enqueueSnackbar('Please upload profile image', {
+                variant: 'error',
+                anchorOrigin: { horizontal: "center", vertical: "bottom" },
+            });
+            return
+        }
+
         setIsSubmitting(true)
         try {
             const result = await createShop({
@@ -76,6 +107,7 @@ export default function CreateShop() {
                     profilePicture: data.profileImage
                 },
             })
+            refetch()
             setIsSubmitting(false)
             enqueueSnackbar({
                 message: "Shop details has been saved successfully.",
@@ -114,6 +146,16 @@ export default function CreateShop() {
         };
         reader.readAsDataURL(file);
     };
+
+    if (loading) {
+        return <div className="flex justify-center items-center min-h-screen">Loading shop ...</div>
+    }
+
+    if (error) {
+        return <div className="flex justify-center items-center min-h-screen text-red-500">
+            Error loading shop: {error.message}
+        </div>
+    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto space-y-6">

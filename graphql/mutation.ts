@@ -121,6 +121,11 @@ export const CREATE_SHOP = gql`
     createShop(shop: $shop, coverPicture: $coverPicture, profilePicture: $profilePicture)
   }
 `;
+export const CREATE_OR_UPDATE_SHOP = gql`
+  mutation UpdateShop($shop: ShopInput!, $coverPicture: Upload, $profilePicture: Upload) {
+    updateShop(shop: $shop, coverPicture: $coverPicture, profilePicture: $profilePicture)
+  }
+`;
 
 export const UPDATE_PRODUCT = gql`
   mutation UpdateProduct($product: ProductInput!, $picturesToAdd: [Upload!]!, $productId:String!, $picturesToRemove:[String]) {

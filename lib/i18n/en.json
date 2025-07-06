@@ -289,6 +289,53 @@
         "title": "Forget Password",
         "email": "Email",
         "button": "Submit"
+    },
+    "dashboard": {
+        "title": "Welcome to dashboard",
+        "sidebar": {
+            "order": "My Orders",
+            "dress": "My Dresses",
+            "profile": "Profile",
+            "subcription": "Subscription",
+            "shop": "Shop",
+            "logout": "Logout"
+        },
+        "order": {
+            "title": "My Orders",
+            "description": "Manage your placed orders",
+            "placebtn": "Placed Orders",
+            "plcnoOrder": "No orders placed",
+            "plcnodesc": "You haven't placed any orders yet.",
+            "recievedbtn": "Received Orders",
+            "rectitle": "Incoming Orders",
+            "recdescription": "Manage your received orders",
+            "recnoOrder": "No orders received",
+            "recnodesc": "You haven't received any orders yet."
+        },
+        "profile": {
+            "title": "Profile",
+            "firstname": "First Name",
+            "lastname": "Last Name",
+            "email": "Email",
+            "mobile": "Mobile",
+            "country": "Country",
+            "language": "Language",
+            "updbtn": "Update"
+        },
+        "shop": {
+            "shopname": "Shop Name",
+            "description": "Description",
+            "contact": "Contact Number",
+            "tags": "Tags",
+            "savebtn": "Save Shop"
+        },
+        "subcription": {
+            "title": "Pricing Plans",
+            "description": "Choose the perfect plan for your needs",
+            "monthly": "Monthly",
+            "quarterly": "Quarterly",
+            "yearly": "Yearly",
+            "getstarted": "Get started"
+        }
     }
-
 }

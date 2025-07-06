@@ -2,8 +2,11 @@
 import { useState } from 'react';
 import { pricingPlans, PlanDuration } from '@/lib/pricing';
 import Link from 'next/link';
+import { useTranslation } from '@/hooks/use-translation';
 
 const Pricing = () => {
+        const {t} = useTranslation();
+    
     const [selectedDuration, setSelectedDuration] = useState<PlanDuration>('monthly');
 
     const durations: PlanDuration[] = ['monthly', 'quarterly', 'yearly'];
@@ -19,10 +22,10 @@ const Pricing = () => {
             <div className="max-w-7xl mx-auto">
                 <div className="text-center">
                     <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                        Pricing Plans
+                        {t('dashboard.subcription.title')}
                     </h2>
                     <p className="mt-4 text-xl text-gray-600">
-                        Choose the perfect plan for your needs
+                                                {t('dashboard.subcription.description')}
                     </p>
                 </div>
 
@@ -118,7 +121,7 @@ const Pricing = () => {
 
                                         >
                                             <Link href={`/dashboard/subscription/pricing/${plan.prices[selectedDuration].priceId}`}>
-                                                Get started
+                                               {t('dashboard.subcription.getstarted')}
 
                                             </Link>
                                         </button>

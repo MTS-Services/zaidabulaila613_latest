@@ -7,6 +7,7 @@ import { Order, OrderItem, PaymentType } from '@/types/order';
 import { Button } from '@/components/ui/button';
 import VendorOrders from '@/interfaces/order/vendorOrders';
 import UserOrders from '@/interfaces/order/userOrders';
+import { useTranslation } from '@/hooks/use-translation';
 
 // Mock data - replace with actual API calls
 const mockOrders: any[] = [
@@ -90,11 +91,12 @@ export default function OrdersPage() {
                 return 'bg-gray-100 text-gray-800';
         }
     };
+    const {t} = useTranslation();
 
     return (
         <>
             <Head>
-                <title>My Orders</title>
+                <title>{t('dashboard.order.title')}</title>
             </Head>
             <div className="flex items-center justify-between mb-4">
                 {/* <h1 className="text-2xl font-bold">User Products</h1> */}
@@ -103,13 +105,13 @@ export default function OrdersPage() {
                         onClick={() => setView('myOrder')}
                         className={`p-2 rounded ${view === 'myOrder' ? 'bg-black text-white' : 'bg-gray-200'}`}
                     >
-                        Placed Orders
+                        {t('dashboard.order.placebtn')}
                     </button>
                     <button
                         onClick={() => setView('RecievedOrder')}
                         className={`p-2 rounded ${view === 'RecievedOrder' ? 'bg-black text-white' : 'bg-gray-200'}`}
                     >
-                        Received Orders
+                        {t('dashboard.order.recievedbtn')}
                     </button>
                 </div>
             </div>

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useQuery } from '@apollo/client';
 import { GET_USER_ORDERS, GET_VENDOR_ORDERS } from '@/graphql/query';
 import { config } from '@/constants/app';
+import { useTranslation } from '@/hooks/use-translation';
 
 
 
@@ -67,11 +68,12 @@ export default function UserOrders() {
     };
 
 
+    const {t} = useTranslation();
 
     return (
         <>
             <Head>
-                <title>My Orders</title>
+                <title>{t('dashboard.order.title')}</title>
             </Head>
             {/* <div className="flex items-center justify-between mb-4">
                 <h1 className="text-2xl font-bold">User Products</h1>
@@ -94,8 +96,8 @@ export default function UserOrders() {
             <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900">My Orders</h1>
-                        <p className="mt-2 text-sm text-gray-600">Manage your placed orders</p>
+                        <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.order.title')}</h1>
+                        <p className="mt-2 text-sm text-gray-600">{t('dashboard.order.description')}</p>
                     </div>
 
                     <div className="space-y-4">
@@ -105,7 +107,7 @@ export default function UserOrders() {
                                     className="px-4 py-5 sm:px-6 cursor-pointer hover:bg-gray-50 transition-colors"
                                     onClick={() => toggleOrder(order.id)}
                                 >
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
                                         <div>
                                             <h3 className="text-lg font-medium text-gray-900">
                                                 Order #{order.ref}
@@ -142,13 +144,13 @@ export default function UserOrders() {
 
                                 {expandedOrderId === order.id && (
                                     <div className="border-t border-gray-200 px-4 py-5 sm:p-6">
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                                             <div className="md:col-span-2">
                                                 <h4 className="text-md font-medium text-gray-900 mb-3">Order Items</h4>
                                                 <div className="space-y-4">
                                                     {order.items.map((item: any, index: number) => (
-                                                        <div key={index} className="flex items-start space-x-4 p-3 border rounded-lg">
+                                                        <div key={index} className="flex items-start space-x-4 p-3 border rounded-lg justify-between">
                                                             <div className="flex-shrink-0">
                                                                 <img
                                                                     className="h-16 w-16 rounded-md object-cover"
@@ -156,7 +158,7 @@ export default function UserOrders() {
                                                                     alt="Product"
                                                                 />
                                                             </div>
-                                                            <div className="flex-1">
+                                                            <div className="">
                                                                 <p className="text-sm font-medium text-gray-900">{item?.product?.name}</p>
                                                                 <p className="text-sm text-gray-500">Qty: {item.qty}</p>
                                                                 <p className="text-sm text-gray-500">
@@ -176,19 +178,19 @@ export default function UserOrders() {
                                                 <div>
                                                     <h4 className="text-md font-medium text-gray-900 mb-3">Order Details</h4>
                                                     <div className="space-y-2">
-                                                        <div className="flex justify-between">
+                                                        <div className="flex justify-between flex-col sm:flex-row gap-1">
                                                             <span className="text-sm text-gray-500">Payment Method:</span>
                                                             <span className="text-sm font-medium text-gray-900">
                                                                 {order.paymentType}
                                                             </span>
                                                         </div>
-                                                        <div className="flex justify-between">
+                                                        <div className="flex justify-between flex-col sm:flex-row gap-1">
                                                             <span className="text-sm text-gray-500">Payment Status:</span>
                                                             <span className="text-sm font-medium text-gray-900">
                                                                 {order.isPaid ? 'Paid' : 'Pending'}
                                                             </span>
                                                         </div>
-                                                        <div className="flex justify-between">
+                                                        <div className="flex justify-between flex-col sm:flex-row gap-1">
                                                             <span className="text-sm text-gray-500">Delivery Address:</span>
                                                             <span className="text-sm font-medium text-gray-900 text-right">
                                                                 {order.address?.
@@ -197,7 +199,7 @@ export default function UserOrders() {
                                                             </span>
                                                         </div>
                                                         {order.notes && (
-                                                            <div>
+                                                            <div className='flex justify-between flex-col sm:flex-row gap-1'>
                                                                 <p className="text-sm text-gray-500">Notes:</p>
                                                                 <p className="text-sm font-medium text-gray-900 mt-1">
                                                                     {order.notes}
@@ -264,9 +266,9 @@ export default function UserOrders() {
                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                                 />
                             </svg>
-                            <h3 className="mt-2 text-lg font-medium text-gray-900">No orders placed</h3>
+                            <h3 className="mt-2 text-lg font-medium text-gray-900">{t('dashboard.order.plcnoOrder')}</h3>
                             <p className="mt-1 text-sm text-gray-500">
-                                You haven't placed any orders yet.
+                                 {t('dashboard.order.plcnodesc')}
                             </p>
                         </div>
                     )}

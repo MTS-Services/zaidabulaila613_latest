@@ -156,6 +156,7 @@ export default function CreateShop() {
             Error loading shop: {error.message}
         </div>
     }
+    const {t} = useTranslation();
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto space-y-6">
@@ -220,7 +221,7 @@ export default function CreateShop() {
             {/* Shop Name */}
             <div className="px-4 space-y-4">
                 <div>
-                    <label className="block font-semibold mb-1">Shop Name</label>
+                    <label className="block font-semibold mb-1">{t('dashboard.shop.shopname')}</label>
                     <Controller
                         name="shopName"
                         control={control}
@@ -239,7 +240,7 @@ export default function CreateShop() {
 
                 {/* Description */}
                 <div>
-                    <label className="block font-semibold mb-1">Description</label>
+                    <label className="block font-semibold mb-1">{t('dashboard.shop.description')}</label>
                     <Controller
                         name="description"
                         control={control}
@@ -259,7 +260,7 @@ export default function CreateShop() {
 
                 {/* Contact Number */}
                 <div>
-                    <label className="block font-semibold mb-1">Contact Number</label>
+                    <label className="block font-semibold mb-1">{t('dashboard.shop.contact')}</label>
                     <Controller
                         name="contact"
                         control={control}
@@ -279,7 +280,7 @@ export default function CreateShop() {
 
                 {/* Tags */}
                 <div>
-                    <label className="block font-semibold mb-1">Tags</label>
+                    <label className="block font-semibold mb-1">{t('dashboard.shop.tags')}</label>
                     <Controller
                         name="tags"
                         control={control}
@@ -301,7 +302,7 @@ export default function CreateShop() {
                     className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
                     disabled={isSubmitting}
                 >
-                    Save Shop
+                    {t('dashboard.shop.savebtn')}
                 </Button>
             </div>
         </form>

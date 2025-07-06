@@ -4,17 +4,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils"; // Optional utility function for conditional classNames
 import { useAuth } from "@/contexts/auth-context";
+import { useTranslation } from "@/hooks/use-translation";
 
-const navItems = [
-    { label: "My Orders", href: "/dashboard/orders" },
-    { label: "My Dresses", href: "/dashboard/dress" },
-    { label: "Profile", href: "/dashboard/profile" },
-    { label: "Subscription", href: "/dashboard/subscription" },
-    { label: "Shop", href: "/dashboard/shop" },
-];
 
 export default function UserSidebar() {
-
+        const {t} = useTranslation();
+    
+    const navItems = [
+        { label: t('dashboard.sidebar.order'), href: "/dashboard/orders" },
+        { label: t('dashboard.sidebar.dress'), href: "/dashboard/dress" },
+        { label: t('dashboard.sidebar.profile'), href: "/dashboard/profile" },
+        { label: t('dashboard.sidebar.subcription'), href: "/dashboard/subscription" },
+        { label: t('dashboard.sidebar.shop'), href: "/dashboard/shop" },
+    ];
     const { logout } = useAuth()
     const pathname = usePathname();
 
@@ -45,7 +47,7 @@ export default function UserSidebar() {
 
                             )}
                         >
-                            Logout
+                          {t('dashboard.sidebar.logout')}
                         </button>
                     </li>
                 </ul>

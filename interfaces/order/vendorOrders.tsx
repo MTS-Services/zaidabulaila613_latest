@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useQuery } from '@apollo/client';
 import { GET_VENDOR_ORDERS } from '@/graphql/query';
 import { config } from '@/constants/app';
+import { useTranslation } from '@/hooks/use-translation';
 
 // Mock data - replace with actual API calls
 const mockOrders: any[] = [
@@ -118,11 +119,12 @@ export default function VendorOrders() {
     };
 
 
+    const {t} = useTranslation();
 
     return (
         <>
             <Head>
-                <title>My Orders</title>
+                <title>{t('dashboard.order.title')}</title>
             </Head>
             {/* <div className="flex items-center justify-between mb-4">
                 <h1 className="text-2xl font-bold">User Products</h1>
@@ -145,8 +147,8 @@ export default function VendorOrders() {
             <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900">Incoming Orders</h1>
-                        <p className="mt-2 text-sm text-gray-600">Manage your received orders</p>
+                        <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.order.rectitle')}</h1>
+                        <p className="mt-2 text-sm text-gray-600">{t('dashboard.order.recdescription')}</p>
                     </div>
 
                     <div className="space-y-4">
@@ -315,9 +317,9 @@ export default function VendorOrders() {
                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                                 />
                             </svg>
-                            <h3 className="mt-2 text-lg font-medium text-gray-900">No orders received</h3>
+                            <h3 className="mt-2 text-lg font-medium text-gray-900">{t('dashboard.order.recnoOrder')}</h3>
                             <p className="mt-1 text-sm text-gray-500">
-                                You haven't received any orders yet.
+                                {t('dashboard.order.recnodesc')}
                             </p>
                         </div>
                     )}

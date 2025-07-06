@@ -9,6 +9,7 @@ import { categoryContent } from "@/constants/categories/category"
 import { useCategory } from "@/contexts/category-context"
 import { useTranslation } from "@/hooks/use-translation"
 import Loader from "./loader"
+import { useTranslation } from "@/hooks/use-translation"
 
 export default function CategorySection() {
   const { carousel } = categoryContent
@@ -18,7 +19,7 @@ export default function CategorySection() {
   const [containerWidth, setContainerWidth] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
   const { categories: cat } = useCategory()
-  const { language } = useTranslation()
+  const { language, t } = useTranslation()
 
   const catAr = cat.map((el, index) => { return { name: el.name.ar, id: el.id, backgroundColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', hoverColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', textColor: '#FFFFFF' } })
   const catEn = cat.map((el, index) => { return { name: el.name.en, id: el.id, backgroundColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', hoverColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', textColor: '#FFFFFF' } })
@@ -137,12 +138,12 @@ export default function CategorySection() {
       flexGrow: 0,
     }
   }
-
+  
   return (
     <section className="py-12 md:py-16">
       <div className="container px-2 md:px-4">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold tracking-tighter font-playfair">{categoryContent.title}</h2>
+          <h2 className="text-2xl font-bold tracking-tighter font-playfair">{t('categorySelection.title')}</h2>
           <div className="flex gap-2">
             <button
               onClick={scrollPrev}

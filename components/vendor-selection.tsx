@@ -11,6 +11,7 @@ import { GET_SHOPS } from "@/graphql/query"
 import { ShopItem, ShopsResponse } from "@/types/shop"
 import { config } from "@/constants/app"
 import Loader from "./loader"
+import { carouselSettings, sectionContent, vendors } from "@/constants/vendors/vendor-section"
 import { useTranslation } from "@/hooks/use-translation"
 
 export default function VendorSelection() {
@@ -183,16 +184,17 @@ export default function VendorSelection() {
     }
   }, [desktopRow1Api, mobileEmblaApi, mobileRow2Api])
 
+  const {t} = useTranslation();
   return (
     <section className="py-8 md:py-12 bg-white">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center mb-6">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-playfair">
-              {sectionContent.title}
+              {t('vendorSelection.title')}
             </h2>
             <p className="max-w-[700px] text-slate-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              {sectionContent.description}
+              {t('vendorSelection.description')}
             </p>
           </div>
         </div>
@@ -245,10 +247,11 @@ export default function VendorSelection() {
         </div>
 
         <div className="flex justify-center mt-10">
-          <NeumorphicButton
-            href={sectionContent.viewAllButton.href}
-            text={sectionContent.viewAllButton.text}
-            className="uppercase w-[200px]"
+
+          <NeumorphicButton 
+            href={sectionContent.viewAllButton.href} 
+            text={t('vendorSelection.button')}
+            className="uppercase w-[200px]" 
           />
         </div>
       </div>

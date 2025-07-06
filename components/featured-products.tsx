@@ -336,17 +336,17 @@ export default function FeaturedProducts() {
 
 
   console.log(selectedOptions, "selectedOptions")
-
+const {t} = useTranslation();
   return (
     <section className="py-12 md:py-16">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-playfair">
-              {featuredContent.title}
+              {t('shopByType.title')}
             </h2>
             <p className="max-w-[700px] text-slate-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              {featuredContent.description}
+              {t('shopByType.description')}
             </p>
           </div>
         </div>
@@ -649,7 +649,7 @@ export default function FeaturedProducts() {
         <div className="flex justify-center mt-10">
           <NeumorphicButton
             href={featuredContent.viewAllButton.href}
-            text={featuredContent.viewAllButton.text}
+            text={t('shopByType.button')}
           />
         </div>
       </div>

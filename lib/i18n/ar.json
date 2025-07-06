@@ -170,23 +170,124 @@
         "view": "عرض",
         "edit": "تعديل",
         "delete": "حذف",
-        "import":"Import"
+        "import": "Import"
     },
     "updateProduct": {
         "title": "تحديث الفستان الخاص بك",
         "description": "قم بتحديث قائمة الفستان الخاصة بك بأحدث المعلومات",
-        "current_images":"Current Images",
-        "new_images":"New Images"
+        "current_images": "Current Images",
+        "new_images": "New Images"
     },
     "productTypes": {
         "new": "جديد",
         "used": "مستعمل",
         "rental": "الإيجار"
     },
-    "hero":{
-"title":"",
-"description":"",
-"subtitle":""
-    }
-
+    "hero": {
+        "subtitle": "عنوان فرعي",
+        "tittle": "قم بتحميل فستانك واربح",
+        "description": "اربح بطاقة هدية بقيمة 100 دولار عند التسجيل في موقعنا",
+        "button": "سجل الآن"
+    },
+    "animatedloaderContent": {
+        "prefix": "يمكنك",
+        "buy": "الشراء",
+        "sell": "تصفح",
+        "rent": "الإيجار",
+        "browse": "البيع"
+    },
+    "vendorSelection": {
+        "title": "البائعون والبوتيكات المميزة",
+        "description": "اكتشف المصممين المستقلين والمجموعات الحصرية",
+        "button": "عرض جميع البائعين"
+    },
+    "categorySelection": {
+        "title": "تسوق حسب الفئة"
+    },
+    "shopByType": {
+        "title": "فساتين مميزة",
+        "description": "اكتشف أكثر الفساتين شهرة عبر جميع الفئات",
+        "button": "عرض جميع الفساتين"
+    },
+    "benefit": {
+        "title": "لماذا نحن؟",
+        "fast": {
+            "title": "توصيل سريع",
+            "description": "احصلي على فستانك بسرعة، حتى في حال الاستئجار",
+            "fasticon": "TruckIcon",
+            "fasticonbgcolor": "bg-gold/10",
+            "fasticoncolor": "text-gold"
+        },
+        "easy": {
+            "icon": "RefreshCw",
+            "title": "إرجاع سهل",
+            "description": "عملية إرجاع خالية من المتاعب إذا لم يكن الفستان مثالياً",
+            "iconbgcolor": "bg-gold/10",
+            "iconcolor": "text-gold"
+        },
+        "quantity": {
+            "icon": "ShieldCheck",
+            "title": "ضمان الجودة",
+            "description": "جميع الفساتين تم التحقق من جودتها وحالتها",
+            "iconbgcolor": "bg-gold/10",
+            "iconcolor": "text-gold"
+        }
+    },
+    "ready": {
+        "title": "هل أنتِ مستعدة للعثور على فستانك المثالي؟",
+        "description": "ابدئي البحث الآن واكتشفي آلاف الخيارات من البائعين الموثوقين",
+        "button": "ابدئي التسوق"
+    },
+    "footer": {
+        "shop": "تسوق",
+        "help": "مساعدة",
+        "about": "معلومات عنا",
+        "connect": "تواصل معنا",
+        "newarrival": "الوافدون الجدد",
+        "useddresses": "فساتين مستعملة",
+        "rentaloptions": "خيارات الإيجار",
+        "vendors": "البائعون",
+        "faq": "الأسئلة الشائعة",
+        "shipping": "الشحن",
+        "returns": "المرتجعات",
+        "contactus": "اتصل بنا",
+        "ourstory": "قصتنا",
+        "careers": "الوظائف",
+        "press": "الصحافة",
+        "instagram": "إنستغرام",
+        "facebook": "فيسبوك",
+        "pinterest": "بينترست",
+        "twitter": "تويتر",
+        "copyright": "© 2025 DressMarket. جميع الحقوق محفوظة.",
+        "privacypolicy": "سياسة الخصوصية",
+        "termservice": "شروط الخدمة"
+    },
+    "backtotop": {
+        "text": "العودة إلى الأعلى"
+    },
+    "login": {
+    "title": "تسجيل الدخول",
+    "phonelabel": "البريد الإلكتروني / الهاتف",
+    "password": "كلمة المرور",
+    "button": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "forgot": "هل نسيت كلمة المرور؟"
+  },
+  "signup": {
+    "title": "إنشاء حساب",
+    "firstname": "الاسم الأول",
+    "lastname": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "mobile": "رقم الجوال",
+    "country": "الدولة",
+    "language": "اللغة",
+    "password": "كلمة المرور",
+    "confirmpassword": "تأكيد كلمة المرور",
+    "button": "تسجيل"
+  },
+  "forgetpassword": {
+    "title": "استعادة كلمة المرور",
+    "email": "البريد الإلكتروني",
+    "button": "إرسال"
+  }
 }

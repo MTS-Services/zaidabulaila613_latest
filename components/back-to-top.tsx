@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { ArrowUp } from "lucide-react"
 import { usePathname } from "next/navigation"
+import { useTranslation } from "@/hooks/use-translation"
 
 export default function BackToTop() {
   const [isVisible, setIsVisible] = useState(false)
@@ -50,6 +51,7 @@ export default function BackToTop() {
 
   if (!isVisible) return null
 
+const {t} = useTranslation();
   return (
     <button
       onClick={scrollToTop}
@@ -81,7 +83,7 @@ export default function BackToTop() {
          group-hover:text-[13px] group-hover:opacity-100
        "
       >
-        Back to Top
+        {t('backtotop.text')}
       </span>
     </button>
   )

@@ -134,20 +134,22 @@ import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { enqueueSnackbar } from 'notistack';
 import { useAuth } from '@/contexts/auth-context';
+import { useTranslation } from '@/hooks/use-translation';
 
-const formFields: Field[] = [
-    { type: "Input", name: 'firstName', label: 'First Name', inputType: 'text' },
-    { type: "Input", name: 'lastName', label: 'Last Name', inputType: 'text' },
-    { type: "Input", name: 'email', label: 'Email', inputType: 'email' },
-    { type: "Phone", name: 'mobile', label: 'Mobile' },
-    { type: "Country", name: 'country', label: 'Country'},
-    { type: "Select", name: 'lang', label: 'Language', options:[{label:'Arabic',value:'ar'}, {label:'English',value:'en'}] },
-    { type: "Input", name: 'password', label: 'Password', inputType: 'password' },
-    { type: "Input", name: 'confirmPassword', label: 'Confirm Password', inputType: 'password' },
-];
 
 export default function SignUp() {
-
+    const {t} = useTranslation();
+    
+    const formFields: Field[] = [
+        { type: "Input", name: 'firstName', label: t('signup.firstname'), inputType: 'text' },
+        { type: "Input", name: 'lastName', label: t('signup.lastname'), inputType: 'text' },
+        { type: "Input", name: 'email', label: t('signup.email'), inputType: 'email' },
+        { type: "Phone", name: 'mobile', label: t('signup.mobile') },
+        { type: "Country", name: 'country', label: t('signup.country')},
+        { type: "Select", name: 'lang', label: t('signup.language'), options:[{label:'Arabic',value:'ar'}, {label:'English',value:'en'}] },
+        { type: "Input", name: 'password', label: t('signup.password'), inputType: 'password' },
+        { type: "Input", name: 'confirmPassword', label: t('signup.confirmpassword'), inputType: 'password' },
+    ];
     const router = useRouter()
     const { login } = useAuth();
     const [createUser, { data, loading, error }] = useMutation(CREATE_USER_MUTATION)
@@ -194,7 +196,7 @@ export default function SignUp() {
             <div className='bg-slate-50'>
                 <div className="container pt-[100px]">
                     <div className="flex items-center justify-center mb-5">
-                        <h1 className="text-2xl md:text-3xl font-bold">Signup</h1>
+                        <h1 className="text-2xl md:text-3xl font-bold">{t('signup.title')}</h1>
                         {/* <Link href="/" className="flex items-center text-sm text-slate-600 hover:text-slate-900">
                                 <ChevronLeft className="h-4 w-4 mr-1" />
                                 Continue Shopping
@@ -217,7 +219,7 @@ export default function SignUp() {
                                 password: '',
                                 lang: ''
                             }}
-                            buttonTitle='Signup'
+                            buttonTitle={t('signup.button')}
                         />
 
                     </div>

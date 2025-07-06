@@ -118,13 +118,13 @@ export default function HeroSection() {
             <div className="space-y-2">
               <p className="text-white/80 font-great-vibes text-2xl md:text-3xl">{t('hero.subtitle')}</p>
               <h1 className="font-playfair text-4xl font-bold tracking-tight text-white sm:text-5xl xl:text-6xl/none elegant-letter-spacing hero-text-shadow">
-                {heroContent.heading}
+                {t('hero.tittle')}
               </h1>
             </div>
-            <p className="text-white/90 text-xl md:text-2xl">{heroContent.description}</p>
+            <p className="text-white/90 text-xl md:text-2xl">{t('hero.description')}</p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <a href={heroContent.cta.href} className="fancy-button fancy-button-primary pointer-events-auto">
-                {heroContent.cta.text}
+                {t('hero.button')}
               </a>
             </div>
           </div>

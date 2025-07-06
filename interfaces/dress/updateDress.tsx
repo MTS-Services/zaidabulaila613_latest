@@ -24,7 +24,7 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "@/components/ui/use-toast"
 import { useAuth } from "@/contexts/auth-context"
 import { enqueueSnackbar } from "notistack"
-import { GET_CATEGORIES, GET_PRODUCT_BY_ID, GET_USER_PRODUCT_BY_ID } from "@/graphql/query"
+import { GET_CATEGORIES, GET_USER_PRODUCT_BY_ID } from "@/graphql/query"
 import { UPDATE_PRODUCT } from "@/graphql/mutation"
 import Select from "@/components/select"
 import { useTranslation } from "@/hooks/use-translation"
@@ -92,8 +92,7 @@ export default function UpdateProduct({ id }: { id: string }) {
     })
 
     const [updateProduct] = useMutation(UPDATE_PRODUCT, {
-        // refetchQueries: [{ query: GET_PRODUCT_BY_ID, variables: { id: id } }],
-        // awaitRefetchQueries: true
+     
     })
 
 
@@ -143,7 +142,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                     ? (product.type.charAt(0).toUpperCase() + product.type.slice(1).toLowerCase()) as "New" | "Used" | "Rental"
                     : product.type,
                 category: product.category?.id, // or use find(categoryOptions) if needed
-                colors: product.color || [],
+                colors: product.color.map((el:any) => el.toLowerCase()) || [],
                 selectedColor: product.selectedColor || "",
                 sizes: product.size?.map((s: any) => s.value) || [],
                 material: product.material || "",

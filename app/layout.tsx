@@ -17,6 +17,7 @@ import { AuthProvider } from "@/contexts/auth-context"
 import { CurrencyProvider } from "@/contexts/currency-context"
 import { LanguageProvider } from "@/contexts/language-context"
 import AppLayout from "@/components/app-layout"
+import { CategoryProvider } from "@/contexts/category-context"
 
 
 
@@ -38,21 +39,24 @@ export default function RootLayout({
         <LanguageProvider>
 
           <CurrencyProvider>
-            <CartProvider>
-              <WishlistProvider>
-                <DrawerProvider>
-                  <AppLayout>
+            <CategoryProvider>
 
-                    <Navbar />
-                    {children}
-                    <BackToTop />
-                    <MobileBottomNav />
-                    <Toaster />
-                  </AppLayout>
-                </DrawerProvider>
-              </WishlistProvider>
-            </CartProvider>
 
+              <CartProvider>
+                <WishlistProvider>
+                  <DrawerProvider>
+                    <AppLayout>
+
+                      <Navbar />
+                      {children}
+                      <BackToTop />
+                      <MobileBottomNav />
+                      <Toaster />
+                    </AppLayout>
+                  </DrawerProvider>
+                </WishlistProvider>
+              </CartProvider>
+            </CategoryProvider>
           </CurrencyProvider>
         </LanguageProvider>
       </AuthProvider>

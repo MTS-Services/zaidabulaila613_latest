@@ -25,6 +25,8 @@ import { useCurrency } from "@/contexts/currency-context"
 import { ProductsResponse } from "@/types/product"
 import { arProductTypes, enProductTypes } from "@/constants/product"
 import ProductCard from "./productCard"
+import AnimatedLoader from "./animated-loader"
+import Loader from "./loader"
 
 
 
@@ -369,275 +371,280 @@ export default function FeaturedProducts() {
             ))}
           </div>
         </div>
+        {loading ?
+          <Loader />
+          :
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mt-8">
-          {filteredProducts.map((product: any, index: number) => {
-            // const selected = selectedOptions.find((o: any) => o.productId === product.id);
-            // const cartItem = cart.find((el) => el.id === product.id)
-            // console.log(cartItem, "Cart item")
-            return (
-              //         <div key={index} className="group relative">
-              //           <div className="relative overflow-hidden rounded-lg">
-              //             {/* Discount Badge - Using animated text */}
-              //             <div className="absolute top-2 left-2 z-30">{getAnimatedDiscountTag(index)}</div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mt-8">
+            {filteredProducts.map((product: any, index: number) => {
+              // const selected = selectedOptions.find((o: any) => o.productId === product.id);
+              // const cartItem = cart.find((el) => el.id === product.id)
+              // console.log(cartItem, "Cart item")
+              return (
+                //         <div key={index} className="group relative">
+                //           <div className="relative overflow-hidden rounded-lg">
+                //             {/* Discount Badge - Using animated text */}
+                //             <div className="absolute top-2 left-2 z-30">{getAnimatedDiscountTag(index)}</div>
 
-              //             {product.type && (
-              //               <div className="absolute top-12 left-2 z-10">
-              //                 <Badge
-              //                   className={`rounded-md
-              //                   ${product.type === "new" ? "bg-green-500" : ""}
-              //                   ${product.type === "used" ? "bg-amber-500" : ""}
-              //                   ${product.type === "rental" ? "bg-purple-500" : ""}
-              //                 `}
-              //                 >
-              //                   {product.type.toUpperCase()}
-              //                 </Badge>
-              //               </div>
-              //             )}
+                //             {product.type && (
+                //               <div className="absolute top-12 left-2 z-10">
+                //                 <Badge
+                //                   className={`rounded-md
+                //                   ${product.type === "new" ? "bg-green-500" : ""}
+                //                   ${product.type === "used" ? "bg-amber-500" : ""}
+                //                   ${product.type === "rental" ? "bg-purple-500" : ""}
+                //                 `}
+                //                 >
+                //                   {product.type.toUpperCase()}
+                //                 </Badge>
+                //               </div>
+                //             )}
 
-              //             <div className="absolute top-2 right-2 z-20">
-              //               <div className="h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center">
-              //                 <HeartButton productId={product.id} size="sm" />
-              //                 <span className="sr-only">Add to wishlist</span>
-              //               </div>
-              //             </div>
-              //             <Link href={`/products/${product.id}`} className="block">
-              //               <div className="aspect-[3/4] relative overflow-hidden rounded-lg">
-              //                 <Image
-              //                   src={`${config.API_URL + product.pictures[0]?.path}` || "/placeholder.svg"}
-              //                   alt={product.name}
-              //                   fill
-              //                   className="object-cover transition-transform group-hover:scale-105"
-              //                 />
-              //               </div>
-              //             </Link>
-              //           </div>
-              //           <Link href={`/products/${product.id}`} className="block">
-              //             <div className="mt-3 space-y-1">
-              //               <h3
-              //                 className="font-medium group-hover:text-gold transition-colors truncate overflow-hidden"
-              //                 title={product.name}
-              //               >
-              //                 {product.name}
-              //               </h3>
-              //               <p className="text-sm text-slate-500">{product.vendorShopName}</p>
+                //             <div className="absolute top-2 right-2 z-20">
+                //               <div className="h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center">
+                //                 <HeartButton productId={product.id} size="sm" />
+                //                 <span className="sr-only">Add to wishlist</span>
+                //               </div>
+                //             </div>
+                //             <Link href={`/products/${product.id}`} className="block">
+                //               <div className="aspect-[3/4] relative overflow-hidden rounded-lg">
+                //                 <Image
+                //                   src={`${config.API_URL + product.pictures[0]?.path}` || "/placeholder.svg"}
+                //                   alt={product.name}
+                //                   fill
+                //                   className="object-cover transition-transform group-hover:scale-105"
+                //                 />
+                //               </div>
+                //             </Link>
+                //           </div>
+                //           <Link href={`/products/${product.id}`} className="block">
+                //             <div className="mt-3 space-y-1">
+                //               <h3
+                //                 className="font-medium group-hover:text-gold transition-colors truncate overflow-hidden"
+                //                 title={product.name}
+                //               >
+                //                 {product.name}
+                //               </h3>
+                //               <p className="text-sm text-slate-500">{product.vendorShopName}</p>
 
-              //               {/* Ratings */}
-              //               <div className="flex items-center gap-1 mt-1">
-              //                 <div className="flex">
-              //                   {[...Array(5)].map((_, i) => (
-              //                     <Star
-              //                       key={i}
-              //                       className={`h-3.5 w-3.5 ${i < product.rating ? "text-yellow-400 fill-yellow-400" : "text-slate-200"}`}
-              //                     />
-              //                   ))}
-              //                 </div>
-              //                 {/* <span className="text-xs text-slate-500">({product.reviewCount})</span> */}
-              //                 <span className="text-xs text-slate-500">(3)</span>
-              //               </div>
+                //               {/* Ratings */}
+                //               <div className="flex items-center gap-1 mt-1">
+                //                 <div className="flex">
+                //                   {[...Array(5)].map((_, i) => (
+                //                     <Star
+                //                       key={i}
+                //                       className={`h-3.5 w-3.5 ${i < product.rating ? "text-yellow-400 fill-yellow-400" : "text-slate-200"}`}
+                //                     />
+                //                   ))}
+                //                 </div>
+                //                 {/* <span className="text-xs text-slate-500">({product.reviewCount})</span> */}
+                //                 <span className="text-xs text-slate-500">(3)</span>
+                //               </div>
 
-              //               <div className="flex justify-between items-center">
-              //                 <p className="font-bold">
-              //                   {selectedCurrency.symbol} {product?.rent ? `${product.price} / Per Day` : product.price
-              //                   }
-              //                 </p>
-              //                 {product.oldPrice && (
-              //                   <p className="text-sm text-slate-500 line-through">${product.oldPrice}</p>
-              //                 )}
-              //               </div>
+                //               <div className="flex justify-between items-center">
+                //                 <p className="font-bold">
+                //                   {selectedCurrency.symbol} {product?.rent ? `${product.price} / Per Day` : product.price
+                //                   }
+                //                 </p>
+                //                 {product.oldPrice && (
+                //                   <p className="text-sm text-slate-500 line-through">${product.oldPrice}</p>
+                //                 )}
+                //               </div>
 
-              //               {/* Total Sales */}
-              //               <p className="text-xs text-slate-500">10+ sold</p>
-              //             </div>
-              //           </Link>
-              //           <div>
-              //             <div className="mt-2">
-              //               <div className="flex gap-2 mt-1">
-              //                 {product.color.map((color: any) => (
-              //                   <label key={color} className={`cursor-pointer px-2 py-1 rounded border text-sm font-medium 
-              //   ${selected?.color === color ? 'bg-black text-white' : 'bg-white text-black border-gray-400'}
-              // `}>
-              //                     <input
-              //                       type="radio"
-              //                       name={`color-${product.id}`}
-              //                       value={color}
-              //                       checked={selected?.color === color}
-              //                       onChange={() => handleChange(product.id, 'color', color)}
-              //                       className="hidden"
-              //                     />
-              //                     <span>{color}</span>
-              //                   </label>
-              //                 ))}
-              //               </div>
-              //             </div>
+                //               {/* Total Sales */}
+                //               <p className="text-xs text-slate-500">10+ sold</p>
+                //             </div>
+                //           </Link>
+                //           <div>
+                //             <div className="mt-2">
+                //               <div className="flex gap-2 mt-1">
+                //                 {product.color.map((color: any) => (
+                //                   <label key={color} className={`cursor-pointer px-2 py-1 rounded border text-sm font-medium 
+                //   ${selected?.color === color ? 'bg-black text-white' : 'bg-white text-black border-gray-400'}
+                // `}>
+                //                     <input
+                //                       type="radio"
+                //                       name={`color-${product.id}`}
+                //                       value={color}
+                //                       checked={selected?.color === color}
+                //                       onChange={() => handleChange(product.id, 'color', color)}
+                //                       className="hidden"
+                //                     />
+                //                     <span>{color}</span>
+                //                   </label>
+                //                 ))}
+                //               </div>
+                //             </div>
 
-              //             {/* Sizes */}
-              //             <div className="mt-2">
-              //               <div className="flex gap-2 mt-1">
-              //                 {product.size.map(({ label, value }: { label: string, value: string }) => (
-              //                   <label key={value} className={`cursor-pointer px-2 py-1 rounded border text-sm font-medium 
-              //   ${selected?.size === value ? 'bg-black text-white' : 'bg-white text-black border-gray-400'}
-              // `}>
-              //                     <input
-              //                       type="radio"
-              //                       name={`size-${product.id}`}
-              //                       value={value}
-              //                       checked={selected?.size === value}
-              //                       onChange={() => handleChange(product.id, 'size', value)}
-              //                       className="hidden"
-              //                     />
-              //                     <span>{label}</span>
-              //                   </label>
-              //                 ))}
-              //               </div>
-              //             </div>
-              //           </div>
+                //             {/* Sizes */}
+                //             <div className="mt-2">
+                //               <div className="flex gap-2 mt-1">
+                //                 {product.size.map(({ label, value }: { label: string, value: string }) => (
+                //                   <label key={value} className={`cursor-pointer px-2 py-1 rounded border text-sm font-medium 
+                //   ${selected?.size === value ? 'bg-black text-white' : 'bg-white text-black border-gray-400'}
+                // `}>
+                //                     <input
+                //                       type="radio"
+                //                       name={`size-${product.id}`}
+                //                       value={value}
+                //                       checked={selected?.size === value}
+                //                       onChange={() => handleChange(product.id, 'size', value)}
+                //                       className="hidden"
+                //                     />
+                //                     <span>{label}</span>
+                //                   </label>
+                //                 ))}
+                //               </div>
+                //             </div>
+                //           </div>
 
-              //           {/* New Add to Cart Button */}
-              //           {/* {
-              //             user && user?.user?.id !== product.user?.id ?
-              //               product.sell ?
-              //                 <button
-              //                   className="cart-button noselect w-full mt-3"
-              //                   disabled={cartItem !== undefined}
-              //                   onClick={(e) => {
-              //                     e.preventDefault()
-              //                     if (!cartItem) {
-              //                       addToCart({
-              //                         id: product.id || index + 1,
-              //                         name: product.name,
-              //                         price: Number.parseFloat(product.price),
-              //                         originalPrice: product.
-              //                           oldPrice ? Number.parseFloat(product.oldPrice) : undefined,
-              //                         quantity: 1,
-              //                         images: [config.API_URL + product.pictures[0].path || "/placeholder.svg"],
-              //                         selectedSize: selected?.size,
-              //                         selectedColor: selected?.color,
-              //                         type: product.type,
-              //                         vendor: {
-              //                           name: product.vendorShopName,
-              //                           slug: product.vendorShopName.toLowerCase().replace(/\s+/g, "-"),
-              //                         },
-              //                       })
+                //           {/* New Add to Cart Button */}
+                //           {/* {
+                //             user && user?.user?.id !== product.user?.id ?
+                //               product.sell ?
+                //                 <button
+                //                   className="cart-button noselect w-full mt-3"
+                //                   disabled={cartItem !== undefined}
+                //                   onClick={(e) => {
+                //                     e.preventDefault()
+                //                     if (!cartItem) {
+                //                       addToCart({
+                //                         id: product.id || index + 1,
+                //                         name: product.name,
+                //                         price: Number.parseFloat(product.price),
+                //                         originalPrice: product.
+                //                           oldPrice ? Number.parseFloat(product.oldPrice) : undefined,
+                //                         quantity: 1,
+                //                         images: [config.API_URL + product.pictures[0].path || "/placeholder.svg"],
+                //                         selectedSize: selected?.size,
+                //                         selectedColor: selected?.color,
+                //                         type: product.type,
+                //                         vendor: {
+                //                           name: product.vendorShopName,
+                //                           slug: product.vendorShopName.toLowerCase().replace(/\s+/g, "-"),
+                //                         },
+                //                       })
 
-              //                     }
-              //                   }}
-              //                 >
-              //                   <span className="text">{cartItem ? 'Added' : 'Add to Cart'} Add to Cart</span>
-              //                   <span className="icon">
-              //                     <ShoppingBag className="h-5 w-5" />
-              //                   </span>
-              //                 </button>
-              //                 :
-              //                 <button
-              //                   className="cart-button noselect w-full mt-3"
-              //                 // onClick={(e) => {
-              //                 //   e.preventDefault()
-              //                 //   addToCart({
-              //                 //     id: product.id || index + 1,
-              //                 //     name: product.name,
-              //                 //     price: Number.parseFloat(product.price),
-              //                 //     originalPrice: product.
-              //                 //       oldPrice ? Number.parseFloat(product.oldPrice) : undefined,
-              //                 //     quantity: 1,
-              //                 //     images: [config.API_URL + product.pictures[0].path || "/placeholder.svg"],
-              //                 //     selectedSize: selected?.size,
-              //                 //     selectedColor: selected?.color,
-              //                 //     type: product.type,
-              //                 //     vendor: {
-              //                 //       name: product.vendorShopName,
-              //                 //       slug: product.vendorShopName.toLowerCase().replace(/\s+/g, "-"),
-              //                 //     },
-              //                 //   })
-              //                 // }}
-              //                 >
-              //                   <span className="text">Contact Seller</span>
-              //                   <span className="icon">
-              //                     <ShoppingBag className="h-5 w-5" />
-              //                   </span>
-              //                 </button>
-              //               :
-              //               ''
+                //                     }
+                //                   }}
+                //                 >
+                //                   <span className="text">{cartItem ? 'Added' : 'Add to Cart'} Add to Cart</span>
+                //                   <span className="icon">
+                //                     <ShoppingBag className="h-5 w-5" />
+                //                   </span>
+                //                 </button>
+                //                 :
+                //                 <button
+                //                   className="cart-button noselect w-full mt-3"
+                //                 // onClick={(e) => {
+                //                 //   e.preventDefault()
+                //                 //   addToCart({
+                //                 //     id: product.id || index + 1,
+                //                 //     name: product.name,
+                //                 //     price: Number.parseFloat(product.price),
+                //                 //     originalPrice: product.
+                //                 //       oldPrice ? Number.parseFloat(product.oldPrice) : undefined,
+                //                 //     quantity: 1,
+                //                 //     images: [config.API_URL + product.pictures[0].path || "/placeholder.svg"],
+                //                 //     selectedSize: selected?.size,
+                //                 //     selectedColor: selected?.color,
+                //                 //     type: product.type,
+                //                 //     vendor: {
+                //                 //       name: product.vendorShopName,
+                //                 //       slug: product.vendorShopName.toLowerCase().replace(/\s+/g, "-"),
+                //                 //     },
+                //                 //   })
+                //                 // }}
+                //                 >
+                //                   <span className="text">Contact Seller</span>
+                //                   <span className="icon">
+                //                     <ShoppingBag className="h-5 w-5" />
+                //                   </span>
+                //                 </button>
+                //               :
+                //               ''
 
-              //           }
+                //           }
 
-              //           {
-              //             !user && product.sell ?
-              //               <button
-              //                 className="cart-button noselect w-full mt-3"
-              //                 onClick={(e) => {
-              //                   e.preventDefault()
-              //                   addToCart({
-              //                     id: product.id || index + 1,
-              //                     name: product.name,
-              //                     price: Number.parseFloat(product.price),
-              //                     originalPrice: product.
-              //                       oldPrice ? Number.parseFloat(product.oldPrice) : undefined,
-              //                     quantity: 1,
-              //                     images: [config.API_URL + product.pictures[0].path || "/placeholder.svg"],
-              //                     selectedSize: selected?.size,
-              //                     selectedColor: selected?.color,
-              //                     type: product.type,
-              //                     vendor: {
-              //                       name: product.vendorShopName,
-              //                       slug: product.vendorShopName.toLowerCase().replace(/\s+/g, "-"),
-              //                     },
-              //                   })
-              //                 }}
-              //               >
-              //                 <span className="text">Add to Cart</span>
-              //                 <span className="icon">
-              //                   <ShoppingBag className="h-5 w-5" />
-              //                 </span>
-              //               </button>
-              //               :
-              //               <button
-              //                 className="cart-button noselect w-full mt-3"
-              //               // onClick={(e) => {
-              //               //   e.preventDefault()
-              //               //   addToCart({
-              //               //     id: product.id || index + 1,
-              //               //     name: product.name,
-              //               //     price: Number.parseFloat(product.price),
-              //               //     originalPrice: product.
-              //               //       oldPrice ? Number.parseFloat(product.oldPrice) : undefined,
-              //               //     quantity: 1,
-              //               //     images: [config.API_URL + product.pictures[0].path || "/placeholder.svg"],
-              //               //     selectedSize: selected?.size,
-              //               //     selectedColor: selected?.color,
-              //               //     type: product.type,
-              //               //     vendor: {
-              //               //       name: product.vendorShopName,
-              //               //       slug: product.vendorShopName.toLowerCase().replace(/\s+/g, "-"),
-              //               //     },
-              //               //   })
-              //               // }}
-              //               >
-              //                 <span className="text">Contact Seller</span>
-              //                 <span className="icon">
-              //                   <ShoppingBag className="h-5 w-5" />
-              //                 </span>
-              //               </button>
+                //           {
+                //             !user && product.sell ?
+                //               <button
+                //                 className="cart-button noselect w-full mt-3"
+                //                 onClick={(e) => {
+                //                   e.preventDefault()
+                //                   addToCart({
+                //                     id: product.id || index + 1,
+                //                     name: product.name,
+                //                     price: Number.parseFloat(product.price),
+                //                     originalPrice: product.
+                //                       oldPrice ? Number.parseFloat(product.oldPrice) : undefined,
+                //                     quantity: 1,
+                //                     images: [config.API_URL + product.pictures[0].path || "/placeholder.svg"],
+                //                     selectedSize: selected?.size,
+                //                     selectedColor: selected?.color,
+                //                     type: product.type,
+                //                     vendor: {
+                //                       name: product.vendorShopName,
+                //                       slug: product.vendorShopName.toLowerCase().replace(/\s+/g, "-"),
+                //                     },
+                //                   })
+                //                 }}
+                //               >
+                //                 <span className="text">Add to Cart</span>
+                //                 <span className="icon">
+                //                   <ShoppingBag className="h-5 w-5" />
+                //                 </span>
+                //               </button>
+                //               :
+                //               <button
+                //                 className="cart-button noselect w-full mt-3"
+                //               // onClick={(e) => {
+                //               //   e.preventDefault()
+                //               //   addToCart({
+                //               //     id: product.id || index + 1,
+                //               //     name: product.name,
+                //               //     price: Number.parseFloat(product.price),
+                //               //     originalPrice: product.
+                //               //       oldPrice ? Number.parseFloat(product.oldPrice) : undefined,
+                //               //     quantity: 1,
+                //               //     images: [config.API_URL + product.pictures[0].path || "/placeholder.svg"],
+                //               //     selectedSize: selected?.size,
+                //               //     selectedColor: selected?.color,
+                //               //     type: product.type,
+                //               //     vendor: {
+                //               //       name: product.vendorShopName,
+                //               //       slug: product.vendorShopName.toLowerCase().replace(/\s+/g, "-"),
+                //               //     },
+                //               //   })
+                //               // }}
+                //               >
+                //                 <span className="text">Contact Seller</span>
+                //                 <span className="icon">
+                //                   <ShoppingBag className="h-5 w-5" />
+                //                 </span>
+                //               </button>
 
-              //           } */}
-              //           <ProductActionButton
-              //             user={user}
-              //             product={{
-              //               ...product,
-              //               selectedSize: selected?.size,
-              //               selectedColor: selected?.color
-              //             }}
-              //             cartItem={cartItem}
-              //             addToCart={addToCart}
-              //           />
-              //         </div>
-              <ProductCard product={product} key={index} />
+                //           } */}
+                //           <ProductActionButton
+                //             user={user}
+                //             product={{
+                //               ...product,
+                //               selectedSize: selected?.size,
+                //               selectedColor: selected?.color
+                //             }}
+                //             cartItem={cartItem}
+                //             addToCart={addToCart}
+                //           />
+                //         </div>
+                <ProductCard product={product} key={index} />
 
-            )
-          }
+              )
+            }
 
-          )}
-        </div>
+            )}
+          </div>
+        }
+
 
         <div className="flex justify-center mt-10">
           <NeumorphicButton

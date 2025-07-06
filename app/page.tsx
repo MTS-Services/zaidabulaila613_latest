@@ -14,8 +14,20 @@ import AnimatedLoader from "@/components/animated-loader"
 import NeumorphicButton from "@/components/neumorphic-button"
 import { ctaContent } from "@/constants/cta/cta"
 import { Footer } from "@/components/Footer"
+import { useQuery } from "@apollo/client"
+import { GET_CATEGORIES } from "@/graphql/query"
+import { useEffect } from "react"
+import { useCategory } from "@/contexts/category-context"
 
 export default function Home() {
+
+  const { data, loading, error } = useQuery(GET_CATEGORIES)
+  const { setCategories } = useCategory()
+  const cat = data?.categories || []
+  useEffect(() => {
+    setCategories(cat)
+  }, [cat])
+
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex-1">
@@ -58,7 +70,7 @@ export default function Home() {
                 style={{ transformOrigin: "top center" }}
               >
                 <div className={`${ctaContent.animatedBag.styles.string.height} ${ctaContent.animatedBag.styles.string.width} ${ctaContent.animatedBag.styles.string.background} mx-auto mb-1`}></div>
-                <ShoppingBag 
+                <ShoppingBag
                   size={ctaContent.animatedBag.styles.bag.size}
                   className={`${ctaContent.animatedBag.styles.bag.color} ${ctaContent.animatedBag.styles.bag.shadow}`}
                 />
@@ -77,20 +89,20 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <NeumorphicButton 
-                  href={ctaContent.button.href} 
-                  text={ctaContent.button.text} 
-                  variant={ctaContent.button.variant} 
+                <NeumorphicButton
+                  href={ctaContent.button.href}
+                  text={ctaContent.button.text}
+                  variant={ctaContent.button.variant}
                 />
               </div>
             </div>
           </div>
         </section>
 
-    
+
       </main>
-    
-    <Footer></Footer>
+
+      <Footer></Footer>
 
     </div>
   )

@@ -10,6 +10,7 @@ const navItems = [
     { label: "My Dresses", href: "/dashboard/dress" },
     { label: "Profile", href: "/dashboard/profile" },
     { label: "Subscription", href: "/dashboard/subscription" },
+    { label: "Shop", href: "/dashboard/shop" },
 ];
 
 export default function UserSidebar() {

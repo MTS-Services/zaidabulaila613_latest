@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import {
@@ -24,44 +24,101 @@ import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/hooks/use-cart"
 import { useWishlist } from "@/hooks/use-wishlist"
 import HeartButton from "@/components/heart-button"
+import { useQuery } from "@apollo/client"
+import { GET_PRODUCT_BY_ID } from "@/graphql/query"
+import { useTranslation } from "@/hooks/use-translation"
+import { useCurrency } from "@/contexts/currency-context"
+import { ProductByIdResponse, ProductPicture } from "@/types/product"
+import { config } from "@/constants/app"
+import { arColors, enColors } from "@/constants/colors"
+import { useParams } from "next/navigation"
+import ProductActionButton from "@/components/productActionButton"
+import { useAuth } from "@/contexts/auth-context"
 
-export default function ProductPage({ params }: { params: { id: string } }) {
+export default function ProductPage() {
   // Find the product based on the id
-  const product = products.find((p) => p.id.toString() === params.id) || products[0]
-
+  const params = useParams(); // ✅ safe
+  const id = params?.id as string;
+  if (!id) return null;
   // State for selected options
-  const [selectedSize, setSelectedSize] = useState("m")
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]?.value || "black")
+  const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const [selectedColor, setSelectedColor] = useState<string | null>(null)
   const [selectedQuantity, setSelectedQuantity] = useState(1)
-  const [mainImage, setMainImage] = useState(product.images[0])
+  const [mainImage, setMainImage] = useState<ProductPicture | null>(null)
   const [activeTab, setActiveTab] = useState("description")
-
   // State for image modal
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [currentModalImage, setCurrentModalImage] = useState(0)
-
   // Cart and wishlist hooks
   const { addToCart } = useCart()
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist()
 
+  const { language } = useTranslation()
+  const { selectedCurrency } = useCurrency()
+
+  const {cart} = useCart()
+  const {user} = useAuth()
+
+  // Handle keyboard navigation
+  // useEffect(() => {
+  //   const handleKeyDown = (e: KeyboardEvent) => {
+  //     if (!isModalOpen) return
+
+  //     if (e.key === "Escape") closeModal()
+  //     if (e.key === "ArrowRight") nextImage()
+  //     if (e.key === "ArrowLeft") prevImage()
+  //   }
+
+  //   window.addEventListener("keydown", handleKeyDown)
+  //   return () => window.removeEventListener("keydown", handleKeyDown)
+  // }, [isModalOpen])
+
+  const { data, loading, error } = useQuery<ProductByIdResponse>(GET_PRODUCT_BY_ID, {
+    variables: {
+      id: id,
+      language: language,
+      currency: selectedCurrency.code.toLowerCase(),
+    },
+    skip: !id,
+    fetchPolicy: 'network-only',
+  });
+
+
+  useEffect(() => {
+    if (data?.productById) {
+      setSelectedSize(data?.productById.size[0].value)
+      setSelectedColor(data?.productById.color[0])
+      setMainImage(data?.productById.pictures[0])
+    }
+  }, [data])
+
+  const product = data?.productById
+  if (loading) {
+    return <ProductSkeleton />
+  }
+  if (!product) {
+    return <div>Product not found</div>
+  }
+  const cartItem = cart.find((el) => el.id === product.id)
+
   // Handle add to cart
   const handleAddToCart = () => {
-    addToCart({
-      ...product,
-      selectedSize,
-      selectedColor,
-      quantity: selectedQuantity,
-    })
+    // addToCart({
+    //   ...product,
+    //   selectedSize,
+    //   selectedColor,
+    //   quantity: selectedQuantity,
+    // })
   }
 
   // Handle wishlist toggle
-  const handleWishlistToggle = () => {
-    if (isInWishlist(product.id)) {
-      removeFromWishlist(product.id)
-    } else {
-      addToWishlist(product)
-    }
-  }
+  // const handleWishlistToggle = () => {
+  //   if (isInWishlist(product.id)) {
+  //     removeFromWishlist(product.id)
+  //   } else {
+  //     addToWishlist(product)
+  //   }
+  // }
 
   // Open modal with specific image
   const openImageModal = (imageIndex: number) => {
@@ -78,37 +135,30 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   // Navigate to next image in modal
   const nextImage = () => {
-    setCurrentModalImage((prev) => (prev + 1) % product.images.length)
+    setCurrentModalImage((prev) => (prev + 1) % product.pictures.length)
   }
 
   // Navigate to previous image in modal
   const prevImage = () => {
-    setCurrentModalImage((prev) => (prev - 1 + product.images.length) % product.images.length)
+    setCurrentModalImage((prev) => (prev - 1 + product.pictures.length) % product.pictures.length)
   }
 
-  // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isModalOpen) return
 
-      if (e.key === "Escape") closeModal()
-      if (e.key === "ArrowRight") nextImage()
-      if (e.key === "ArrowLeft") prevImage()
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [isModalOpen])
 
   // Increment quantity
   const incrementQuantity = () => {
-    setSelectedQuantity((prev) => Math.min(prev + 1, 10))
+    setSelectedQuantity((prev) => Math.min(prev + 1, product.qty))
   }
 
   // Decrement quantity
   const decrementQuantity = () => {
     setSelectedQuantity((prev) => Math.max(prev - 1, 1))
   }
+
+
+  const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =>
+    product.color.includes(color.value)
+  );
 
   return (
     <div className="min-h-screen bg-white">
@@ -125,7 +175,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               Vendors
             </Link>
             <ChevronRight className="h-4 w-4 mx-1" />
-            {product.vendor && typeof product.vendor === "object" ? (
+            {/* {product.vendor && typeof product.vendor === "object" ? (
               <Link href={`/vendors/${product.vendor.slug}`} className="hover:text-slate-900">
                 {product.vendor.name}
               </Link>
@@ -133,7 +183,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               <span className="hover:text-slate-900">
                 {typeof product.vendor === "string" ? product.vendor : "Unknown Vendor"}
               </span>
-            )}
+            )} */}
             <ChevronRight className="h-4 w-4 mx-1" />
             <span className="text-slate-900 font-medium">{product.name}</span>
           </div>
@@ -148,16 +198,15 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <div className="md:flex md:gap-4">
               {/* Thumbnails - Left side on desktop, hidden on mobile */}
               <div className="hidden md:flex md:flex-col md:gap-3 md:w-20">
-                {product.images.map((image, index) => (
+                {product.pictures.map((image, index) => (
                   <button
                     key={index}
-                    className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border ${
-                      mainImage === image ? "ring-2 ring-gold" : ""
-                    }`}
+                    className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border ${mainImage === image ? "ring-2 ring-gold" : ""
+                      }`}
                     onClick={() => setMainImage(image)}
                   >
                     <Image
-                      src={image || "/placeholder.svg"}
+                      src={config.API_URL + image.path || "/placeholder.svg"}
                       alt={`${product.name} thumbnail ${index + 1}`}
                       fill
                       className="object-contain p-1"
@@ -170,10 +219,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               <div className="flex-1">
                 <div
                   className="relative aspect-square overflow-hidden rounded-lg border cursor-pointer"
-                  onClick={() => openImageModal(product.images.indexOf(mainImage))}
+                  onClick={() => mainImage && openImageModal(product.pictures.indexOf(mainImage))}
                 >
                   <Image
-                    src={mainImage || "/placeholder.svg"}
+                    src={mainImage ? config.API_URL + mainImage.path : "/placeholder.svg"}
                     alt={product.name}
                     fill
                     className="object-contain"
@@ -198,16 +247,15 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
                 {/* Thumbnails - Bottom on mobile only */}
                 <div className="flex md:hidden gap-3 overflow-auto pb-2 mt-4">
-                  {product.images.map((image, index) => (
+                  {product.pictures.map((image, index) => (
                     <button
                       key={index}
-                      className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border ${
-                        mainImage === image ? "ring-2 ring-gold" : ""
-                      }`}
+                      className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border ${mainImage === image ? "ring-2 ring-gold" : ""
+                        }`}
                       onClick={() => setMainImage(image)}
                     >
                       <Image
-                        src={image || "/placeholder.svg"}
+                        src={config.API_URL + image.path || "/placeholder.svg"}
                         alt={`${product.name} thumbnail ${index + 1}`}
                         fill
                         className="object-contain p-1"
@@ -224,13 +272,16 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <div>
               <h1 className="text-2xl md:text-3xl font-bold">{product.name}</h1>
               <div className="mt-2 flex items-center gap-4">
-                <div className="text-2xl font-bold">${product.price.toFixed(2)}</div>
-                {product.originalPrice && (
-                  <div className="text-lg text-slate-500 line-through">${product.originalPrice.toFixed(2)}</div>
+                <div className="text-2xl font-bold">{product?.price && <> <span>{selectedCurrency.symbol} </span>{(product.price)}</>} </div>
+                {product.oldPrice && (
+                  <div className="text-lg text-slate-500 line-through">
+                    {product?.oldPrice && <> <span>{selectedCurrency.symbol} </span>{product.oldPrice}</>}
+                  </div>
+
                 )}
               </div>
 
-              <p className="mt-4 text-slate-600">{product.description}</p>
+              <p className="mt-4 text-slate-600">{product.description && product.description}</p>
             </div>
 
             {/* Color Selection */}
@@ -239,12 +290,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 COLOR: <span className="uppercase">{selectedColor}</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {product.colors.map((color) => (
+                {matchedColors.map((color) => (
                   <button
                     key={color.value}
-                    className={`w-8 h-8 rounded-full border ${
-                      selectedColor === color.value ? "ring-2 ring-gold ring-offset-2" : "border-slate-300"
-                    }`}
+                    className={`w-8 h-8 rounded-full border ${selectedColor === color.value ? "ring-2 ring-gold ring-offset-2" : "border-slate-300"
+                      }`}
                     style={{ backgroundColor: color.hex }}
                     onClick={() => setSelectedColor(color.value)}
                     aria-label={`Select ${color.name} color`}
@@ -255,20 +305,19 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
             {/* Size Selection */}
             <div className="space-y-2">
-              <div className="font-medium">SIZE: {selectedSize.toUpperCase()}</div>
+              <div className="font-medium">SIZE: {selectedSize?.toUpperCase()}</div>
               <div className="flex flex-wrap gap-2">
-                {product.sizes.map((size) => (
+                {product.size.map((el) => (
                   <button
-                    key={size.value}
-                    className={`w-8 h-8 flex items-center justify-center border rounded-md ${
-                      selectedSize === size.value
-                        ? "bg-slate-900 text-white border-slate-900"
-                        : "border-slate-300 text-slate-900"
-                    } ${!size.inStock ? "opacity-50 cursor-not-allowed" : ""}`}
-                    onClick={() => size.inStock && setSelectedSize(size.value)}
-                    disabled={!size.inStock}
+                    key={el.value}
+                    className={`w-8 h-8 flex items-center justify-center border rounded-md ${selectedSize === el.value
+                      ? "bg-slate-900 text-white border-slate-900"
+                      : "border-slate-300 text-slate-900"
+                      } `}
+                    onClick={() => setSelectedSize(el.value)}
+                  // disabled={!el.inStock}
                   >
-                    {size.label}
+                    {el.label}
                   </button>
                 ))}
               </div>
@@ -289,13 +338,23 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 </button>
               </div>
 
-              <Button className="bg-black hover:bg-black/90 text-white flex-1" onClick={handleAddToCart}>
+              {/* <Button className="bg-black hover:bg-black/90 text-white flex-1" onClick={handleAddToCart}>
                 ADD TO CART
-              </Button>
+              </Button> */}
+              <ProductActionButton
+                user={user}
+                product={{
+                    ...product,
+                    selectedSize: selectedSize,
+                    selectedColor: selectedColor
+                }}
+                cartItem={cartItem}
+                addToCart={addToCart}
+            />
 
-              <div className="h-10 w-10 flex items-center justify-center">
+              {/* <div className="h-10 w-10 flex items-center justify-center">
                 <HeartButton productId={product.id} size="md" />
-              </div>
+              </div> */}
             </div>
 
             {/* Payment Methods */}
@@ -303,20 +362,20 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {/* Additional Info */}
             <div className="grid grid-cols-2 gap-4 text-sm pt-4 border-t">
               <div>
-                <div className="font-medium">SKU: {product.id}</div>
+                <div className="font-medium">REF: {product.ref}</div>
                 <div className="text-slate-500 mt-1">
                   Categories:{" "}
                   <Link href="#" className="text-gold hover:underline">
-                    {product.category}
+                    {product.category?.name}
                   </Link>
                 </div>
               </div>
-              <div>
+              {/* <div>
                 <Link href="#" className="text-gold hover:underline">
                   Ask a Question
                 </Link>
                 <div className="text-slate-500 mt-1">Delivery and Return</div>
-              </div>
+              </div> */}
             </div>
 
             {/* Social Share */}
@@ -356,47 +415,21 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               >
                 Additional Information
               </TabsTrigger>
-              <TabsTrigger
+              {/* <TabsTrigger
                 value="warranty"
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-gold data-[state=active]:bg-transparent text-slate-600 data-[state=active]:text-slate-900 font-medium"
               >
                 Warranty & Shipping
-              </TabsTrigger>
+              </TabsTrigger> */}
             </TabsList>
 
             <TabsContent value="description" className="pt-6">
               <div className="prose max-w-none">
                 <p>
-                  Design inspiration lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi commodo, ipsum sed
-                  pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim.
-                  Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla
-                  facilisi. Nulla libero. Vivamus pharetra posuere sapien. Nam consectetuer. Sed aliquam, nunc eget
-                  euismod ullamcorper, lectus nunc ullamcorper orci.
+                  {product?.description}
                 </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                  <Image
-                    src={product.images[0] || "/placeholder.svg"}
-                    alt={product.name}
-                    width={300}
-                    height={300}
-                    className="rounded-md"
-                  />
-                  <Image
-                    src={product.images[1] || product.images[0]}
-                    alt={product.name}
-                    width={300}
-                    height={300}
-                    className="rounded-md"
-                  />
-                  <Image
-                    src={product.images[2] || product.images[0]}
-                    alt={product.name}
-                    width={300}
-                    height={300}
-                    className="rounded-md"
-                  />
-                </div>
+
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
                   <div className="flex flex-col items-center text-center">
@@ -436,23 +469,41 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
             <TabsContent value="additional" className="pt-6">
               <div className="prose max-w-none">
-                <h3>Product Details</h3>
+                <h3 className="mb-4">Product Details</h3>
                 <ul>
-                  <li>
-                    <strong>Material:</strong> {product.material}
+                  <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <strong>Material</strong>
+                    {product?.material}
                   </li>
-                  <li>
-                    <strong>Care:</strong> {product.care}
+                  <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <strong>Care</strong>
+                    {product?.careInstructions}
                   </li>
-                  <li>
-                    <strong>Condition:</strong> {product.condition}
+                  <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <strong>Chest</strong>
+                    {product?.chest}
                   </li>
-                  <li>
-                    <strong>Style:</strong> {product.style}
+                  <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <strong>Waist</strong>
+                    {product?.waist}
                   </li>
+                  <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <strong>Length</strong>
+                    {product?.length}
+                  </li>
+                  <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <strong>Hieght</strong>
+                    {product?.high}
+                  </li>
+                  <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <strong>Hip</strong>
+                    {product?.hip}
+                  </li>
+
+
                 </ul>
 
-                <h3>Size & Fit</h3>
+                {/* <h3>Size & Fit</h3>
                 <p>The model is 5'9" and wears size S.</p>
                 <ul>
                   <li>Regular fit</li>
@@ -466,11 +517,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                   <li>Do not bleach</li>
                   <li>Tumble dry low</li>
                   <li>Iron on low heat if needed</li>
-                </ul>
+                </ul> */}
               </div>
             </TabsContent>
 
-            <TabsContent value="warranty" className="pt-6">
+            {/* <TabsContent value="warranty" className="pt-6">
               <div className="prose max-w-none">
                 <h3>Shipping Information</h3>
                 <p>
@@ -496,12 +547,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                   covered for 30 days.
                 </p>
               </div>
-            </TabsContent>
+            </TabsContent> */}
           </Tabs>
         </div>
 
         {/* You May Also Like */}
-        <div className="mt-16">
+        {/* <div className="mt-16">
           <h2 className="text-2xl font-bold mb-6">You May Also Like</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {relatedProducts.map((product, index) => (
@@ -542,10 +593,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               </Link>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Recently Viewed Products */}
-        <div className="mt-16">
+        {/* <div className="mt-16">
           <h2 className="text-2xl font-bold mb-6">Recently Viewed Products</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {recentlyViewed.map((product, index) => (
@@ -574,7 +625,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               </Link>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Image Modal */}
@@ -593,8 +644,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {/* Image */}
             <div className="relative w-full h-full max-w-4xl max-h-[80vh] mx-auto">
               <Image
-                src={product.images[currentModalImage] || "/placeholder.svg"}
-                alt={`${product.name} - image ${currentModalImage + 1} of ${product.images.length}`}
+                src={config.API_URL + product.pictures[currentModalImage].path || "/placeholder.svg"}
+                alt={`${product.name} - image ${currentModalImage + 1} of ${product.pictures.length}`}
                 fill
                 className="object-contain"
                 sizes="100vw"
@@ -627,7 +678,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
             {/* Image counter */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-              {currentModalImage + 1} / {product.images.length}
+              {currentModalImage + 1} / {product.pictures.length}
             </div>
           </div>
         </div>
@@ -636,273 +687,51 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   )
 }
 
-// Sample data with real dress images
-const products = [
-  {
-    id: 1,
-    name: "Silk Wedding Gown",
-    description:
-      "Luxurious silk wedding gown with intricate lace detailing and a flowing train. Perfect for your special day, this dress combines traditional elegance with modern design elements.",
-    price: 1299,
-    originalPrice: 1499,
-    type: "New",
-    rating: 4.8,
-    reviewCount: 24,
-    material: "100% Silk with lace detailing",
-    care: "Dry clean only",
-    condition: "New with tags",
-    style: "A-line silhouette with sweetheart neckline",
-    images: [
-      "https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1596436889106-be35e843f974?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1585241920473-b472eb9ffbae?q=80&w=1000&auto=format&fit=crop",
-    ],
-    colors: [
-      {
-        value: "ivory",
-        name: "Ivory",
-        hex: "#fffff0",
-      },
-      {
-        value: "white",
-        name: "White",
-        hex: "#ffffff",
-      },
-      {
-        value: "champagne",
-        name: "Champagne",
-        hex: "#f7e7ce",
-      },
-    ],
-    sizes: [
-      {
-        value: "xs",
-        label: "XS",
-        inStock: true,
-      },
-      {
-        value: "s",
-        label: "S",
-        inStock: true,
-      },
-      {
-        value: "m",
-        label: "M",
-        inStock: true,
-      },
-      {
-        value: "l",
-        label: "L",
-        inStock: true,
-      },
-      {
-        value: "xl",
-        label: "XL",
-        inStock: false,
-      },
-    ],
-    category: "Wedding Dresses",
-    vendor: {
-      name: "Elegance Bridal",
-      slug: "elegance-bridal",
-    },
-    reviews: [
-      {
-        name: "Sarah J.",
-        rating: 5,
-        comment:
-          "Absolutely stunning dress! The silk is so soft and the lace is exquisite. I felt like a princess on my wedding day.",
-        date: "2024-03-15",
-      },
-      {
-        name: "Emily K.",
-        rating: 4,
-        comment:
-          "Beautiful dress, but the sizing runs a bit small. I recommend ordering a size up for a comfortable fit.",
-        date: "2024-02-28",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Lace Mermaid Gown",
-    description:
-      "Elegant mermaid gown featuring delicate lace appliques and a dramatic flared skirt. This dress is designed to accentuate your curves and create a memorable silhouette.",
-    price: 999,
-    originalPrice: 1199,
-    type: "Used",
-    rating: 4.5,
-    reviewCount: 18,
-    material: "Lace and Tulle",
-    care: "Dry clean only",
-    condition: "Gently used, excellent condition",
-    style: "Mermaid silhouette with sweetheart neckline",
-    images: [
-      "https://images.unsplash.com/photo-1550639525-c97d455acf70?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1000&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1000&auto=format&fit=crop",
-    ],
-    colors: [
-      {
-        value: "ivory",
-        name: "Ivory",
-        hex: "#fffff0",
-      },
-      {
-        value: "white",
-        name: "White",
-        hex: "#ffffff",
-      },
-    ],
-    sizes: [
-      {
-        value: "xs",
-        label: "XS",
-        inStock: true,
-      },
-      {
-        value: "s",
-        label: "S",
-        inStock: true,
-      },
-      {
-        value: "m",
-        label: "M",
-        inStock: true,
-      },
-      {
-        value: "l",
-        label: "L",
-        inStock: true,
-      },
-      {
-        value: "xl",
-        label: "XL",
-        inStock: false,
-      },
-    ],
-    category: "Wedding Dresses",
-    vendor: {
-      name: "Glamour Gowns",
-      slug: "glamour-gowns",
-    },
-    reviews: [
-      {
-        name: "Jessica L.",
-        rating: 5,
-        comment:
-          "I felt absolutely stunning in this dress! The lace detailing is exquisite and the fit was perfect. Highly recommend!",
-        date: "2024-04-01",
-      },
-      {
-        name: "Amanda S.",
-        rating: 4,
-        comment:
-          "The dress is gorgeous, but the train was a bit longer than I expected. Overall, I was very happy with my purchase.",
-        date: "2024-03-20",
-      },
-    ],
-  },
-]
+const ProductSkeleton = () => {
+  return (
+    <div className="animate-pulse flex flex-col md:flex-row gap-8 p-6">
+      {/* Left Side */}
+      <div className="flex-1 space-y-4">
+        <div className="h-8 w-1/2 bg-gray-300 rounded" />
+        <div className="flex items-center space-x-2">
+          <div className="h-4 w-16 bg-gray-200 rounded" />
+          <div className="h-4 w-20 bg-gray-300 rounded" />
+        </div>
+        <div className="h-4 w-32 bg-gray-200 rounded" />
+        {/* Color Circles */}
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-gray-300" />
+          <div className="w-8 h-8 rounded-full bg-gray-300" />
+          <div className="w-8 h-8 rounded-full bg-gray-300" />
+          <div className="w-8 h-8 rounded-full bg-gray-300" />
+        </div>
+        {/* Sizes */}
+        <div className="flex items-center gap-2">
+          <div className="px-4 py-2 bg-gray-300 rounded-md w-12 h-10" />
+          <div className="px-4 py-2 bg-gray-300 rounded-md w-12 h-10" />
+        </div>
+        {/* Add to Cart */}
+        <div className="flex items-center gap-4 mt-6">
+          <div className="h-12 w-40 bg-gray-300 rounded" />
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gray-300 rounded" />
+            <div className="w-8 h-8 bg-gray-300 rounded" />
+          </div>
+        </div>
+        {/* Ref + Category */}
+        <div className="h-4 w-32 bg-gray-200 mt-4 rounded" />
+        <div className="h-4 w-40 bg-gray-200 rounded" />
+        {/* Social icons */}
+        <div className="flex gap-3 mt-4">
+          <div className="w-6 h-6 rounded-full bg-gray-300" />
+          <div className="w-6 h-6 rounded-full bg-gray-300" />
+          <div className="w-6 h-6 rounded-full bg-gray-300" />
+          <div className="w-6 h-6 rounded-full bg-gray-300" />
+        </div>
+      </div>
 
-// Update the relatedProducts array to ensure each product has a proper vendor object
-const relatedProducts = [
-  {
-    id: 3,
-    name: "Lace Bridal Gown",
-    vendor: {
-      name: "Elegance",
-      slug: "elegance",
-    },
-    price: "599",
-    originalPrice: "1299",
-    image: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=1000&auto=format&fit=crop",
-    type: "Used",
-  },
-  {
-    id: 4,
-    name: "Satin Ball Gown",
-    vendor: {
-      name: "Dress Haven",
-      slug: "dress-haven",
-    },
-    price: "199",
-    image: "https://images.unsplash.com/photo-1550639525-c97d455acf70?q=80&w=1000&auto=format&fit=crop",
-    type: "Rental",
-  },
-  {
-    id: 5,
-    name: "Sequin Cocktail Dress",
-    vendor: {
-      name: "Glamour",
-      slug: "glamour",
-    },
-    price: "499",
-    image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=1000&auto=format&fit=crop",
-    type: "New",
-  },
-  {
-    id: 6,
-    name: "Chiffon Bridesmaid Dress",
-    vendor: {
-      name: "Bella Boutique",
-      slug: "bella-boutique",
-    },
-    price: "299",
-    image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?q=80&w=1000&auto=format&fit=crop",
-    type: "New",
-  },
-]
-
-// Update the recentlyViewed array to ensure each product has a proper vendor object
-const recentlyViewed = [
-  {
-    id: 7,
-    name: "Bohemian Maxi Dress",
-    vendor: {
-      name: "Style Studio",
-      slug: "style-studio",
-    },
-    price: "159",
-    image: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=1000&auto=format&fit=crop",
-    type: "New",
-  },
-  {
-    id: 8,
-    name: "Prom Night Special",
-    vendor: {
-      name: "Dress Dreams",
-      slug: "dress-dreams",
-    },
-    price: "179",
-    originalPrice: "249",
-    image: "https://images.unsplash.com/photo-1562137369-1a1a0bc66744?q=80&w=1000&auto=format&fit=crop",
-    type: "Used",
-    discount: "-20%",
-  },
-  {
-    id: 9,
-    name: "Floral Summer Dress",
-    vendor: {
-      name: "Bella Boutique",
-      slug: "bella-boutique",
-    },
-    price: "129",
-    image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1000&auto=format&fit=crop",
-    type: "New",
-  },
-  {
-    id: 10,
-    name: "Vintage Evening Gown",
-    vendor: {
-      name: "Dress Haven",
-      slug: "dress-haven",
-    },
-    price: "249",
-    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1000&auto=format&fit=crop",
-    type: "Rental",
-    discount: "RENTAL",
-  },
-]
+      {/* Right Side - Product Image */}
+      <div className="w-full md:w-[500px] h-[500px] bg-gray-200 rounded-lg" />
+    </div>
+  )
+}

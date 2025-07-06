@@ -28,6 +28,7 @@
         { value: "أرجواني",name: "أرجواني", hex: "#800080" },
         { value: "وردي",name: "وردي", hex: "#FFC0CB" },
         { value: "برتقالي",name: "برتقالي", hex: "#FFA500" },
+        { value: "البرتقالي",name: "البرتقالي", hex: "#FFA500" },
         { value: "بني",name: "بني", hex: "#A52A2A" },
         { value: "رمادي",name: "رمادي", hex: "#808080" },
         { value: "ذهبي",name: "ذهبي", hex: "#FFD700" },

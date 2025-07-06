@@ -62,6 +62,8 @@ export const GET_PRODUCTS = gql`
     $page: Int
     $limit: Int
     $sort: SortInput
+    $categoryId: String
+    $type: String
   ) {
     products(
       language: $language
@@ -70,6 +72,8 @@ export const GET_PRODUCTS = gql`
       page: $page
       limit: $limit
       sort: $sort
+      categoryId:$categoryId
+type:$type
     ) {
       total
       data {
@@ -142,63 +146,13 @@ export const GET_PRODUCTS = gql`
 //       id
 //       account{
 //         mobile
-        
+
 //       }
 //     }
 //     }
 //   }
 // `;
 
-export const GET_PRODUCT_BY_ID = gql`
-  query GetProductById($id: ID!) {
-    productById(id: $id) {
-    id
-      name
-    description
-    vendorShopName
-      price
-      oldPrice
-      type
-      selectedColor
-      origin
-      qty
-    color
-      category
-      approve
-      status
-      rentPerHur
-      sell
-      rent
-      state
-    material
-    careInstructions
-    shape{
-      label
-      value
-    }
-    size{
-      label
-      value
-    }
-      country {
-        value
-        label
-      }
-      pictures {
-        id
-        path
-        fileType
-      }
-    sleeve
-    sell
-    rent
-    underlay
-    selectedColor
-    ref
-    shoulder
-    }
-  }
-`;
 export const GET_USER_PRODUCT_BY_ID = gql`
   query GetUserProductById($id: ID!, $language: LanguageEnum!, $currency: String!) {
     userProductById(id: $id, language: $language, currency: $currency) {
@@ -342,4 +296,162 @@ export const GET_CATEGORIES = gql`
             }
         }
     }
+`;
+
+export const GET_SHOP = gql`
+query FindOneShopByUser($language: LanguageEnum!) {
+  findOneShopByUser(language: $language) {
+    shopName
+    description
+    shopPhoneNumber
+    tags
+    coverImage {
+      id
+      path
+    }
+    profileImage {
+      id
+      path
+    }
+  }
+}
+`;
+
+export const GET_SHOPS = gql`
+  query GetShops($language: LanguageEnum!, $search: String, $page: Int, $limit: Int) {
+    shops(language: $language, search: $search, page: $page, limit: $limit) {
+      data {
+        id
+        shopName
+        description
+        coverImage {
+          path
+        }
+        profileImage {
+          path
+        }
+          tags
+      }
+      total
+    }
+  }
+`;
+export const GET_SHOP_BY_ID = gql`
+  query FindShopById($language: LanguageEnum!, $id: ID!) {
+    findShopById(language: $language, id: $id) {
+       id
+        shopName
+        description
+        coverImage {
+          path
+        }
+        profileImage {
+          path
+        }
+          tags
+          shopPhoneNumber
+          user{
+          id
+          }
+    }
+  }
+`;
+
+export const GET_PRODUCTS_BY_USER_ID = gql`
+  query GetProductsByUserId(
+    $id: ID
+    $language: LanguageEnum!
+    $currency: String
+    $search: String
+    $page: Int
+    $limit: Int
+    $sort: SortInput
+  ) {
+    getProductsByUserId(
+      id: $id
+      language: $language
+      currency: $currency
+      search: $search
+      page: $page
+      limit: $limit
+      sort: $sort
+    ) {
+      total
+      data {
+        id
+        name
+        type
+        selectedColor
+        origin
+        qty
+        approve
+        price
+        oldPrice
+        size {
+          value
+          label
+        }
+        color
+        category {
+          id
+          name
+        }
+        pictures {
+          id
+          path
+          fileType
+        }
+        user {
+          id
+          account {
+            mobile
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCT_BY_ID = gql`
+  query GetProductById($id: ID!, $language: LanguageEnum!, $currency: String!) {
+    productById(id: $id, language: $language, currency: $currency) {
+      id
+      name
+      description
+      price
+      oldPrice
+      type
+      selectedColor
+      origin
+      qty
+      color
+      category {
+        id
+        name
+      }
+      approve
+      state
+      material
+      careInstructions
+      size {
+        label
+        value
+      }
+      pictures {
+        id
+        path
+        fileType
+      }
+      sleeve
+      underlay
+      selectedColor
+      ref
+      shoulder
+      chest
+    length
+    hip
+    high
+    waist
+    }
+  }
 `;

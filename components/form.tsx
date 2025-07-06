@@ -8,8 +8,10 @@ import Input from '@/components/input';
 import Select from '@/components/select';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import countries from 'react-phone-number-input/locale/en.json';
+import countriesEn from 'react-phone-number-input/locale/en.json';
+import countriesAr from 'react-phone-number-input/locale/ar.json';
 import { Button } from './ui/button';
+import { useLanguage } from '@/contexts/language-context';
 
 type InputField = {
   type: 'Input';
@@ -61,20 +63,7 @@ interface FormProps<T extends z.ZodType<any, any>> {
 //   label
 // }));
 
-const countryOptions = Object.entries(countries)
-  .filter(([code, label]) => {
-    // Exclude specific unwanted entries
-    const unwantedLabels = [
-      'ext.', 
-      'Phone number country',
-      'Phone'
-    ];
-    return !unwantedLabels.includes(label);
-  })
-  .map(([value, label]) => ({
-    value,
-    label
-  }));
+
 
 export default function Form<T extends z.ZodType<any, any>>({
   schema,
@@ -93,6 +82,24 @@ export default function Form<T extends z.ZodType<any, any>>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues
   });
+
+  const {language} = useLanguage()
+
+  // const countries = language === 'AR' ? countriesAr : countriesEn
+  const countryOptions =  Object.entries(countriesEn)
+  .filter(([code, label]) => {
+    // Exclude specific unwanted entries
+    const unwantedLabels = [
+      'ext.', 
+      'Phone number country',
+      'Phone'
+    ];
+    return !unwantedLabels.includes(label);
+  })
+  .map(([value, label]) => ({
+    value,
+    label
+  }));
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

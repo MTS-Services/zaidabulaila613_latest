@@ -9,7 +9,6 @@ import { categoryContent } from "@/constants/categories/category"
 import { useCategory } from "@/contexts/category-context"
 import { useTranslation } from "@/hooks/use-translation"
 import Loader from "./loader"
-import { useTranslation } from "@/hooks/use-translation"
 
 export default function CategorySection() {
   const { carousel } = categoryContent

@@ -335,7 +335,45 @@
             "monthly": "Monthly",
             "quarterly": "Quarterly",
             "yearly": "Yearly",
-            "getstarted": "Get started"
+            "getstarted": "Get started",
+            "save": "Save",
+            "vs": "% vs monthly",
+            "basicplan": {
+                "name": "Basic",
+                "description": "For individuals getting started with dress listings",
+                "feature1": "Add up to 5 dresses",
+                "feature2": "5 images per dress",
+                "feature3": "Edit and upload images",
+                "feature4": "Basic visibility",
+                "monpr": "9.99",
+                "quarpr": "26.97",
+                "yearpr": "80"
+            },
+            "platinumplan": {
+                "name": "Platinum",
+                "description": "For serious sellers who want more visibility",
+                "feature1": "Priority visibility on homepage",
+                "feature2": "Add unlimited dresses",
+                "feature3": "Add more photos and videos per dress",
+                "feature4": "Moderate visibility for listings",
+                "feature5": "Advanced dress management",
+                "monpr": "29.99",
+                "quarpr": "80.97",
+                "yearpr": "287.88"
+            },
+            "vendorplan": {
+                "name": "Vendor",
+                "description": "For professional vendors and boutiques",
+                "feature1": "Create and manage a storefront",
+                "feature2": "Access advanced analytics",
+                "feature3": "Bulk upload dresses",
+                "feature4": "Highest visibility priority",
+                "feature5": "Dedicated support",
+                "feature6": "API access",
+                "monpr": "99.99",
+                "quarpr": "269.97",
+                "yearpr": "959.88"
+            }
         }
     },
     "navbar":{

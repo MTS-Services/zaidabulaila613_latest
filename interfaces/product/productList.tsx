@@ -239,6 +239,7 @@ export default function ProductList({ searchPlaceHolder, categoryId,
 
     const products = data?.products?.data || []
     const count = data?.products?.total
+const {t} = useTranslation();
 
     return (
         <div>
@@ -250,7 +251,7 @@ export default function ProductList({ searchPlaceHolder, categoryId,
                         <div className="flex items-center gap-2">
                             <Button variant="outline" className="flex items-center gap-2" onClick={() => setIsFilterModalOpen(true)}>
                                 <SlidersHorizontal className="h-4 w-4" />
-                                Filter
+                               {t('productpage.filter')}
                             </Button>
 
                             {/* Search Input */}
@@ -262,7 +263,7 @@ export default function ProductList({ searchPlaceHolder, categoryId,
                                     <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                                     <Input
                                         type="search"
-                                        placeholder={searchPlaceHolder}
+                                        placeholder={t('productpage.searchproduct')}
                                         className="pl-8 rounded-lg border-slate-200"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -272,13 +273,13 @@ export default function ProductList({ searchPlaceHolder, categoryId,
                             </form>
                         </div>
 
-                        <div className="text-sm text-slate-500">Showing {count} products</div>
+                        <div className="text-sm text-slate-500">{t('productpage.showing')} {count} {t('productpage.products')}</div>
                     </div>
 
                     {/* Active Filters */}
                     {activeFilters.length > 0 && (
                         <div className="flex flex-wrap gap-2 items-center">
-                            <span className="text-sm font-medium">Active Filters:</span>
+                            <span className="text-sm font-medium">{t('productpage.activefilter')}:</span>
                             {activeFilters.map((filter) => (
                                 <Badge key={filter} variant="secondary" className="flex items-center gap-1">
                                     {filter}
@@ -288,17 +289,17 @@ export default function ProductList({ searchPlaceHolder, categoryId,
                                 </Badge>
                             ))}
                             <Button variant="link" size="sm" onClick={resetFilters} className="text-sm text-slate-500">
-                                Clear All
+                                {t('productpage.clearall')}
                             </Button>
                         </div>
                     )}
                     {loading ? <Loader /> :
                         count === 0 ?
                             <div className="bg-white rounded-lg p-8 text-center">
-                                <h3 className="font-bold text-lg">No products found</h3>
-                                <p className="text-slate-500 mt-2">Try adjusting your filters to find what you're looking for.</p>
+                                <h3 className="font-bold text-lg">{t('productpage.noproduct')}</h3>
+                                <p className="text-slate-500 mt-2">{t('productpage.try')}</p>
                                 <Button variant="outline" className="mt-4" onClick={resetFilters}>
-                                    Reset Filters
+                                    {t('productpage.resetfilter')}
                                 </Button>
                             </div>
                             :

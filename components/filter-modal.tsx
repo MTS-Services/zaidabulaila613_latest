@@ -119,12 +119,13 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
   const displayColors = language === "AR" ? arColors : enColors
   const displayVendors = data?.shops?.data || []
   console.log(displayVendors, "displayVendors")
+const {t} = useTranslation();
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[600px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Filter</DialogTitle>
+          <DialogTitle className="text-xl font-bold">{t('productpage.filter')}</DialogTitle>
         </DialogHeader>
 
         {/* Grid View Options and Feature Dropdown */}
@@ -182,7 +183,7 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* By Color */}
           <div>
-            <h3 className="font-medium mb-3 pb-1 border-b">By Color</h3>
+            <h3 className="font-medium mb-3 pb-1 border-b">{t('productpage.bycolor')}</h3>
             <div className="space-y-3">
               {displayColors.map((color) => (
                 <div key={color.name} className="flex items-center space-x-2">
@@ -199,7 +200,7 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
           </div>
           {/* By Vendor */}
           <div>
-            <h3 className="font-medium mb-3 pb-1 border-b">By Vendor</h3>
+            <h3 className="font-medium mb-3 pb-1 border-b">{t('productpage.byvendor')}</h3>
             <div className="space-y-2">
               {displayVendors.map((vendor) => (
                 vendor?.user?.id &&
@@ -220,7 +221,7 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
 
           {/* By Size */}
           <div>
-            <h3 className="font-medium mb-3 pb-1 border-b">By Size</h3>
+            <h3 className="font-medium mb-3 pb-1 border-b">{t('productpage.bysize')}</h3>
             <div className="space-y-2">
               {sizes.map((size) => (
                 <div key={size.value} className="flex items-center space-x-2">
@@ -241,7 +242,7 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
 
           {/* By Category */}
           <div>
-            <h3 className="font-medium mb-3 pb-1 border-b">By Category</h3>
+            <h3 className="font-medium mb-3 pb-1 border-b">{t('productpage.bycategory')}</h3>
             <div className="space-y-2">
               {categories.map((category) => (
                 <div key={category.id} className="flex items-center space-x-2">
@@ -262,12 +263,12 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           {/* By Title */}
           <div>
-            <h3 className="font-medium mb-3 pb-1 border-b">By Title</h3>
+            <h3 className="font-medium mb-3 pb-1 border-b">{t('productpage.bytitle')}</h3>
             <div className="space-y-3">
               <div className="relative">
                 <Input
                   type="text"
-                  placeholder="Search for product title"
+                  placeholder={t('productpage.placeholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pr-8"
@@ -278,7 +279,7 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
 
           {/* By Price */}
           <div>
-            <h3 className="font-medium mb-3 pb-1 border-b">By Price</h3>
+            <h3 className="font-medium mb-3 pb-1 border-b">{t('productpage.byprice')}</h3>
             <div className="space-y-6">
               <div className="px-2">
                 <Slider
@@ -292,7 +293,7 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
               </div>
               <div className="flex justify-between text-sm">
                 <span>
-                  Price: ${priceRange[0].toFixed(2)} - ${priceRange[1].toFixed(2)}
+                  {t('productpage.price')}: ${priceRange[0].toFixed(2)} - ${priceRange[1].toFixed(2)}
                 </span>
               </div>
             </div>
@@ -301,10 +302,10 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
 
         <DialogFooter className="mt-6 flex justify-between">
           <Button variant="outline" onClick={resetFilters}>
-            Reset Filters
+            {t('productpage.resetfilter')}
           </Button>
           <Button onClick={applyFilters} className="bg-black text-white hover:bg-black/90">
-            APPLY FILTERS
+            {t('productpage.applyfilter')}
           </Button>
         </DialogFooter>
       </DialogContent>

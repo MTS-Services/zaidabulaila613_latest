@@ -122,7 +122,7 @@ export default function UserOrders() {
                                     <div className="flex items-center justify-between flex-col sm:flex-row gap-4">
                                         <div>
                                             <h3 className="text-lg font-medium text-gray-900">
-                                                Order #{order.ref}
+                                                {t('dashboard.order.order')} #{order.ref}
                                             </h3>
                                             <p className="mt-1 text-sm text-gray-500">
                                                 {formatDate(order.createdAt)}
@@ -159,7 +159,7 @@ export default function UserOrders() {
                                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                                             <div className="md:col-span-2">
-                                                <h4 className="text-md font-medium text-gray-900 mb-3">Order Items</h4>
+                                                <h4 className="text-md font-medium text-gray-900 mb-3">{t('dashboard.order.orderitem')}</h4>
                                                 <div className="space-y-4">
                                                     {order.items.map((item: any, index: number) => (
                                                         <div key={index} className="flex items-start space-x-4 p-3 border rounded-lg justify-between">
@@ -188,22 +188,22 @@ export default function UserOrders() {
 
                                             <div className="space-y-6">
                                                 <div>
-                                                    <h4 className="text-md font-medium text-gray-900 mb-3">Order Details</h4>
+                                                    <h4 className="text-md font-medium text-gray-900 mb-3">{t('dashboard.order.orderdetail')}</h4>
                                                     <div className="space-y-2">
                                                         <div className="flex justify-between flex-col sm:flex-row gap-1">
-                                                            <span className="text-sm text-gray-500">Payment Method:</span>
+                                                            <span className="text-sm text-gray-500">{t('dashboard.order.method')}</span>
                                                             <span className="text-sm font-medium text-gray-900">
                                                                 {order.paymentType}
                                                             </span>
                                                         </div>
                                                         <div className="flex justify-between flex-col sm:flex-row gap-1">
-                                                            <span className="text-sm text-gray-500">Payment Status:</span>
+                                                            <span className="text-sm text-gray-500">{t('dashboard.order.status')}</span>
                                                             <span className="text-sm font-medium text-gray-900">
-                                                                {order.isPaid ? 'Paid' : 'Pending'}
+                                                                {order.isPaid ? t('dashboard.order.paid') : t('dashboard.order.pending')}
                                                             </span>
                                                         </div>
                                                         <div className="flex justify-between flex-col sm:flex-row gap-1">
-                                                            <span className="text-sm text-gray-500">Delivery Address:</span>
+                                                            <span className="text-sm text-gray-500">{t('dashboard.order.address')}</span>
                                                             <span className="text-sm font-medium text-gray-900 text-right">
                                                                 {order.address?.
                                                                     appartment
@@ -212,7 +212,7 @@ export default function UserOrders() {
                                                         </div>
                                                         {order.notes && (
                                                             <div className='flex justify-between flex-col sm:flex-row gap-1'>
-                                                                <p className="text-sm text-gray-500">Notes:</p>
+                                                                <p className="text-sm text-gray-500">{t('dashboard.order.note')}</p>
                                                                 <p className="text-sm font-medium text-gray-900 mt-1">
                                                                     {order.notes}
                                                                 </p>

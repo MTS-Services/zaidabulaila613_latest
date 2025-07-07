@@ -71,16 +71,17 @@ export function VendorGrid() {
       sortOrder: "desc",
     })
   }
+const {t} = useTranslation();
 
   return (
     <>
       
       {count === 0 ? (
         <div className="text-center py-12">
-          <h2 className="text-xl font-medium mb-2">No vendors found</h2>
-          <p className="text-slate-500">Try adjusting your search criteria</p>
+          <h2 className="text-xl font-medium mb-2">{t('vendorpage.novendor')}</h2>
+          <p className="text-slate-500">{t('vendorpage.try')}</p>
           <Button className="mt-4 bg-gold hover:bg-gold/90 text-white" onClick={() => setSearchQuery("")}>
-            Clear Search
+            {t('vendorpage.clear')}
           </Button>
         </div>
       ) : (
@@ -89,9 +90,9 @@ export function VendorGrid() {
             <div className="container mx-auto py-8 px-4 md:px-6">
               <div className="flex flex-col items-center justify-center space-y-4 text-center">
                 <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-playfair">Our Vendors</h1>
+                  <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-playfair">{t('vendorpage.title')}</h1>
                   <p className="max-w-[700px] text-slate-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                    Discover our curated selection of trusted dress vendors
+                    {t('vendorpage.description')}
                   </p>
                 </div>
               </div>
@@ -102,7 +103,7 @@ export function VendorGrid() {
 
                     <Input
                       type="search"
-                      placeholder="Search vendors..."
+                      placeholder= {t('vendorpage.placeholder')}
                       className="w-full bg-slate-50 pl-8 rounded-lg border-slate-200"
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />

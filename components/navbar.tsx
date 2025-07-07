@@ -31,12 +31,21 @@ import { useCurrency } from "@/contexts/currency-context"
 import { currencies } from "@/lib/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { useLanguage } from "@/contexts/language-context"
+import { useCategory } from "@/contexts/category-context"
+import { useQuery } from "@apollo/client"
+import { ShopsResponse } from "@/types/shop"
+import { GET_SHOPS } from "@/graphql/query"
+import { useSearchParams } from "next/navigation"
+import { useUpdateQueryParams } from "@/hooks/useSearchParams"
 
 // Add this currencies array near the top of the file, after the imports
 
 
 // Add a state variable for the selected currency in the Navbar component
 export default function Navbar() {
+
+  const params = useSearchParams()
+  const search = params.get("search")
   const [scrolled, setScrolled] = useState(false)
   const { cartCount } = useCart()
   const { wishlistCount } = useWishlist()
@@ -46,11 +55,48 @@ export default function Navbar() {
   // const [selectedCurrency, setSelectedCurrency] = useState(currencies[0])
   const { isDrawerOpen, setIsDrawerOpen } = useDrawer()
   const [isArabic, setIsArabic] = useState(false)
-
+  const [searchTerm, setSearchTerm] = useState(search ? search : "")
+  const [open, setOpen] = useState(false);
   const { selectedCurrency, setSelectedCurrency } = useCurrency();
   const { language, setLanguage } = useLanguage();
 
-  const [open, setOpen] = useState(false);
+  const updateQuery = useUpdateQueryParams();
+
+  const { categories } = useCategory()
+
+  const { loading, error, data, refetch } = useQuery<ShopsResponse>(GET_SHOPS, {
+    variables: {
+      language: language,
+      page: 1,
+      limit: 10,
+      search: "",
+      sortField: "createdAt",
+      sortOrder: "desc",
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  useEffect(() => {
+    if (search) {
+      setSearchTerm(search)
+    }
+  }, [search])
+
+  const vendors = data?.shops?.data || []
+
+  const displayVendors = vendors.map((el) => {
+    return {
+      label: el.shopName,
+      href: `/vendors/${el.id}`
+    }
+  })
+
+  const displayCategories = categories?.map((el) => {
+    return {
+      label: language === "AR" ? el.name.ar : el.name.en,
+      href: `/categories/${el.id}`
+    }
+  })
 
   const handleSelect = (lang: "EN" | "AR") => {
     setLanguage(lang);
@@ -206,25 +252,21 @@ export default function Navbar() {
               label="Shop"
               items={[
                 { label: "All Products", href: "#" },
-                { label: "New Arrivals", href: "#" },
-                { label: "Best Sellers", href: "#" },
+                { label: "New", href: "/products?type=new" },
+                { label: "Used", href: "/products?type=used" },
+                { label: "Rental", href: "/products?type=rental" },
               ]}
             />
             <NavLinkWithDropdown
               label="Categories"
-              items={[
-                { label: "Wedding", href: "/categories/wedding" },
-                { label: "Evening", href: "/categories/evening" },
-                { label: "Casual", href: "/categories/casual" },
-                { label: "Formal", href: "/categories/formal" },
-              ]}
+              items={displayCategories}
             />
             <NavLinkWithDropdown
               label="Vendors"
               items={[
                 { label: "All Vendors", href: "/vendors" },
-                { label: "Elegance", href: "/vendors/elegance" },
-                { label: "Bella Boutique", href: "/vendors/bella-boutique" },
+                ...displayVendors,
+
               ]}
             />
             {/* <NavLink href="#" label="Contact" /> */}
@@ -298,7 +340,15 @@ export default function Navbar() {
                     <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path>
                   </svg>
                 </div>
-                <input className="search-input" placeholder="Search" type="text" />
+                <form onSubmit={(e) => {
+                  e.preventDefault()
+                  updateQuery({search: searchTerm})
+                }}>
+                  <input className="search-input" placeholder="Search" type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+
+
+                </form>
+
               </div>
             </div>
           </div>
@@ -367,7 +417,7 @@ export default function Navbar() {
               onClick={() => setOpen(!open)}
               className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
             >
-               {language === "EN" ? "English" : "العربية"}
+              {language === "EN" ? "English" : "العربية"}
               <svg
                 className="h-4 w-4"
                 viewBox="0 0 20 20"

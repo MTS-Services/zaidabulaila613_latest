@@ -34,6 +34,7 @@ import { arColors, enColors } from "@/constants/colors"
 import { useParams } from "next/navigation"
 import ProductActionButton from "@/components/productActionButton"
 import { useAuth } from "@/contexts/auth-context"
+import { capitalizeFirstLetter } from "@/lib/utils"
 
 export default function ProductPage() {
   // Find the product based on the id
@@ -156,9 +157,9 @@ export default function ProductPage() {
   }
 
 
-  const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =>
-    product.color.includes(color.value)
-  );
+const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =>
+  product.color.some((c: string) => c.toLowerCase() === color.value.toLowerCase())
+);
 
   return (
     <div className="min-h-screen bg-white">
@@ -231,12 +232,12 @@ export default function ProductPage() {
                   <Badge
                     className={`
                       absolute top-3 left-3 z-10
-                      ${product.type === "New" ? "bg-green-500" : ""}
-                      ${product.type === "Used" ? "bg-amber-500" : ""}
-                      ${product.type === "Rental" ? "bg-purple-500" : ""}
+                      ${product.type === "new"  || product.type === "جديد" ? "bg-green-500" : ""}
+                      ${product.type === "used"  || product.type ==="مستعمل" ? "bg-amber-500" : ""}
+                      ${product.type === "rental" || product.type === "الإيجار" ? "bg-purple-500" : ""}
                     `}
                   >
-                    {product.type}
+                    {capitalizeFirstLetter(product.type)}
                   </Badge>
                   <div className="absolute inset-0 bg-black/5 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="bg-white/80 text-slate-800 px-3 py-1 rounded-md text-sm font-medium">

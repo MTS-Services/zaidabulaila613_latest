@@ -9,6 +9,13 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { useUpdateQueryParams } from "@/hooks/useSearchParams"
+import { useTranslation } from "@/hooks/use-translation"
+import { arColors, enColors } from "@/constants/colors"
+import { useCategory } from "@/contexts/category-context"
+import { useQuery } from "@apollo/client"
+import { ShopsResponse } from "@/types/shop"
+import { GET_SHOPS } from "@/graphql/query"
 
 interface FilterModalProps {
   isOpen: boolean
@@ -26,6 +33,19 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialFilters.categories || [])
   const [selectedTypes, setSelectedTypes] = useState<string[]>(initialFilters.types || [])
   const [gridView, setGridView] = useState<"2x2" | "3x3" | "4x4" | "list">("3x3")
+  const { categories } = useCategory()
+  const updateQueryParams = useUpdateQueryParams();
+  const { language } = useTranslation()
+  const { loading, error, data, refetch } = useQuery<ShopsResponse>(GET_SHOPS, {
+    variables: {
+      language: language,
+      page: 1,
+      limit: 10,
+      search: "",
+      sortField: "createdAt",
+      sortOrder: "desc",
+    },
+  });
 
   // Handle price range change
   const handlePriceRangeChange = (value: number[]) => {
@@ -72,17 +92,33 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
 
   // Apply filters
   const applyFilters = () => {
-    onApplyFilters({
-      priceRange,
-      searchTerm,
-      vendors: selectedVendors,
-      sizes: selectedSizes,
-      colors: selectedColors,
-      categories: selectedCategories,
-      types: selectedTypes,
-    })
-    onClose()
-  }
+    const queryVars: Record<string, any> = {};
+
+    if (priceRange?.length === 2) {
+      queryVars.minPrice = priceRange[0];
+      queryVars.maxPrice = priceRange[1];
+    } else {
+      queryVars.minPrice = null;
+      queryVars.maxPrice = null;
+    }
+
+    queryVars.search = searchTerm || null;
+
+    // ✅ Always include, even if empty
+    queryVars.colors = selectedColors;
+    queryVars.categories = selectedCategories;
+    queryVars.sizes = selectedSizes;
+    queryVars.vendors = selectedVendors;
+    queryVars.types = selectedTypes;
+
+    updateQueryParams(queryVars); // hook will clean up
+    onClose();
+  };
+
+
+  const displayColors = language === "AR" ? arColors : enColors
+  const displayVendors = data?.shops?.data || []
+  console.log(displayVendors, "displayVendors")
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -92,7 +128,7 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
         </DialogHeader>
 
         {/* Grid View Options and Feature Dropdown */}
-        <div className="flex items-center justify-between mb-6">
+        {/* <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2 border rounded-md p-1">
             <Button
               variant={gridView === "2x2" ? "default" : "ghost"}
@@ -140,23 +176,42 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
               <SelectItem value="best-selling">Best Selling</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+        </div> */}
 
         {/* Filter Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {/* By Color */}
+          <div>
+            <h3 className="font-medium mb-3 pb-1 border-b">By Color</h3>
+            <div className="space-y-3">
+              {displayColors.map((color) => (
+                <div key={color.name} className="flex items-center space-x-2">
+                  <div
+                    className={`h-6 w-6 rounded-full border cursor-pointer ${selectedColors.includes(color.value) ? "ring-2 ring-black ring-offset-2" : ""
+                      }`}
+                    style={{ backgroundColor: color.hex }}
+                    onClick={() => toggleColor(color.value)}
+                  />
+                  <span className="text-sm">{color.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
           {/* By Vendor */}
           <div>
             <h3 className="font-medium mb-3 pb-1 border-b">By Vendor</h3>
             <div className="space-y-2">
-              {vendors.map((vendor) => (
-                <div key={vendor.name} className="flex items-center space-x-2">
+              {displayVendors.map((vendor) => (
+                vendor?.user?.id &&
+
+                <div key={vendor.id} className="flex items-center space-x-2">
                   <Checkbox
-                    id={`vendor-${vendor.slug}`}
-                    checked={selectedVendors.includes(vendor.name)}
-                    onCheckedChange={() => toggleVendor(vendor.name)}
+                    id={`vendor-${vendor.id}`}
+                    checked={selectedVendors.includes(vendor.user?.id)}
+                    onCheckedChange={() => vendor.user?.id ? toggleVendor(vendor.user?.id) : ""}
                   />
-                  <Label htmlFor={`vendor-${vendor.slug}`} className="text-sm">
-                    {vendor.name}
+                  <Label htmlFor={`vendor-${vendor.id}`} className="text-sm">
+                    {vendor.shopName}
                   </Label>
                 </div>
               ))}
@@ -182,38 +237,21 @@ export default function FilterModal({ isOpen, onClose, onApplyFilters, initialFi
             </div>
           </div>
 
-          {/* By Color */}
-          <div>
-            <h3 className="font-medium mb-3 pb-1 border-b">By Color</h3>
-            <div className="space-y-3">
-              {colors.map((color) => (
-                <div key={color.name} className="flex items-center space-x-2">
-                  <div
-                    className={`h-6 w-6 rounded-full border cursor-pointer ${
-                      selectedColors.includes(color.name) ? "ring-2 ring-black ring-offset-2" : ""
-                    }`}
-                    style={{ backgroundColor: color.hex }}
-                    onClick={() => toggleColor(color.name)}
-                  />
-                  <span className="text-sm">{color.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+
 
           {/* By Category */}
           <div>
             <h3 className="font-medium mb-3 pb-1 border-b">By Category</h3>
             <div className="space-y-2">
               {categories.map((category) => (
-                <div key={category} className="flex items-center space-x-2">
+                <div key={category.id} className="flex items-center space-x-2">
                   <Checkbox
-                    id={`category-${category}`}
-                    checked={selectedCategories.includes(category)}
-                    onCheckedChange={() => toggleCategory(category)}
+                    id={`category-${category.id}`}
+                    checked={selectedCategories.includes(category.id)}
+                    onCheckedChange={() => toggleCategory(category.id)}
                   />
                   <Label htmlFor={`category-${category}`} className="text-sm">
-                    {category}
+                    {language === "AR" ? category.name.ar : category.name.en}
                   </Label>
                 </div>
               ))}
@@ -302,4 +340,3 @@ const colors = [
   { name: "Orange", hex: "#FFA500" },
 ]
 
-const categories = ["Accessories", "Men", "Women", "Shoes", "T-Shirt", "Dress", "Jackets"]

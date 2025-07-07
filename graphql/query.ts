@@ -64,6 +64,11 @@ export const GET_PRODUCTS = gql`
     $sort: SortInput
     $categoryId: String
     $type: String
+    $minPrice: Float
+    $maxPrice: Float
+$userIds: [String]
+$categoryIds: [String]
+$colors: [String]
   ) {
     products(
       language: $language
@@ -74,6 +79,11 @@ export const GET_PRODUCTS = gql`
       sort: $sort
       categoryId:$categoryId
 type:$type
+minPrice: $minPrice
+maxPrice: $maxPrice
+userIds: $userIds
+categoryIds: $categoryIds
+colors: $colors
     ) {
       total
       data {
@@ -330,6 +340,9 @@ export const GET_SHOPS = gql`
         profileImage {
           path
         }
+          user{
+          id
+          }
           tags
       }
       total
@@ -452,6 +465,12 @@ export const GET_PRODUCT_BY_ID = gql`
     hip
     high
     waist
+    user {
+          id
+          account {
+            mobile
+          }
+        }
     }
   }
 `;

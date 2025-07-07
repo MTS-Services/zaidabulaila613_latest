@@ -19,3 +19,6 @@ export const currencies = [
   { id: 'iqd', code: "IQD", countryCode: "IQ", name: "Iraqi Dinar", symbol: "IQD", },
   { id: 'usd', code: "USD", countryCode: "US", name: "US Dollar", symbol: "$", },
 ]
+
+export const capitalizeFirstLetter = (str: string) =>
+  str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();

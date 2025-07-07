@@ -8,6 +8,7 @@ interface AuthContextType {
   user: LoginUser | null;
   login: (data: LoginUser) => void;
   updateUser: (newAccount: LoginUser["user"]["account"]) => void;
+  updateUserSubscription: (subscription: LoginUser["subscription"]) => void;
   logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
@@ -47,6 +48,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   setUser(updatedUser);
   localStorage.setItem("loginUser", JSON.stringify(updatedUser));
 };
+ const updateUserSubscription = (newSubscription: LoginUser["subscription"]) => {
+  if (!user) return;
+
+  const updatedUser: LoginUser = {
+    ...user,
+    subscription: newSubscription
+  };
+
+  setUser(updatedUser);
+  localStorage.setItem("loginUser", JSON.stringify(updatedUser));
+};
 
   const logout = () => {
     setUser(null);
@@ -57,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const isAuthenticated = !!user?.access_token;
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated, loading, updateUser }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated, loading, updateUser, updateUserSubscription }}>
       {children}
     </AuthContext.Provider>
   );

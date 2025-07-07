@@ -5,11 +5,13 @@ import { useState } from 'react';
 import Head from 'next/head';
 import { Order, OrderItem, PaymentType } from '@/types/order';
 import { Button } from '@/components/ui/button';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { GET_VENDOR_ORDERS } from '@/graphql/query';
 import { config } from '@/constants/app';
 import { useTranslation } from '@/hooks/use-translation';
 import { useCurrency } from '@/contexts/currency-context';
+import { CHANGE_ORDER_STATUS } from '@/graphql/mutation';
+import { enqueueSnackbar } from 'notistack';
 
 // Mock data - replace with actual API calls
 const mockOrders: any[] = [
@@ -74,7 +76,7 @@ export default function VendorOrders() {
     const { language } = useTranslation()
     const { selectedCurrency } = useCurrency()
 
-    const { loading, error, data } = useQuery(GET_VENDOR_ORDERS, {
+    const { loading, error, data, refetch } = useQuery(GET_VENDOR_ORDERS, {
         variables: {
             language: language,
             currency: selectedCurrency.code.toLowerCase(),
@@ -86,6 +88,41 @@ export default function VendorOrders() {
         },
         fetchPolicy: 'network-only', // Ensures fresh data on each load
     });
+
+    const [changeStatus, { loading: statusLoading, error: statusError }] = useMutation(CHANGE_ORDER_STATUS);
+
+    const updateOrderStatus = async (id: string, status: string) => {
+        setUpdatingStatus(id)
+        try {
+            await changeStatus({ variables: { id: id, status: status } })
+            enqueueSnackbar({
+                message: `Order status changed to ${status}.`,
+                variant: 'success',
+                anchorOrigin: { horizontal: "center", vertical: "bottom" }
+            })
+            setUpdatingStatus(null)
+            refetch({
+                language: language,
+                currency: selectedCurrency.code.toLowerCase(),
+                search: "",
+                page: 1,
+                limit: 20,
+                sortField: "createdAt",
+                sortOrder: "desc"
+            })
+        } catch (e: any) {
+            setUpdatingStatus(null)
+            const message =
+                e?.graphQLErrors?.[0]?.message ||
+                e?.message ||
+                "Something went wrong during updating dress";
+
+            enqueueSnackbar(message, {
+                variant: 'error',
+                anchorOrigin: { horizontal: "center", vertical: "bottom" },
+            });
+        }
+    }
 
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center">
@@ -278,16 +315,16 @@ export default function VendorOrders() {
                                                         {statusOptions.map((status) => (
                                                             <button
                                                                 key={status}
-                                                                // onClick={() => updateOrderStatus(order.id, status)}
-                                                                // disabled={updatingStatus === order.id || order.status === status}
-                                                                className={`px-3 py-1 text-sm rounded-full ${order.status === (status).toLowerCase()
+                                                                onClick={() => updateOrderStatus(order.id, status)}
+                                                                disabled={order.status.toLowerCase() === status.toLowerCase()}
+                                                                className={`px-3 py-1 text-sm rounded-full ${order.status.toLowerCase() === (status).toLowerCase()
                                                                     ? 'bg-gold text-white'
                                                                     : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                                                                     } ${updatingStatus === order.id ? 'opacity-50 cursor-not-allowed' : ''
                                                                     }`}
                                                             >
                                                                 {status}
-                                                                {updatingStatus === order.id && order.status === (status).toLowerCase() && (
+                                                                {updatingStatus === order.id && order.status.toLowerCase() === (status).toLowerCase() && (
                                                                     <span className="ml-1 inline-block animate-spin">↻</span>
                                                                 )}
                                                             </button>

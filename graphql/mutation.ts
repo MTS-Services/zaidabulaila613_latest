@@ -149,6 +149,11 @@ export const CREATE_ORDER_MUTATION = gql`
     createOrder(order: $order)
   }
 `;
+export const CHANGE_ORDER_STATUS = gql`
+  mutation ChangeStatus($id: String, $status:String) {
+    changeStatus(id: $id, status:$status)
+  }
+`;
 
 // export const CREATE_PRODUCT = gql`
 //   mutation CreateProduct($name: String!, $user: String!, $pictures: [Upload!]!) {

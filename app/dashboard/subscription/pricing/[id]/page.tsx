@@ -1,15 +1,16 @@
-import Checkout from "@/interfaces/subscription/payment";
-import Pricing from "@/interfaces/subscription/pricing";
+'use client'
+import Checkout from "@/interfaces/subscription/paymentChckout";
+import { useParams } from "next/navigation";
 
+export default function Page() {
 
-interface Props {
-    params: { id: string };
-}
+    const {id} = useParams()
 
-export default function Page({ params }: Props) {
+    if(!id)
+        return
     return (
         <>
-            <Checkout priceId={params.id} />
+            <Checkout priceId={id?.toString()} />
         </>
     );
 }

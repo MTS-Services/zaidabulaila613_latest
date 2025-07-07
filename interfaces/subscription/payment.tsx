@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { PlanDuration, PricingPlan, pricingPlans } from '@/lib/pricing';
 import { enqueueSnackbar } from 'notistack';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/hooks/use-translation';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -35,7 +36,7 @@ const inputStyle = {
 const CheckoutForm = ({ priceId }: { priceId: string }) => {
     const stripe = useStripe();
     const elements = useElements();
-    const { user } = useAuth();
+    const { user, updateUserSubscription } = useAuth();
     const router = useRouter()
     const [submitting, setSubmitting] = useState<boolean>(false)
     const [createSubscription] = useMutation(CREATE_SUBSCRIPTION_MUTATION);
@@ -75,6 +76,7 @@ const CheckoutForm = ({ priceId }: { priceId: string }) => {
             });
 
             const clientSecret = res.data?.createSubscription?.clientSecret;
+            const subscription = res.data?.createSubscription?.subscription;
             const confirm = await stripe.confirmCardPayment(clientSecret);
 
             if (confirm.error) {
@@ -83,6 +85,12 @@ const CheckoutForm = ({ priceId }: { priceId: string }) => {
                 // alert(confirm.error.message);
             } else {
                 setSubmitting(false)
+                updateUserSubscription({
+                    id: subscription?._id,
+                    plan: subscription.plan,
+                    status: subscription.status,
+                    userId: user.user.id
+                })
                 router.push('/dashboard')
                 enqueueSnackbar({ message: "Subscription purchased successfully", variant: 'success', anchorOrigin: { horizontal: "center", vertical: "bottom" } })
 
@@ -122,7 +130,7 @@ const CheckoutForm = ({ priceId }: { priceId: string }) => {
     );
 };
 
-function PaymentForm({ priceId }: { priceId: string }) {
+export function PaymentForm({ priceId }: { priceId: string }) {
     return (
         <Elements stripe={stripePromise}>
             <CheckoutForm priceId={priceId} />
@@ -130,7 +138,7 @@ function PaymentForm({ priceId }: { priceId: string }) {
     );
 }
 
-function getPlanByPriceId(priceId: string): {
+export function getPlanByPriceId(priceId: string, pricingPlans:any[]): {
     plan: PricingPlan;
     duration: PlanDuration;
 } | null {
@@ -144,43 +152,4 @@ function getPlanByPriceId(priceId: string): {
     return null;
 }
 
-export default function Checkout({ priceId }: { priceId: string }) {
 
-
-    if (!priceId) {
-        return <div className="text-red-500">Missing priceId</div>;
-    }
-
-    const planInfo = getPlanByPriceId(priceId);
-
-    if (!planInfo) {
-        return <div className="text-red-500">Invalid priceId</div>;
-    }
-
-    const { plan, duration } = planInfo;
-    const price = plan.prices[duration].price;
-
-    return (
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto p-6">
-            {/* Left: Checkout Form */}
-            <div>
-                <h2 className="text-xl font-semibold mb-4">Complete Your Subscription</h2>
-                <PaymentForm priceId={priceId} />
-            </div>
-
-            {/* Right: Plan Details */}
-            <div className="bg-gray-50 p-6 rounded-lg shadow">
-                <h3 className="text-2xl font-bold mb-2">{plan.name} Plan</h3>
-                <p className="text-sm text-gray-600 mb-4">{plan.description}</p>
-                <div className="text-lg font-medium mb-4">
-                    ${price.toFixed(2)} / {duration}
-                </div>
-                <ul className="list-disc pl-5 space-y-2 text-sm">
-                    {plan.features.map((feature, idx) => (
-                        <li key={idx}>{feature}</li>
-                    ))}
-                </ul>
-            </div>
-        </div>
-    );
-}

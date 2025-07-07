@@ -338,6 +338,12 @@
             "getstarted": "Get started",
             "save": "Save",
             "vs": "% vs monthly",
+            "month":"month",
+            "quarter": "quarter",
+            "year": "year",
+            "upgrade":"Upgrade",
+            "completeSub":"Complete Your Subscription",
+            "plan":"Plan",
             "basicplan": {
                 "name": "Basic",
                 "description": "For individuals getting started with dress listings",

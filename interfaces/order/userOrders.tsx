@@ -9,6 +9,7 @@ import { useQuery } from '@apollo/client';
 import { GET_USER_ORDERS, GET_VENDOR_ORDERS } from '@/graphql/query';
 import { config } from '@/constants/app';
 import { useTranslation } from '@/hooks/use-translation';
+import { useCurrency } from '@/contexts/currency-context';
 
 
 
@@ -20,13 +21,24 @@ export default function UserOrders() {
     const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
     const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
 
+    const { language } = useTranslation()
+    const { selectedCurrency } = useCurrency()
     const { loading, error, data } = useQuery(GET_USER_ORDERS, {
+        variables: {
+            language: language,
+            currency: selectedCurrency.code.toLowerCase(),
+            search: "",
+            page: 1,
+            limit: 20,
+            sortField: "createdAt",
+            sortOrder: "desc"
+        },
         fetchPolicy: 'network-only', // Ensures fresh data on each load
     });
 
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold-dark"></div>
         </div>
     );
 
@@ -36,7 +48,7 @@ export default function UserOrders() {
         </div>
     );
 
-    const orders = data?.orders || [];
+    const orders = data?.orders?.data ||  [];
 
 
     const toggleOrder = (orderId: string) => {
@@ -68,7 +80,7 @@ export default function UserOrders() {
     };
 
 
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     return (
         <>
@@ -122,7 +134,7 @@ export default function UserOrders() {
                                                     {order.status}
                                                 </span>
                                                 <span className="text-lg font-semibold text-gray-900">
-                                                    ${order.total.toFixed(2)}
+                                                    {selectedCurrency.symbol} {order.total.toFixed(2)}
                                                 </span>
                                             </div>
                                             <svg
@@ -165,7 +177,7 @@ export default function UserOrders() {
                                                                     {item.size}, {item.color}
                                                                 </p>
                                                                 <p className="text-sm font-medium mt-1">
-                                                                    ${item.total}
+                                                                    {selectedCurrency.symbol} {item.total}
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -268,7 +280,7 @@ export default function UserOrders() {
                             </svg>
                             <h3 className="mt-2 text-lg font-medium text-gray-900">{t('dashboard.order.plcnoOrder')}</h3>
                             <p className="mt-1 text-sm text-gray-500">
-                                 {t('dashboard.order.plcnodesc')}
+                                {t('dashboard.order.plcnodesc')}
                             </p>
                         </div>
                     )}

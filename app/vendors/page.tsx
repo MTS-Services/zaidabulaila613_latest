@@ -4,6 +4,7 @@ import { VendorGrid } from "@/components/vendor-grid"
 import client from "@/lib/apolloClient";
 import { ShopsResponse } from "@/types/shop";
 import { GET_SHOPS } from "@/graphql/query";
+import { Suspense } from "react";
 
 
 export default async function VendorsPage() {
@@ -11,13 +12,15 @@ export default async function VendorsPage() {
 
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      
+    <Suspense fallback={<div>Loading category...</div>}>
+      <div className="min-h-screen bg-slate-50">
 
-      <div className="container mx-auto py-8 px-4 md:py-12 md:px-6">
-        <VendorGrid />
+
+        <div className="container mx-auto py-8 px-4 md:py-12 md:px-6">
+          <VendorGrid />
+        </div>
       </div>
-    </div>
+    </Suspense>
   )
 }
 

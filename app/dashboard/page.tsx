@@ -1,6 +1,5 @@
 'use client'
 import SignIn from "@/interfaces/auth/signIn";
-import Home from "../page";
 import { useTranslation } from "@/hooks/use-translation";
 
 export default function Page() {

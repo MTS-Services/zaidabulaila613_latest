@@ -184,7 +184,7 @@
         "rental": "Rental"
     },
     "hero": {
-        "subtitle": "SubTittle",
+        "subtitle": "Ready to Find Your Perfect Dress?",
         "tittle": "Upload your dress and WIN",
         "description": "Win a $100 gift by registering on our website",
         "button": "Register Now"
@@ -337,5 +337,17 @@
             "yearly": "Yearly",
             "getstarted": "Get started"
         }
+    },
+    "navbar":{
+        "offer":"Free shipping on orders over $100",
+        "allVendors":"All Vendors",
+        "allShops":"All Shops",
+        "allCategories":"All Categories",
+        "categories":"Categories",
+        "vendors":"Vendors",
+        "shops":"Shops",
+        "products":"Products",
+        "allProducts":"All Products",
+        "shop":"Shop"
     }
 }

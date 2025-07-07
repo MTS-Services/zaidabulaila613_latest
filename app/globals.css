@@ -990,6 +990,9 @@ body {
 .search-checkbox:checked ~ .search-mainbox .search-iconContainer {
   padding-right: 8px;
 }
+.search-checkbox:checked ~ .search-mainbox .search-iconContainer-ar {
+  padding-left: 8px;
+}
 
 .search-checkbox {
   box-sizing: border-box;
@@ -1024,6 +1027,15 @@ body {
 }
 
 .search-iconContainer {
+  box-sizing: border-box;
+  padding-top: 0px;
+  width: fit-content;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.search-iconContainer-ar {
   box-sizing: border-box;
   padding-top: 0px;
   width: fit-content;

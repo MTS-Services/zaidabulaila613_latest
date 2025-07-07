@@ -37,6 +37,8 @@ import { ShopsResponse } from "@/types/shop"
 import { GET_SHOPS } from "@/graphql/query"
 import { useSearchParams } from "next/navigation"
 import { useUpdateQueryParams } from "@/hooks/useSearchParams"
+import { useTranslation } from "@/hooks/use-translation"
+import { arProductTypes, enProductTypes } from "@/constants/product"
 
 // Add this currencies array near the top of the file, after the imports
 
@@ -59,6 +61,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { selectedCurrency, setSelectedCurrency } = useCurrency();
   const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation()
 
   const updateQuery = useUpdateQueryParams();
 
@@ -95,6 +98,13 @@ export default function Navbar() {
     return {
       label: language === "AR" ? el.name.ar : el.name.en,
       href: `/categories/${el.id}`
+    }
+  })
+
+  const displayProductTypes = (language === "AR" ? arProductTypes : enProductTypes)?.map((el) => {
+    return {
+      label: el,
+      href: `/products?type=${el.toLowerCase()}`
     }
   })
 
@@ -249,22 +259,20 @@ export default function Navbar() {
           {/* Navigation Links */}
           <div className={`hidden lg:flex items-center space-x-4 transition-transform duration-300 ${searchExpanded ? 'lg:-translate-x-4' : ''}`}>
             <NavLinkWithDropdown
-              label="Shop"
+              label={t("navbar.shop")}
               items={[
-                { label: "All Products", href: "#" },
-                { label: "New", href: "/products?type=new" },
-                { label: "Used", href: "/products?type=used" },
-                { label: "Rental", href: "/products?type=rental" },
+                { label: t("navbar.allProducts"), href: "/products" },
+                ...displayProductTypes
               ]}
             />
             <NavLinkWithDropdown
-              label="Categories"
+              label={t("navbar.categories")}
               items={displayCategories}
             />
             <NavLinkWithDropdown
-              label="Vendors"
+              label={t("navbar.vendors")}
               items={[
-                { label: "All Vendors", href: "/vendors" },
+                { label: t("navbar.allVendors"), href: "/vendors" },
                 ...displayVendors,
 
               ]}
@@ -335,14 +343,14 @@ export default function Navbar() {
                 onChange={() => setSearchExpanded(!searchExpanded)}
               />
               <div className="search-mainbox">
-                <div className="search-iconContainer">
+                <div className={language === "AR" ? `search-iconContainer-ar` : `search-iconContainer`}>
                   <svg viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg" className="search-icon">
                     <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path>
                   </svg>
                 </div>
                 <form onSubmit={(e) => {
                   e.preventDefault()
-                  updateQuery({search: searchTerm})
+                  updateQuery({ search: searchTerm })
                 }}>
                   <input className="search-input" placeholder="Search" type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
 
@@ -475,7 +483,8 @@ export default function Navbar() {
 
           {/* Center - Free Shipping Info */}
           <div className="text-sm text-slate-600">
-            <span className="text-gold font-medium">{shippingInfo.message}
+            <span className="text-gold font-medium">
+              {t("navbar.offer")}
             </span>
           </div>
 
@@ -546,7 +555,7 @@ export default function Navbar() {
               onChange={() => setSearchExpanded(!searchExpanded)}
             />
             <div className="search-mainbox w-full">
-              <div className="search-iconContainer">
+              <div className={language === "AR" ? `search-iconContainer-ar` : `search-iconContainer`}>
                 <svg viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg" className="search-icon">
                   <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path>
                 </svg>

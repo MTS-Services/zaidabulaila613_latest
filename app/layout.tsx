@@ -18,6 +18,7 @@ import { CurrencyProvider } from "@/contexts/currency-context"
 import { LanguageProvider } from "@/contexts/language-context"
 import AppLayout from "@/components/app-layout"
 import { CategoryProvider } from "@/contexts/category-context"
+import { Suspense } from "react"
 
 
 
@@ -45,14 +46,19 @@ export default function RootLayout({
               <CartProvider>
                 <WishlistProvider>
                   <DrawerProvider>
-                    <AppLayout>
+                    <Suspense>
 
-                      <Navbar />
-                      {children}
-                      <BackToTop />
-                      <MobileBottomNav />
-                      <Toaster />
-                    </AppLayout>
+
+                      <AppLayout>
+
+                        <Navbar />
+                        {children}
+                        <BackToTop />
+                        <MobileBottomNav />
+                        <Toaster />
+                        
+                      </AppLayout>
+                    </Suspense>
                   </DrawerProvider>
                 </WishlistProvider>
               </CartProvider>

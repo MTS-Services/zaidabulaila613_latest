@@ -17,6 +17,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useMutation } from '@apollo/client';
 import { CREATE_ORDER_MUTATION } from '@/graphql/mutation';
 import { enqueueSnackbar } from 'notistack';
+import { useTranslation } from '@/hooks/use-translation';
+import { useCurrency } from '@/contexts/currency-context';
 
 // Define Zod schema
 const checkoutSchema = z.object({
@@ -35,6 +37,8 @@ export default function CheckoutPage() {
 
     const { user, isAuthenticated, loading } = useAuth()
     const router = useRouter()
+    const { language } = useTranslation()
+    const { selectedCurrency } = useCurrency()
     const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart()
     const subtotal = cartTotal()
     const shipping = subtotal > 100 ? 0 : 10
@@ -86,14 +90,16 @@ export default function CheckoutPage() {
             })
 
             const orderInput = {
-                user: user && user?.user?.id, // Replace with actual user ID
-                total: 100.00, // Calculate from cart items
+                // user: user && user?.user?.id, // Replace with actual user ID
+                total: subtotal, // Calculate from cart items
                 ref: `ORD-${Date.now()}`, // Generate order reference
                 status: 'pending',
                 notes: formData.additionalNotes,
                 items,
                 paymentType: formData.paymentMethod,
                 address: formData.address,
+                language: language,
+                currency: selectedCurrency.code.toLowerCase()
             };
             const { data } = await createOrder({
                 variables: { order: orderInput },

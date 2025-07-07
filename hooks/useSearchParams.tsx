@@ -1,3 +1,4 @@
+'use client'
 import { useRouter, useSearchParams } from 'next/navigation';
 
 type QueryValue = string | number | boolean | null | undefined;

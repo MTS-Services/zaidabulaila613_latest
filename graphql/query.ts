@@ -211,90 +211,130 @@ length
 `;
 
 export const GET_USER_ORDERS = gql`
-  query GetUserOrders {
-    orders {
-      id
-      total
-      ref
-      status
-      notes
-    isPaid
-    paymentType
-    createdAt
-    address{
-      city
-      appartment
-      street
-    }
-      items {
+  query GetUserOrders(
+    $language: LanguageEnum!
+    $currency: String
+    $search: String
+    $page: Int
+    $limit: Int
+    $sortField: String
+    $sortOrder: SortOrder
+  ) {
+    orders(
+      language: $language
+      currency: $currency
+      search: $search
+      page: $page
+      limit: $limit
+      sortField: $sortField
+      sortOrder: $sortOrder
+    ) {
+      data {
         id
-        product {
+        ref
+        total
+        status
+        notes
+        isPaid
+        paymentType
+        createdAt
+        address {
+          city
+          appartment
+          street
+        }
+        items {
           id
-          name
-          pictures{
-          path
+          qty
+          total
+          size
+          color
+          product {
+            id
+            name
+            pictures {
+              path
+            }
           }
         }
-        qty
-        total
-        size
-        color
-      }
-    user{
+        user {
           id
-          account{
+          account {
             firstName
             lastName
             email
             mobile
           }
         }
+      }
+      total
     }
   }
 `;
 
 export const GET_VENDOR_ORDERS = gql`
-  query GetVendorOrders {
-    userOrders {
-      id
-      total
-      ref
-      status
-      notes
-    isPaid
-    paymentType
-    createdAt
-    address{
-      city
-      appartment
-      street
-    }
-      items {
+  query GetVendorOrders(
+    $language: LanguageEnum!
+    $currency: String
+    $search: String
+    $page: Int
+    $limit: Int
+    $sortField: String
+    $sortOrder: SortOrder
+  ) {
+    userOrders(
+      language: $language
+      currency: $currency
+      search: $search
+      page: $page
+      limit: $limit
+      sortField: $sortField
+      sortOrder: $sortOrder
+    ) {
+      data {
         id
-        product {
+        ref
+        total
+        status
+        notes
+        isPaid
+        paymentType
+        createdAt
+        address {
+          city
+          appartment
+          street
+        }
+        items {
           id
-          name
-          pictures{
-          path
+          qty
+          total
+          size
+          color
+          product {
+            id
+            name
+            pictures {
+              path
+            }
           }
         }
-        qty
-        total
-        size
-        color
-      }
-    user{
+        user {
           id
-          account{
+          account {
             firstName
             lastName
             email
             mobile
           }
         }
+      }
+      total
     }
   }
 `;
+
+
 
 export const GET_CATEGORIES = gql`
     query {

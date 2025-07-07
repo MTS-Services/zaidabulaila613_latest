@@ -1,11 +1,14 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 
 export default function NotFound() {
   const router = useRouter();
 
   return (
+     <Suspense fallback={<div>Loading ...</div>}>
+
     <div className="flex flex-col items-center justify-center h-screen text-center bg-gray-100">
       <h1 className="text-5xl font-bold text-gray-800 mb-4">404</h1>
       <p className="text-xl text-gray-600 mb-8">Page not found</p>
@@ -16,5 +19,6 @@ export default function NotFound() {
         Go Home
       </button>
     </div>
+    </Suspense>
   );
 }

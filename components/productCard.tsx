@@ -58,6 +58,7 @@ export default function ProductCard({ product }: { product: Product }) {
     const { language } = useTranslation()
     const { selectedCurrency } = useCurrency()
     const { addToWishlist, removeFromWishlist, wishlist } = useWishlist()
+    const {t} = useTranslation()
     // const { loading, error, data, refetch } = useQuery<ProductsResponse>(GET_PRODUCTS, {
     //     variables: {
     //         language: language,
@@ -396,7 +397,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
                     <div className="flex justify-between items-center">
                         <p className="font-bold">
-                            {selectedCurrency.symbol} {product?.type === 'rental' || product?.type === 'الإيجار' ? `${product.price} / Per Day` : product.price
+                            {selectedCurrency.symbol} {product?.type === 'rental' || product?.type === 'الإيجار' ? `${product.price} / ${t('createProduct.perDay')}` : product.price
                             }
                         </p>
                         {product.oldPrice && (

@@ -1,4 +1,5 @@
 import { config } from "@/constants/app";
+import { useTranslation } from "@/hooks/use-translation";
 import { ShoppingBag } from "lucide-react";
 import React from "react";
 
@@ -53,6 +54,7 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
             },
         });
     };
+const {t} = useTranslation();
 
     // Product is for sale
     if (product.type !== "rental") {
@@ -62,7 +64,7 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
                 disabled={!!cartItem}
                 onClick={handleAddToCart}
             >
-                <span className="text">{cartItem ? "Added" : "Add to Cart"}</span>
+                <span className="text">{cartItem ? t('productpageid.added') : t('productpageid.addtocart')}</span>
                 {
                     !cartItem ?
                         <span className="icon">

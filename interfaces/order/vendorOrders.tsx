@@ -210,7 +210,7 @@ export default function VendorOrders() {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <h3 className="text-lg font-medium text-gray-900">
-                                                Order #{order.ref}
+                                                {t('dashboard.order.order')} #{order.ref}
                                             </h3>
                                             <p className="mt-1 text-sm text-gray-500">
                                                 {formatDate(order.createdAt)}
@@ -247,7 +247,7 @@ export default function VendorOrders() {
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                                             <div className="md:col-span-2">
-                                                <h4 className="text-md font-medium text-gray-900 mb-3">Order Items</h4>
+                                                <h4 className="text-md font-medium text-gray-900 mb-3">{t('dashboard.order.orderitem')}</h4>
                                                 <div className="space-y-4">
                                                     {order.items.map((item: any, index: number) => (
                                                         <div key={index} className="flex items-start space-x-4 p-3 border rounded-lg">
@@ -276,22 +276,22 @@ export default function VendorOrders() {
 
                                             <div className="space-y-6">
                                                 <div>
-                                                    <h4 className="text-md font-medium text-gray-900 mb-3">Order Details</h4>
+                                                    <h4 className="text-md font-medium text-gray-900 mb-3">{t('dashboard.order.orderdetail')}</h4>
                                                     <div className="space-y-2">
                                                         <div className="flex justify-between">
-                                                            <span className="text-sm text-gray-500">Payment Method:</span>
+                                                            <span className="text-sm text-gray-500">{t('dashboard.order.method')}</span>
                                                             <span className="text-sm font-medium text-gray-900">
                                                                 {order.paymentType}
                                                             </span>
                                                         </div>
                                                         <div className="flex justify-between">
-                                                            <span className="text-sm text-gray-500">Payment Status:</span>
+                                                            <span className="text-sm text-gray-500">{t('dashboard.order.status')}</span>
                                                             <span className="text-sm font-medium text-gray-900">
-                                                                {order.isPaid ? 'Paid' : 'Pending'}
+                                                                {order.isPaid ? t('dashboard.order.paid') : t('dashboard.order.pending')}
                                                             </span>
                                                         </div>
                                                         <div className="flex justify-between">
-                                                            <span className="text-sm text-gray-500">Delivery Address:</span>
+                                                            <span className="text-sm text-gray-500">{t('dashboard.order.address')}</span>
                                                             <span className="text-sm font-medium text-gray-900 text-right">
                                                                 {order.address?.
                                                                     appartment
@@ -300,7 +300,7 @@ export default function VendorOrders() {
                                                         </div>
                                                         {order.notes && (
                                                             <div>
-                                                                <p className="text-sm text-gray-500">Customer Notes:</p>
+                                                                <p className="text-sm text-gray-500">{t('dashboard.order.customerNotes')}:</p>
                                                                 <p className="text-sm font-medium text-gray-900 mt-1">
                                                                     {order.notes}
                                                                 </p>
@@ -310,7 +310,7 @@ export default function VendorOrders() {
                                                 </div>
 
                                                 <div>
-                                                    <h4 className="text-md font-medium text-gray-900 mb-3">Update Status</h4>
+                                                    <h4 className="text-md font-medium text-gray-900 mb-3">{t('dashboard.order.updstatus')}</h4>
                                                     <div className="flex flex-wrap gap-2">
                                                         {statusOptions.map((status) => (
                                                             <button
@@ -340,7 +340,7 @@ export default function VendorOrders() {
                                                         <svg className="-ml-0.5 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                                                         </svg>
-                                                        Print Order
+                                                        {t('dashboard.order.print')}
                                                     </button>
                                                 </div>
                                             </div>

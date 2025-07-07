@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useWishlist } from "@/hooks/use-wishlist"
 import { useCart } from "@/hooks/use-cart"
+import { useTranslation } from "@/hooks/use-translation"
+import { useCurrency } from "@/contexts/currency-context"
 
 export default function WishlistPage() {
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist()
@@ -23,15 +25,16 @@ export default function WishlistPage() {
     })
     removeFromWishlist(item.id)
   }
-
+const {t} = useTranslation();
+const {selectedCurrency} = useCurrency()
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="container px-4 md:px-6 py-8 md:py-12">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold">My Wishlist</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">{t('wishlist.title')}</h1>
           <Link href="/" className="flex items-center text-sm text-slate-600 hover:text-slate-900">
             <ChevronLeft className="h-4 w-4 mr-1" />
-            Continue Shopping
+            {t('cartpage.continue')}
           </Link>
         </div>
 
@@ -71,11 +74,11 @@ export default function WishlistPage() {
                     <p className="text-sm text-slate-500">{item.vendor.name}</p>
                     <div className="flex justify-between items-center mt-2">
                       <p className="font-bold">
-                        ${typeof item.price === "number" ? item.price.toFixed(2) : item.price}
+                        {selectedCurrency.symbol} {typeof item.price === t('wishlist.number') ? item.price : item.price}
                       </p>
                       {item.originalPrice && (
                         <p className="text-sm text-slate-500 line-through">
-                          ${typeof item.originalPrice === "number" ? item.originalPrice.toFixed(2) : item.originalPrice}
+                          {selectedCurrency.symbol} {typeof item.originalPrice === t('wishlist.number') ? item.originalPrice : item.originalPrice}
                         </p>
                       )}
                     </div>
@@ -85,7 +88,7 @@ export default function WishlistPage() {
                         onClick={() => handleMoveToCart(item)}
                       >
                         <ShoppingBag className="h-4 w-4 mr-2" />
-                        Add to Cart
+                       {t('productpageid.addtocart')}
                       </Button>
                       <Button variant="outline" size="icon" onClick={() => removeFromWishlist(item.id)}>
                         <Trash2 className="h-4 w-4" />
@@ -98,10 +101,10 @@ export default function WishlistPage() {
 
             <div className="flex justify-between items-center pt-4">
               <Button variant="outline" size="sm" onClick={clearWishlist}>
-                Clear Wishlist
+               {t('wishlist.clear')}
               </Button>
               <div className="text-sm text-slate-500">
-                {wishlist.length} {wishlist.length === 1 ? "item" : "items"} in wishlist
+                {wishlist.length} {wishlist.length === 1 ? t('cartpage.item') : t('cartpage.items')} {t('wishlist.inwishlist')}
               </div>
             </div>
           </div>
@@ -110,10 +113,10 @@ export default function WishlistPage() {
             <div className="flex justify-center mb-4">
               <Heart className="h-16 w-16 text-slate-300" />
             </div>
-            <h2 className="text-xl font-bold mb-2">Your wishlist is empty</h2>
-            <p className="text-slate-500 mb-6">Save items you love to your wishlist and revisit them anytime.</p>
+            <h2 className="text-xl font-bold mb-2">{t('wishlist.empty')}</h2>
+            <p className="text-slate-500 mb-6">{t('wishlist.love')}</p>
             <Button asChild>
-              <Link href="/">Start Shopping</Link>
+              <Link href="/">{t('cartpage.startshopping')}</Link>
             </Button>
           </div>
         )}

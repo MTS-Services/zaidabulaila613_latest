@@ -129,20 +129,21 @@ export default function CheckoutPage() {
 
 
     const paymentMethod = watch('paymentMethod')
+const {t} = useTranslation();
 
     return (
         <>
             <Head>
-                <title>Checkout</title>
+                <title>{t('checkout.title')}</title>
             </Head>
 
             <div className="min-h-screen bg-slate-50">
                 <div className="container px-4 md:px-6 py-8 md:py-12">
                     <div className="flex items-center justify-between mb-8">
-                        <h1 className="text-2xl md:text-3xl font-bold">Checkout</h1>
+                        <h1 className="text-2xl md:text-3xl font-bold">{t('checkout.title')}</h1>
                         <Link href="/" className="flex items-center text-sm text-slate-600 hover:text-slate-900">
                             <ChevronLeft className="h-4 w-4 mr-1" />
-                            Continue Shopping
+                             {t('cartpage.continue')}
                         </Link>
                     </div>
 
@@ -153,11 +154,11 @@ export default function CheckoutPage() {
                                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                                     {/* Address Section */}
                                     <div>
-                                        <h2 className="text-lg font-medium text-gray-900 mb-4">Address Information</h2>
+                                        <h2 className="text-lg font-medium text-gray-900 mb-4">{t('checkout.info')}</h2>
                                         <div className="space-y-4">
                                             <div className="space-y-2">
                                                 <Label htmlFor="city">
-                                                    City <span className="text-red-500">*</span>
+                                                    {t('checkout.city')} <span className="text-red-500">*</span>
                                                 </Label>
                                                 <Input
                                                     id="city"
@@ -171,7 +172,7 @@ export default function CheckoutPage() {
 
                                             <div className="space-y-2">
                                                 <Label htmlFor="apartment">
-                                                    Apartment <span className="text-red-500">*</span>
+                                                    {t('checkout.apartment')} <span className="text-red-500">*</span>
                                                 </Label>
                                                 <Input
                                                     id="appartment"
@@ -184,7 +185,7 @@ export default function CheckoutPage() {
 
                                             <div className="space-y-2">
                                                 <Label htmlFor="street">
-                                                    Street <span className="text-red-500">*</span>
+                                                    {t('checkout.street')} <span className="text-red-500">*</span>
                                                 </Label>
                                                 <Input
                                                     id="street"
@@ -198,7 +199,7 @@ export default function CheckoutPage() {
 
                                     {/* Payment Method Section */}
                                     <div>
-                                        <h2 className="text-lg font-medium text-gray-900 mb-4">Payment Method</h2>
+                                        <h2 className="text-lg font-medium text-gray-900 mb-4">{t('checkout.payment')}</h2>
                                         <div className="space-y-2">
 
                                             <label className={`cursor-pointer mr-2 px-2 py-1 rounded border text-sm font-medium 
@@ -211,7 +212,7 @@ export default function CheckoutPage() {
                                                     {...register('paymentMethod')}
                                                     className="hidden"
                                                 />
-                                                <span>Cash</span>
+                                                <span>{t('checkout.cash')}</span>
                                             </label>
                                             <label className={`cursor-pointer px-2 py-1 rounded border text-sm font-medium 
         ${paymentMethod === "online" ? 'bg-black text-white' : 'bg-white text-black border-gray-400'}
@@ -223,7 +224,7 @@ export default function CheckoutPage() {
                                                     {...register('paymentMethod')}
                                                     className="hidden"
                                                 />
-                                                <span>Online</span>
+                                                <span>{t('checkout.online')}</span>
                                             </label>
                                             {/* <div className="flex items-center">
                                                 <input
@@ -245,7 +246,7 @@ export default function CheckoutPage() {
                                     {/* Additional Notes Section */}
                                     <div className="space-y-2">
                                         <Label htmlFor="description">
-                                            Additional Notes (Optional)
+                                            {t('checkout.additioninfo')}
                                         </Label>
                                         <Textarea
                                             id="additionalNotes"
@@ -264,7 +265,7 @@ export default function CheckoutPage() {
                                             disabled={isSubmitting}
                                             className="w-full bg-gold hover:bg-gold/90 text-white"
                                         >
-                                            {isSubmitting ? 'Processing...' : 'Complete Order'}
+                                            {isSubmitting ? t('checkout.processing') : t('checkout.complete')}
                                         </Button>
                                     </div>
                                 </form>
@@ -274,26 +275,26 @@ export default function CheckoutPage() {
 
                             {/* Order Summary */}
                             <div className="bg-white rounded-lg shadow-sm p-6">
-                                <h2 className="text-lg font-bold mb-4">Order Summary</h2>
+                                <h2 className="text-lg font-bold mb-4">{t('cartpage.ordersummary')}</h2>
 
                                 <div className="space-y-3">
                                     <div className="flex justify-between">
-                                        <span className="text-slate-600">Subtotal</span>
+                                        <span className="text-slate-600">{t('cartpage.subtotal')}</span>
                                         <span className="font-medium">${subtotal.toFixed(2)}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-slate-600">Shipping</span>
-                                        <span className="font-medium">{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+                                        <span className="text-slate-600">{t('cartpage.shipping')}</span>
+                                        <span className="font-medium">{shipping === 0 ? t('cartpage.freeshipping') : `$${shipping.toFixed(2)}`}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-slate-600">Tax</span>
+                                        <span className="text-slate-600">{t('cartpage.tax')}</span>
                                         <span className="font-medium">${tax.toFixed(2)}</span>
                                     </div>
 
                                     <Separator />
 
                                     <div className="flex justify-between font-bold">
-                                        <span>Total</span>
+                                        <span>{t('cartpage.total')}</span>
                                         <span>${total.toFixed(2)}</span>
                                     </div>
                                 </div>
@@ -303,11 +304,11 @@ export default function CheckoutPage() {
                                 <div className="mt-6 space-y-3">
                                     <div className="flex items-center gap-2 text-sm text-slate-600">
                                         <Truck className="h-4 w-4 text-slate-400" />
-                                        <span>Free shipping on orders over $100</span>
+                                        <span>{t('cartpage.free')}</span>
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-slate-600">
                                         <ShoppingBag className="h-4 w-4 text-slate-400" />
-                                        <span>30-day easy returns</span>
+                                        <span>{t('cartpage.return')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -317,10 +318,10 @@ export default function CheckoutPage() {
                             <div className="flex justify-center mb-4">
                                 <ShoppingBag className="h-16 w-16 text-slate-300" />
                             </div>
-                            <h2 className="text-xl font-bold mb-2">Your cart is empty</h2>
-                            <p className="text-slate-500 mb-6">Looks like you haven't added any items to your cart yet.</p>
+                            <h2 className="text-xl font-bold mb-2">{t('cartpage.empty')}</h2>
+                            <p className="text-slate-500 mb-6">{t('cartpage.look')}</p>
                             <Button asChild>
-                                <Link href="/">Start Shopping</Link>
+                                <Link href="/">{t('cartpage.startshopping')}</Link>
                             </Button>
                         </div>
                     )}

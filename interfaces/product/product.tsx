@@ -158,6 +158,7 @@ export default function Product({id}:{id:string}) {
 const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =>
   product.color.some((c: string) => c.toLowerCase() === color.value.toLowerCase())
 );
+const {t} = useTranslation();
 
   return (
     <div className="min-h-screen bg-white">
@@ -239,7 +240,7 @@ const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =
                   </Badge>
                   <div className="absolute inset-0 bg-black/5 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="bg-white/80 text-slate-800 px-3 py-1 rounded-md text-sm font-medium">
-                      Click to zoom
+                     {t('productpageid.zoom')}
                     </span>
                   </div>
                 </div>
@@ -286,7 +287,7 @@ const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =
             {/* Color Selection */}
             <div className="space-y-2">
               <div className="font-medium">
-                COLOR: <span className="uppercase">{selectedColor}</span>
+                {t('productpageid.color')}: <span className="uppercase">{selectedColor}</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {matchedColors.map((color) => (
@@ -304,7 +305,7 @@ const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =
 
             {/* Size Selection */}
             <div className="space-y-2">
-              <div className="font-medium">SIZE: {selectedSize?.toUpperCase()}</div>
+              <div className="font-medium">{t('productpageid.size')}: {selectedSize?.toUpperCase()}</div>
               <div className="flex flex-wrap gap-2">
                 {product.size.map((el) => (
                   <button
@@ -321,7 +322,7 @@ const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =
                 ))}
               </div>
               <Link href="#" className="text-sm text-gold hover:underline">
-                Size Guide
+                {t('productpageid.sizeguide')}
               </Link>
             </div>
 
@@ -361,9 +362,9 @@ const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =
             {/* Additional Info */}
             <div className="grid grid-cols-2 gap-4 text-sm pt-4 border-t">
               <div>
-                <div className="font-medium">REF: {product.ref}</div>
+                <div className="font-medium">{t('productpageid.ref')}: {product.ref}</div>
                 <div className="text-slate-500 mt-1">
-                  Categories:{" "}
+                  {t('productpageid.categories')}:{" "}
                   <Link href="#" className="text-gold hover:underline">
                     {product.category?.name}
                   </Link>
@@ -379,7 +380,7 @@ const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =
 
             {/* Social Share */}
             <div className="flex items-center gap-4 pt-4 border-t">
-              <div className="text-sm font-medium">Share:</div>
+              <div className="text-sm font-medium">{t('productpageid.share')}:</div>
               <div className="flex gap-2">
                 <Link href="#" className="text-slate-500 hover:text-gold">
                   <Facebook className="h-4 w-4" />
@@ -406,13 +407,13 @@ const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =
                 value="description"
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-gold data-[state=active]:bg-transparent text-slate-600 data-[state=active]:text-slate-900 font-medium"
               >
-                Description
+                {t('productpageid.description')}
               </TabsTrigger>
               <TabsTrigger
                 value="additional"
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-gold data-[state=active]:bg-transparent text-slate-600 data-[state=active]:text-slate-900 font-medium"
               >
-                Additional Information
+                {t('productpageid.additionalinformation')}
               </TabsTrigger>
               {/* <TabsTrigger
                 value="warranty"
@@ -435,32 +436,32 @@ const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =
                     <div className="bg-slate-100 rounded-full p-4 mb-3">
                       <ShieldCheck className="h-6 w-6 text-gold" />
                     </div>
-                    <div className="text-sm font-medium">Safe & Secure</div>
-                    <div className="text-xs text-slate-500">Guaranteed</div>
+                    <div className="text-sm font-medium">{t('productpageid.safe')}</div>
+                    <div className="text-xs text-slate-500">{t('productpageid.guarant')}</div>
                   </div>
 
                   <div className="flex flex-col items-center text-center">
                     <div className="bg-slate-100 rounded-full p-4 mb-3">
                       <Truck className="h-6 w-6 text-gold" />
                     </div>
-                    <div className="text-sm font-medium">Free Shipping</div>
-                    <div className="text-xs text-slate-500">On orders over $100</div>
+                    <div className="text-sm font-medium">{t('productpageid.free')}</div>
+                    <div className="text-xs text-slate-500">{t('productpageid.overon')}</div>
                   </div>
 
                   <div className="flex flex-col items-center text-center">
                     <div className="bg-slate-100 rounded-full p-4 mb-3">
                       <RefreshCw className="h-6 w-6 text-gold" />
                     </div>
-                    <div className="text-sm font-medium">Hassle-Free Returns</div>
-                    <div className="text-xs text-slate-500">30 day money back</div>
+                    <div className="text-sm font-medium">{t('productpageid.hassle')}</div>
+                    <div className="text-xs text-slate-500">{t('productpageid.moneyback')}</div>
                   </div>
 
                   <div className="flex flex-col items-center text-center">
                     <div className="bg-slate-100 rounded-full p-4 mb-3">
                       <ShieldCheck className="h-6 w-6 text-gold" />
                     </div>
-                    <div className="text-sm font-medium">100% Authentic</div>
-                    <div className="text-xs text-slate-500">Guaranteed Products</div>
+                    <div className="text-sm font-medium">{t('productpageid.authentic')}</div>
+                    <div className="text-xs text-slate-500">{t('productpageid.guarantproduct')}</div>
                   </div>
                 </div>
               </div>
@@ -468,34 +469,34 @@ const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =
 
             <TabsContent value="additional" className="pt-6">
               <div className="prose max-w-none">
-                <h3 className="mb-4">Product Details</h3>
+                <h3 className="mb-4">{t('productpageid.productdetail')}</h3>
                 <ul>
                   <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <strong>Material</strong>
+                    <strong>{t('productpageid.material')}</strong>
                     {product?.material}
                   </li>
                   <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <strong>Care</strong>
+                    <strong>{t('productpageid.care')}</strong>
                     {product?.careInstructions}
                   </li>
                   <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <strong>Chest</strong>
+                    <strong>{t('productpageid.chest')}</strong>
                     {product?.chest}
                   </li>
                   <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <strong>Waist</strong>
+                    <strong>{t('productpageid.waist')}</strong>
                     {product?.waist}
                   </li>
                   <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <strong>Length</strong>
+                    <strong>{t('productpageid.length')}</strong>
                     {product?.length}
                   </li>
                   <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <strong>Hieght</strong>
+                    <strong>{t('productpageid.height')}</strong>
                     {product?.high}
                   </li>
                   <li className={`flex gap-1 ${language === "AR" ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <strong>Hip</strong>
+                    <strong>{t('productpageid.hip')}</strong>
                     {product?.hip}
                   </li>
 

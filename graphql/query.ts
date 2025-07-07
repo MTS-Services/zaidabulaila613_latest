@@ -514,3 +514,14 @@ export const GET_PRODUCT_BY_ID = gql`
     }
   }
 `;
+
+export const GET_DASHBOARD_DATA = gql`
+  query GetUserDashboard{
+    userDashboard {
+      completed
+    pending
+    processing
+    total
+    }
+  }
+`;

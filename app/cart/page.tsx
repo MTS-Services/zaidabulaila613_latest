@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import { useCart } from "@/hooks/use-cart"
 import { useWishlist } from "@/hooks/use-wishlist"
 import { useRouter } from "next/navigation"
+import { useTranslation } from "@/hooks/use-translation"
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart()
@@ -36,15 +37,16 @@ export default function CartPage() {
     if (newQuantity < 1) return
     updateQuantity(id, newQuantity)
   }
+const {t} = useTranslation();
 
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="container px-4 md:px-6 py-8 md:py-12">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold">Shopping Cart</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">{t('cartpage.title')}</h1>
           <Link href="/" className="flex items-center text-sm text-slate-600 hover:text-slate-900">
             <ChevronLeft className="h-4 w-4 mr-1" />
-            Continue Shopping
+            {t('cartpage.continue')}
           </Link>
         </div>
 
@@ -79,11 +81,11 @@ export default function CartPage() {
                           </p>
                           <div className="flex items-center gap-2 mt-1 text-sm">
                             <div className="flex items-center gap-1">
-                              <span>Size:</span>
+                              <span>{t('cartpage.size')}:</span>
                               <span className="font-medium uppercase">{item.selectedSize}</span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <span>Color:</span>
+                              <span>{t('cartpage.color')}:</span>
                               <span className="font-medium capitalize">{item.selectedColor}</span>
                             </div>
                           </div>
@@ -119,7 +121,7 @@ export default function CartPage() {
                           >
                             <span className="wishlist-save-button-content">
                               <Heart className="h-4 w-4" />
-                              <span className="wishlist-save-button-text">Save</span>
+                              <span className="wishlist-save-button-text">{t('cartpage.save')}</span>
                             </span>
                             <span className="wishlist-save-button-icon">
                               <Heart className="h-4 w-4 fill-white" />
@@ -128,7 +130,7 @@ export default function CartPage() {
 
                           {/* Custom Delete Button */}
                           <button className="delete-button noselect" onClick={() => removeFromCart(item.id)}>
-                            <span className="text">Remove</span>
+                            <span className="text">{t('cartpage.remove')}</span>
                             <span className="icon">
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <path d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712z" />
@@ -144,36 +146,36 @@ export default function CartPage() {
 
               <div className="flex justify-between items-center pt-4">
                 <Button variant="outline" size="sm" onClick={clearCart}>
-                  Clear Cart
+                 {t('cartpage.clearcart')}
                 </Button>
                 <div className="text-sm text-slate-500">
-                  {cart.length} {cart.length === 1 ? "item" : "items"} in cart
+                  {cart.length} {cart.length === 1 ? t('cartpage.item') : t('cartpage.items')} {t('cartpage.incart')}
                 </div>
               </div>
             </div>
 
             {/* Order Summary */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-bold mb-4">Order Summary</h2>
+              <h2 className="text-lg font-bold mb-4">{t('cartpage.ordersummary')}</h2>
 
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Subtotal</span>
+                  <span className="text-slate-600">{t('cartpage.subtotal')}</span>
                   <span className="font-medium">${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Shipping</span>
-                  <span className="font-medium">{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+                  <span className="text-slate-600">{t('cartpage.shipping')}</span>
+                  <span className="font-medium">{shipping === 0 ? t('cartpage.freeshipping') : `$${shipping.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Tax</span>
+                  <span className="text-slate-600">{t('cartpage.tax')}</span>
                   <span className="font-medium">${tax.toFixed(2)}</span>
                 </div>
 
                 <Separator />
 
                 <div className="flex justify-between font-bold">
-                  <span>Total</span>
+                  <span>{t('cartpage.total')}</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
               </div>
@@ -181,32 +183,32 @@ export default function CartPage() {
               <div className="mt-6 space-y-4">
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Input
-                    placeholder="Promo code"
+                    placeholder={t('cartpage.promo')}
                     value={promoCode}
                     onChange={(e) => setPromoCode(e.target.value)}
                     className="flex-1"
                   />
                   <Button variant="outline" className="sm:w-auto w-full">
-                    Apply
+                    {t('cartpage.apply')}
                   </Button>
                 </div>
 
                 <Button className="w-full bg-gold hover:bg-gold/90 text-white" onClick={() => router.push('/checkout')}>
                   <CreditCard className="h-4 w-4 mr-2" />
-                  Checkout
+                  {t('cartpage.checkout')}
                 </Button>
 
-                <div className="text-sm text-slate-500 text-center">Secure checkout powered by Stripe</div>
+                <div className="text-sm text-slate-500 text-center">{t('cartpage.secure')}</div>
               </div>
 
               <div className="mt-6 space-y-3">
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <Truck className="h-4 w-4 text-slate-400" />
-                  <span>Free shipping on orders over $100</span>
+                  <span>{t('cartpage.free')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <ShoppingBag className="h-4 w-4 text-slate-400" />
-                  <span>30-day easy returns</span>
+                  <span>{t('cartpage.return')}</span>
                 </div>
               </div>
             </div>
@@ -216,10 +218,10 @@ export default function CartPage() {
             <div className="flex justify-center mb-4">
               <ShoppingBag className="h-16 w-16 text-slate-300" />
             </div>
-            <h2 className="text-xl font-bold mb-2">Your cart is empty</h2>
-            <p className="text-slate-500 mb-6">Looks like you haven't added any items to your cart yet.</p>
+            <h2 className="text-xl font-bold mb-2">{t('cartpage.empty')}</h2>
+            <p className="text-slate-500 mb-6">{t('cartpage.look')}</p>
             <Button asChild>
-              <Link href="/">Start Shopping</Link>
+              <Link href="/">{t('cartpage.startshopping')}</Link>
             </Button>
           </div>
         )}

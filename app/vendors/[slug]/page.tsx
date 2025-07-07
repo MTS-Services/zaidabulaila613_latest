@@ -148,6 +148,7 @@ export default function VendorPage({ params }: { params: Promise<{ slug: string 
   //     // Handle error appropriately
   //   }
   // }
+const {t} = useTranslation();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -169,7 +170,7 @@ export default function VendorPage({ params }: { params: Promise<{ slug: string 
                   <h1 className="text-2xl md:text-3xl font-bold text-white">{vendor.shopName}</h1>
                   <div className="flex items-center text-white/80 text-sm mt-1">
                     <Link href="/vendors" className="hover:text-white">
-                      Vendors
+                     {t('navbar.vendors')}
                     </Link>
                     <ChevronRight className="h-3 w-3 mx-1" />
                     <span>{vendor.shopName}</span>
@@ -198,7 +199,7 @@ export default function VendorPage({ params }: { params: Promise<{ slug: string 
                     Follow
                   </Button> */}
                   {vendor?.shopPhoneNumber ?
-                    <Button size="sm" onClick={() => { vendor?.shopPhoneNumber ? handleClick(vendor?.shopPhoneNumber) : console.log("No phone number") }}>Contact Vendor</Button>
+                    <Button size="sm" onClick={() => { vendor?.shopPhoneNumber ? handleClick(vendor?.shopPhoneNumber) : console.log("No phone number") }}>{t('vendorpage.contact')}</Button>
                     :
                     ''
                   }

@@ -11,6 +11,7 @@ export default function UserSidebar() {
         const {t} = useTranslation();
     
     const navItems = [
+        { label: t('dashboard.sidebar.home'), href: "/dashboard" },
         { label: t('dashboard.sidebar.order'), href: "/dashboard/orders" },
         { label: t('dashboard.sidebar.dress'), href: "/dashboard/dress" },
         { label: t('dashboard.sidebar.profile'), href: "/dashboard/profile" },

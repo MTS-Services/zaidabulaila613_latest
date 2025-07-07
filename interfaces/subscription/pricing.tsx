@@ -49,7 +49,7 @@ const Pricing = () => {
                 </div>
 
                 {/* Pricing Cards */}
-                <div className="mt-12 space-y-8 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-8 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:mx-0">
+                <div className="mt-12 space-y-8 sm:space-y-0 sm:grid sm:grid-cols-[repeat(auto-fill,_minmax(300px,_auto))] sm:gap-8  lg:mx-auto  xl:mx-0">
                     {pricingPlans.map((plan) => {
                         const savings = getSavings(plan, selectedDuration);
                         return (

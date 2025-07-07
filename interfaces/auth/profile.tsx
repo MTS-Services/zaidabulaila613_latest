@@ -78,14 +78,14 @@ export default function Profile() {
     return (
         <>
             <div className='bg-slate-50'>
-                <div className="container pt-10">
+                <div className="container pt-10 px-[10px] sm:px-8">
                     <div className="flex items-center justify-center mb-5">
                         <h1 className="text-2xl md:text-3xl font-bold">{t('dashboard.profile.title')}</h1>
 
                     </div>
 
 
-                    <div className="container bg-white py-6">
+                    <div className="container bg-white py-6 px-[10px] sm:px-8">
                         <Form
                             schema={profileValidator}
                             formFields={formFields}

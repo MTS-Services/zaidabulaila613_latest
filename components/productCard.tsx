@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ShoppingBag, Star, Percent } from "lucide-react"
+import { ShoppingBag, Star, Percent, Check } from "lucide-react"
 import { useCart } from "@/hooks/use-cart"
 import { useWishlist } from "@/hooks/use-wishlist"
 import { motion, AnimatePresence } from "framer-motion"
@@ -24,6 +24,8 @@ import { useTranslation } from "@/hooks/use-translation"
 import { useCurrency } from "@/contexts/currency-context"
 import { Product, ProductsResponse } from "@/types/product"
 import { arProductTypes, enProductTypes } from "@/constants/product"
+import { capitalizeFirstLetter } from "@/lib/utils"
+import { arColors, enColors } from "@/constants/colors"
 
 
 
@@ -328,7 +330,9 @@ export default function ProductCard({ product }: { product: Product }) {
 
     // const selected = selectedOptions.productId === product.id;
     const cartItem = cart.find((el) => el.id === product.id)
-
+    const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =>
+        product.color.some((c: string) => c.toLowerCase() === color.value.toLowerCase())
+    );
     return (
         <div className="group relative">
             <div className="relative overflow-hidden rounded-lg">
@@ -339,12 +343,12 @@ export default function ProductCard({ product }: { product: Product }) {
                     <div className="absolute top-12 left-2 z-10">
                         <Badge
                             className={`rounded-md
-                        ${product.type === "new" ? "bg-green-500" : ""}
-                        ${product.type === "used" ? "bg-amber-500" : ""}
-                        ${product.type === "rental" ? "bg-purple-500" : ""}
+                        ${product.type === "new" || product.type === "جديد" ? "bg-green-500" : ""}
+                        ${product.type === "used" || product.type === "مستعمل" ? "bg-amber-500" : ""}
+                        ${product.type === "rental" || product.type === "الإيجار" ? "bg-purple-500" : ""}
                       `}
                         >
-                            {product.type.toUpperCase()}
+                            {capitalizeFirstLetter(product.type)}
                         </Badge>
                     </div>
                 )}
@@ -407,21 +411,32 @@ export default function ProductCard({ product }: { product: Product }) {
             <div>
                 <div className="mt-2">
                     <div className="flex gap-2 mt-1">
-                        {product.color.map((color: any) => (
-                            <label key={color} className={`cursor-pointer px-2 py-1 rounded border text-sm font-medium 
-        ${selectedOptions?.color === color ? 'bg-black text-white' : 'bg-white text-black border-gray-400'}
+                        {matchedColors.map((color) => (
+                            <label key={color.value}
+                                style={{ backgroundColor: color.hex }}
+                                className={`cursor-pointer px-2 py-1 border text-sm font-medium h-6 w-6 pr-2
+                                rounded-full
+        ${selectedOptions?.color.toLowerCase() === color.value.toLowerCase() ? `border-gold-dark border-[3px]` : ' border-gray-400'}
       `}>
+                                {selectedOptions?.color.toLowerCase() === color.value.toLowerCase() &&
+                                    <Check color="#fff" size={12} />
+
+                                }
                                 <input
                                     type="radio"
                                     name={`color-${product.id}`}
-                                    value={color}
-                                    checked={selectedOptions?.color === color}
-                                    onChange={() => handleChange('color', color)}
+                                    value={color.value.toLowerCase()}
+                                    checked={selectedOptions?.color?.toLowerCase() === color.value.toLowerCase()}
+                                    onChange={() => handleChange('color', color.value.toLowerCase())}
                                     className="hidden"
                                 />
-                                <span>{color}</span>
+                                {/* <span>{capitalizeFirstLetter(color)}</span> */}
                             </label>
                         ))}
+
+                        {/* {product.color.map((color: any) => (
+                           
+                        ))} */}
                     </div>
                 </div>
 

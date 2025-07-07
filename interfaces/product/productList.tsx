@@ -14,13 +14,14 @@ import FilterModal from "@/components/filter-modal"
 import HeartButton from "@/components/heart-button"
 import { gql, useQuery } from "@apollo/client"
 import { useCategory } from "@/contexts/category-context"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { useTranslation } from "@/hooks/use-translation"
 import { ProductsResponse } from "@/types/product"
 import { GET_PRODUCTS } from "@/graphql/query"
 import { useCurrency } from "@/contexts/currency-context"
 import ProductCard from "@/components/productCard"
 import Loader from "@/components/loader"
+import { useUpdateQueryParams } from "@/hooks/useSearchParams"
 
 
 interface ProductListProps {
@@ -34,13 +35,21 @@ export default function ProductList({ searchPlaceHolder, categoryId,
     // Find the category based on the slug
     // const category = categories.find((c) => c.slug === params.slug) || categories[0]
     const router = useRouter()
+    const params = useSearchParams()
+    const searchQuery = params.get('search')
+    const minPrice = params.get('minPrice')
+    const maxPrice = params.get('maxPrice')
+    const colors = params.get('colors')
+    const categoryIds = params.get('categories')
+    const vendorParam = params.get('vendors')
+    const sizeParam = params.get('sizes')
     // State for filters
     const [productType, setProductType] = useState<string[]>([])
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000])
     const [filteredProducts, setFilteredProducts] = useState<any[]>([])
     const [groupedByVendor, setGroupedByVendor] = useState<Record<string, any[]>>({})
     const [selectedVendors, setSelectedVendors] = useState<string[]>([])
-    const [searchTerm, setSearchTerm] = useState("")
+    const [searchTerm, setSearchTerm] = useState(searchQuery ? searchQuery : "")
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
     const [activeFilters, setActiveFilters] = useState<string[]>([])
     const { categories } = useCategory()
@@ -48,12 +57,13 @@ export default function ProductList({ searchPlaceHolder, categoryId,
     const { addToCart } = useCart()
     const { language } = useTranslation()
     const { selectedCurrency } = useCurrency()
+    const updateQuery = useUpdateQueryParams();
     const queryVariables: any = {
         language: language,
         currency: selectedCurrency.code.toLowerCase(),
         page: 1,
         limit: 10,
-        search: "",
+        search: searchQuery ? searchQuery : "",
         sortField: "createdAt",
         sortOrder: "desc",
     };
@@ -66,11 +76,45 @@ export default function ProductList({ searchPlaceHolder, categoryId,
         queryVariables.type = type;
 
     }
+    if (minPrice && maxPrice) {
+        if (parseFloat(minPrice) && parseFloat(maxPrice)) {
+
+            queryVariables.minPrice = parseFloat(minPrice);
+            queryVariables.maxPrice = parseFloat(maxPrice);
+        }
+    }
+    if (colors) {
+        const validColors = colors.split(',')
+        if (validColors)
+            queryVariables.colors = validColors;
+    }
+    if (categoryIds) {
+        const validcategoryIds = categoryIds.split(',')
+        if (validcategoryIds)
+            queryVariables.categoryIds = validcategoryIds;
+    }
+    if (vendorParam) {
+        const validVendors = vendorParam.split(',')
+        if (validVendors)
+            queryVariables.userIds = validVendors;
+    }
+    if (sizeParam) {
+        const validSizes = sizeParam.split(',')
+        if (validSizes)
+            queryVariables.sizes = validSizes;
+    }
 
     const { loading, error, data, refetch } = useQuery<ProductsResponse>(GET_PRODUCTS, {
         variables: queryVariables,
         fetchPolicy: 'network-only',
     });
+
+    useEffect(() => {
+        if (searchQuery) {
+            setSearchTerm(searchQuery)
+            refetch(queryVariables)
+        }
+    }, [searchQuery])
 
     // Apply filters and group by vendor
     // useEffect(() => {
@@ -210,16 +254,22 @@ export default function ProductList({ searchPlaceHolder, categoryId,
                             </Button>
 
                             {/* Search Input */}
-                            <div className="relative w-full max-w-xs">
-                                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                                <Input
-                                    type="search"
-                                    placeholder={searchPlaceHolder}
-                                    className="pl-8 rounded-lg border-slate-200"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                            </div>
+                            <form onSubmit={(e) => {
+                                e.preventDefault()
+                                updateQuery({ search: searchTerm })
+                            }}>
+                                <div className="relative w-full max-w-xs">
+                                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                    <Input
+                                        type="search"
+                                        placeholder={searchPlaceHolder}
+                                        className="pl-8 rounded-lg border-slate-200"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+
+                            </form>
                         </div>
 
                         <div className="text-sm text-slate-500">Showing {count} products</div>
@@ -321,6 +371,8 @@ export default function ProductList({ searchPlaceHolder, categoryId,
 
     )
 }
+
+
 
 
 

@@ -9,7 +9,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <UserSidebar />
 
                 </div>
-                <main className="flex-1 p-6 pt-16">
+                <main className="flex-1 px:[10px] sm:p-6 pt-16">
                     <div className="p-4">
                         {/* <h2 className="text-xl font-bold">Dashboard</h2> */}
                     </div>

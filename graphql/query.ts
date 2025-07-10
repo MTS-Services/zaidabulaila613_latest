@@ -525,3 +525,17 @@ export const GET_DASHBOARD_DATA = gql`
     }
   }
 `;
+export const GET_USER_PROFILE = gql`
+  query GET_USER_PROFILE{
+    userProfile {
+      productsCount
+       subscription{
+      id
+    userId
+    status
+    plan
+    }
+    }
+    
+  }
+`;

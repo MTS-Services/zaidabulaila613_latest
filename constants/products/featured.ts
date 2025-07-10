@@ -3,7 +3,7 @@ export const featuredContent = {
   description: "Discover our most popular dresses across all categories",
   viewAllButton: {
     text: "View All Dresses",
-    href: "/categories",
+    href: "/products",
   },
   filterTags: ["All", "New", "Used", "Rental", "Wedding", "Evening", "Formal"],
   discount: {

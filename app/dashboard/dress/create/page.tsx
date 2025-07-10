@@ -29,6 +29,8 @@ import { GET_CATEGORIES, GET_USER_PRODUCTS } from "@/graphql/query"
 import { useCurrency } from "@/contexts/currency-context"
 import { useTranslation } from "@/hooks/use-translation"
 import { arColors, enColors } from "@/constants/colors"
+import { useUserSubscription } from "@/hooks/useSubscription"
+import TooltipBox from "@/components/tooltipBox"
 
 // Zod schema for form validation
 const formSchema = z.object({
@@ -39,10 +41,10 @@ const formSchema = z.object({
     type: z.string().min(1, "Type is required"),
     category: z.string().min(1, "Category is required"),
     colors: z.array(z.string()).min(1, "At least one color is required"),
-    selectedColor: z.string().min(1, "Selected color is required"),
+    selectedColor: z.string().optional(),
     sizes: z.array(z.string()).min(1, "At least one size is required"),
     material: z.string().min(1, "Material is required"),
-    careInstructions: z.string().min(1, "Care instructions are required"),
+    careInstructions: z.string().optional(),
     chest: z.number().min(0, "Chest measurement must be positive").optional(),
     waist: z.number().min(0, "Waist measurement must be positive").optional(),
     hip: z.number().min(0, "Hip measurement must be positive").optional(),
@@ -52,9 +54,9 @@ const formSchema = z.object({
     sleeve: z.boolean().optional(),
     underlay: z.boolean().optional(),
     qty: z.number().min(1, "Quantity must be at least 1"),
-    ref: z.string().min(1, "Reference is required"),
+    ref: z.string().optional(),
     state: z.string().min(1, "State is required"),
-    //   terms: z.boolean().refine(val => val, "You must accept the terms and conditions")
+      terms: z.boolean().refine(val => val, "You must accept the terms and conditions")
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -70,6 +72,7 @@ export default function UploadPage() {
 
     const { selectedCurrency } = useCurrency();
     const { language } = useTranslation();
+    const { bulkUpload, allowedDressTypes, maxMediaPerDress, maxDresses } = useUserSubscription()
 
     const [createProduct] = useMutation(CREATE_PRODUCT)
     const { data } = useQuery(GET_CATEGORIES)
@@ -87,7 +90,7 @@ export default function UploadPage() {
             description: "",
             price: 0,
             oldPrice: 0,
-            type: "New",
+            type: "Used",
             category: "",
             colors: [],
             selectedColor: "",
@@ -105,7 +108,7 @@ export default function UploadPage() {
             qty: 1,
             ref: "",
             state: "",
-            //   terms: false
+              terms: false
         }
     })
 
@@ -116,23 +119,38 @@ export default function UploadPage() {
         return null
     }
 
+    if (user.productsCount === maxDresses) {
+        return <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-lg max-w-xl mx-auto">
+            <p className="font-semibold text-lg">Upgrade your subscription to add more dresses.</p>
+            <p className="text-sm mt-1">
+                Unlock the ability to upload more items, showcase videos, and increase your store’s visibility.
+            </p>
+            <a
+                href="/dashboard/subscription"
+                className="inline-block mt-3 text-sm font-medium text-yellow-700 bg-yellow-300 hover:bg-yellow-400 transition px-4 py-2 rounded-md shadow"
+            >
+                Upgrade Now →
+            </a>
+        </div>
+    }
+
     // Handle image upload
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files
         if (!files) return
 
-        if (!user?.subscription) {
-            // Limit to 5 images
-            if (images.length + files.length > 5) {
+        if (maxMediaPerDress !== "unlimited" && images.length + files.length > maxMediaPerDress) {
 
-                enqueueSnackbar('Maximum 5 images allowed, upgrade your subscription to add more.', {
-                    variant: 'error',
-                    anchorOrigin: { horizontal: "center", vertical: "bottom" },
-                });
-                return
-            }
-
+            enqueueSnackbar(`Maximum ${maxMediaPerDress} images allowed, upgrade your subscription to add more.`, {
+                variant: 'error',
+                anchorOrigin: { horizontal: "center", vertical: "bottom" },
+            });
+            return
         }
+        // if (!user?.subscription) {
+        //     // Limit to 5 images
+
+        // }
 
         // Create preview URLs for the images
         Array.from(files).forEach((file) => {
@@ -161,6 +179,13 @@ export default function UploadPage() {
 
         if (files.length < 2) {
             enqueueSnackbar({ message: "Please upload minimum 2 images.", variant: 'warning', anchorOrigin: { horizontal: "center", vertical: "bottom" } })
+            return
+        }
+        if (maxMediaPerDress !== "unlimited" && files.length > maxMediaPerDress) {
+            enqueueSnackbar(`Maximum ${maxMediaPerDress} images allowed, upgrade your subscription to add unlimited.`, {
+                variant: 'error',
+                anchorOrigin: { horizontal: "center", vertical: "bottom" },
+            });
             return
         }
         setIsSubmitting(true)
@@ -230,7 +255,7 @@ export default function UploadPage() {
     // Size options
     const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "Custom"]
 
-  
+
 
     const colorOptions = language === 'AR' ? arColors : enColors
 
@@ -286,7 +311,7 @@ export default function UploadPage() {
                                                 type="file"
                                                 id="images"
                                                 multiple
-                                                accept="image/*"
+                                                accept={user?.subscription?.plan === "BASIC" ? `image/*` : `image/*,video/*`}
                                                 className="hidden"
                                                 onChange={handleImageUpload}
                                             />
@@ -301,7 +326,7 @@ export default function UploadPage() {
                                         </div>
 
                                         {/* Image previews */}
-                                        {images.length > 0 && (
+                                        {/* {images.length > 0 && (
                                             <div className="space-y-2">
                                                 <p className="text-sm font-medium">{t("createProduct.images.uploadedImages")} ({images.length}/5)</p>
                                                 <div className="grid grid-cols-2 gap-2">
@@ -326,6 +351,55 @@ export default function UploadPage() {
                                                     ))}
                                                 </div>
                                             </div>
+                                        )} */}
+
+                                        {files.length > 0 && (
+                                            <div className="space-y-2">
+                                                <p className="text-sm font-medium">
+                                                    {t("createProduct.images.uploadedImages")} ({files.length}/5)
+                                                </p>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {files.map((fileOrUrl, index) => {
+                                                        const src =
+                                                            typeof fileOrUrl === "string"
+                                                                ? fileOrUrl
+                                                                : URL.createObjectURL(fileOrUrl);
+
+                                                        const isVideo =
+                                                            typeof fileOrUrl === "string"
+                                                                ? /\.(mp4|webm|ogg)$/i.test(fileOrUrl)
+                                                                : fileOrUrl.type.startsWith("video");
+
+                                                        return (
+                                                            <div key={index} className="relative group">
+                                                                <div className="aspect-square relative rounded-md overflow-hidden bg-gray-100">
+                                                                    {isVideo ? (
+                                                                        <video
+                                                                            src={src}
+                                                                            controls
+                                                                            className="w-full h-full object-cover"
+                                                                        />
+                                                                    ) : (
+                                                                        <Image
+                                                                            src={src || "/placeholder.svg"}
+                                                                            alt={`Media ${index + 1}`}
+                                                                            fill
+                                                                            className="object-cover"
+                                                                        />
+                                                                    )}
+                                                                </div>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => removeImage(index)}
+                                                                    className="absolute top-1 right-1 bg-white/80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                >
+                                                                    <X className="h-4 w-4 text-red-500" />
+                                                                </button>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
                                         )}
                                     </div>
                                 </CardContent>
@@ -342,15 +416,35 @@ export default function UploadPage() {
                                         onValueChange={(value) => setValue("type", value)}
                                         className="space-y-3"
                                     >
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value={t('productTypes.new')} id="type-new" />
-                                            <Label htmlFor="type-new" className="flex items-center">
-                                                <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
-                                                    {t("createProduct.dressType.new.label")}
-                                                </span>
-                                                {t("createProduct.dressType.new.description")}
-                                            </Label>
-                                        </div>
+
+                                        {/* { &&} */}
+                                        {!allowedDressTypes.includes('new') ?
+
+                                            <TooltipBox text={allowedDressTypes.includes('new') ? "" : "Upgrade plan to add new dresses"}>
+                                                <div className="flex items-center space-x-2">
+                                                    <RadioGroupItem disabled={!allowedDressTypes.includes('new')} value={t('productTypes.new')} id="type-new" />
+                                                    <Label htmlFor="type-new" className="flex items-center">
+                                                        <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
+                                                            {t("createProduct.dressType.new.label")}
+                                                        </span>
+                                                        {t("createProduct.dressType.new.description")}
+                                                    </Label>
+                                                </div>
+                                            </TooltipBox>
+                                            :
+                                            <div className="flex items-center space-x-2">
+                                                <RadioGroupItem value={t('productTypes.new')} id="type-new" />
+                                                <Label htmlFor="type-new" className="flex items-center">
+                                                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
+                                                        {t("createProduct.dressType.new.label")}
+                                                    </span>
+                                                    {t("createProduct.dressType.new.description")}
+                                                </Label>
+                                            </div>
+                                        }
+
+
+
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value={t('productTypes.used')} id="type-used" />
                                             <Label htmlFor="type-used" className="flex items-center">
@@ -609,7 +703,7 @@ export default function UploadPage() {
                                     </div>
 
                                     {/* Selected Color */}
-                                    <div className="space-y-2">
+                                    {/* <div className="space-y-2">
                                         <Label htmlFor="selectedColor">
                                             {t("createProduct.specifications.colors.selectedColor.label")} <span className="text-red-500">*</span>
                                         </Label>
@@ -632,7 +726,7 @@ export default function UploadPage() {
                                             </SelectContent>
                                         </Select>
                                         {errors.selectedColor && <p className="text-sm text-red-500">{errors.selectedColor.message}</p>}
-                                    </div>
+                                    </div> */}
 
                                     <Separator />
 
@@ -648,7 +742,7 @@ export default function UploadPage() {
                                             {errors.material && <p className="text-sm text-red-500">{errors.material.message}</p>}
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="careInstructions">{t("createProduct.specifications.careInstructions.label")}<span className="text-red-500">*</span></Label>
+                                            <Label htmlFor="careInstructions">{t("createProduct.specifications.careInstructions.label")}</Label>
                                             <Input
                                                 id="careInstructions"
                                                 {...register("careInstructions")}
@@ -779,7 +873,7 @@ export default function UploadPage() {
                                             {errors.qty && <p className="text-sm text-red-500">{errors.qty.message}</p>}
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="ref">{t("createProduct.specifications.reference.label")} <span className="text-red-500">*</span></Label>
+                                            <Label htmlFor="ref">{t("createProduct.specifications.reference.label")} </Label>
                                             <Input
                                                 id="ref"
                                                 {...register("ref")}
@@ -791,11 +885,11 @@ export default function UploadPage() {
 
                                     {/* State */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="state">{t("createProduct.specifications.state.label")} <span className="text-red-500">*</span></Label>
+                                        <Label htmlFor="state">{t("createProduct.specifications.city.label")} <span className="text-red-500">*</span></Label>
                                         <Input
                                             id="state"
                                             {...register("state")}
-                                            placeholder={t("createProduct.specifications.state.placeholder")}
+                                            placeholder={t("createProduct.specifications.city.placeholder")}
                                         />
                                         {errors.state && <p className="text-sm text-red-500">{errors.state.message}</p>}
                                     </div>
@@ -810,7 +904,14 @@ export default function UploadPage() {
                                     <div className="flex items-center space-x-2 pt-2">
                                         <Checkbox
                                             id="terms"
-                                        //   {...register("terms")} 
+                                          {...register("terms")} 
+                                           onCheckedChange={(checked) => {
+                                                    if (checked) {
+                                                        setValue("terms", true)
+                                                    } else {
+                                                        setValue("terms", false)
+                                                    }
+                                                }}
 
                                         />
                                         <Label htmlFor="terms" className="text-sm">
@@ -824,7 +925,7 @@ export default function UploadPage() {
                                             </Link>
                                         </Label>
                                     </div>
-                                    {/* {errors.terms && <p className="text-sm text-red-500">{errors.terms.message}</p>} */}
+                                    {errors.terms && <p className="text-sm text-red-500">{errors.terms.message}</p>}
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
                                     <Button variant="outline" type="button" onClick={() => router.back()}>

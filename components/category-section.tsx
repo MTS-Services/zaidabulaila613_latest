@@ -20,8 +20,8 @@ export default function CategorySection() {
   const { categories: cat } = useCategory()
   const { language, t } = useTranslation()
 
-  const catAr = cat.map((el, index) => { return { name: el.name.ar, id: el.id, backgroundColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', hoverColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', textColor: '#FFFFFF' } })
-  const catEn = cat.map((el, index) => { return { name: el.name.en, id: el.id, backgroundColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', hoverColor: index === 0 || index === 1 ? '#CC9765' : '#2D3748', textColor: '#FFFFFF' } })
+  const catAr = cat.map((el, index) => { return { name: el.name.ar, id: el.id, backgroundColor:  '#2D3748', hoverColor:  '#2D3748', textColor: '#FFFFFF' } })
+  const catEn = cat.map((el, index) => { return { name: el.name.en, id: el.id, backgroundColor:  '#2D3748', hoverColor:  '#2D3748', textColor: '#FFFFFF' } })
 
 
   console.log(cat, "cat")

@@ -30,4 +30,5 @@ export interface LoginUser {
   access_token: string;
   user: User;
   subscription: ISubscription | null
+  productsCount: number
 }

@@ -20,6 +20,12 @@ export const CREATE_USER_MUTATION = gql`
         }
       }
     }
+        subscription{
+      id
+    userId
+    status
+    plan
+    }
   }
 }
 

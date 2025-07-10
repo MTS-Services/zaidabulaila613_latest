@@ -1,7 +1,11 @@
+'use client'
 import { config } from "@/constants/app";
 import { useTranslation } from "@/hooks/use-translation";
+import { useUserSubscription } from "@/hooks/useSubscription";
 import { ShoppingBag } from "lucide-react";
 import React from "react";
+import TooltipBox from "./tooltipBox";
+import { useRouter } from "next/navigation";
 
 interface ProductActionButtonProps {
     user: any;
@@ -18,10 +22,12 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
     addToCart,
     className = "",
 }) => {
+    const router = useRouter()
     // User is viewing their own product - don't show any button
     if (user && user?.user?.id === product.user?.id) {
         return null;
     }
+    const { canContactSeller } = useUserSubscription()
 
     const handleClick = (phone: string, productName: string) => {
         // const phoneNumber = '923001234567'; // Replace with your number (e.g., 92 for Pakistan)
@@ -54,10 +60,10 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
             },
         });
     };
-const {t} = useTranslation();
+    const { t } = useTranslation();
 
     // Product is for sale
-    if (product.type !== "rental") {
+    if (product.type === "new") {
         return (
             <button
                 className={`cart-button noselect w-full mt-3 ${className} disabled:bg-gold-light`}
@@ -81,15 +87,36 @@ const {t} = useTranslation();
 
     // Product is for rental/contact
     return (
-        <button className={`cart-button noselect w-full mt-3 ${className}`} onClick={() => handleClick(product?.user?.account?.mobile, product?.name)}>
-            <span className="text">
-                {/* {product.type === "rental" ? "Rent Now" : "Contact Seller"} */}
-                Contact Seller
-            </span>
-            <span className="icon">
-                <ShoppingBag className="h-5 w-5" />
-            </span>
-        </button>
+        <>
+            {
+                canContactSeller ?
+
+                    <button className={`cart-button noselect w-full mt-3 ${className}`} onClick={() => handleClick(product?.user?.account?.mobile, product?.name)}>
+                        <span className="text">
+                            {/* {product.type === "rental" ? "Rent Now" : "Contact Seller"} */}
+                            Contact Seller
+                        </span>
+                        <span className="icon">
+                            <ShoppingBag className="h-5 w-5" />
+                        </span>
+                    </button>
+                    :
+                    <TooltipBox text="Upgrade your subscription.">
+
+                        <button className={`cart-button noselect w-full mt-3 ${className}`} onClick={() => router.push(`/dashboard/subscription`)}>
+                            <span className="text">
+                                {/* {product.type === "rental" ? "Rent Now" : "Contact Seller"} */}
+                                Contact Seller
+                            </span>
+                            <span className="icon">
+                                <ShoppingBag className="h-5 w-5" />
+                            </span>
+                        </button>
+                    </TooltipBox>
+
+            }
+
+        </>
     );
 };
 

@@ -71,11 +71,11 @@ export function VendorGrid() {
       sortOrder: "desc",
     })
   }
-const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <>
-      
+
       {count === 0 ? (
         <div className="text-center py-12">
           <h2 className="text-xl font-medium mb-2">{t('vendorpage.novendor')}</h2>
@@ -98,12 +98,15 @@ const {t} = useTranslation();
               </div>
 
               <div className="max-w-md mx-auto mt-6">
-                <form onSubmit={() => { handleSearch() }}>
+                <form onSubmit={(e) => {
+                  e.preventDefault()
+                  handleSearch()
+                }}>
                   <div className="relative">
 
                     <Input
                       type="search"
-                      placeholder= {t('vendorpage.placeholder')}
+                      placeholder={t('vendorpage.placeholder')}
                       className="w-full bg-slate-50 pl-8 rounded-lg border-slate-200"
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -230,7 +233,7 @@ const {t} = useTranslation();
             ))}
           </div>
 
-          
+
         </>
       )}
       {loading && <Loader />}

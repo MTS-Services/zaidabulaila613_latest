@@ -31,6 +31,8 @@ import { useTranslation } from "@/hooks/use-translation"
 import { useCurrency } from "@/contexts/currency-context"
 import { arColors, enColors } from "@/constants/colors"
 import { config } from "@/constants/app"
+import { useUserSubscription } from "@/hooks/useSubscription"
+import TooltipBox from "@/components/tooltipBox"
 
 // Zod schema for form validation (same as create)
 const formSchema = z.object({
@@ -41,10 +43,10 @@ const formSchema = z.object({
     type: z.string().min(1, "Product type is required"),
     category: z.string().min(1, "Category is required"),
     colors: z.array(z.string()).min(1, "At least one color is required"),
-    selectedColor: z.string().min(1, "Selected color is required"),
+    selectedColor: z.string().optional(),
     sizes: z.array(z.string()).min(1, "At least one size is required"),
     material: z.string().min(1, "Material is required"),
-    careInstructions: z.string().min(1, "Care instructions are required"),
+    careInstructions: z.string().optional(),
     chest: z.number().min(0, "Chest measurement must be positive").optional(),
     waist: z.number().min(0, "Waist measurement must be positive").optional(),
     hip: z.number().min(0, "Hip measurement must be positive").optional(),
@@ -54,8 +56,9 @@ const formSchema = z.object({
     sleeve: z.boolean().optional(),
     underlay: z.boolean().optional(),
     qty: z.number().min(1, "Quantity must be at least 1"),
-    ref: z.string().min(1, "Reference is required"),
+    ref: z.string().optional(),
     state: z.string().min(1, "State is required"),
+    terms: z.boolean().refine(val => val, "You must accept the terms and conditions")
 
 })
 
@@ -73,7 +76,7 @@ export default function UpdateProduct({ id }: { id: string }) {
 
     const { t, language } = useTranslation()
     const { selectedCurrency } = useCurrency()
-
+    const { bulkUpload, allowedDressTypes, maxMediaPerDress, maxDresses } = useUserSubscription()
     const { data: categoryData } = useQuery(GET_CATEGORIES)
     const categoryOptions = useMemo(() => {
         return (categoryData?.categories || []).map((category: any) => ({
@@ -92,7 +95,7 @@ export default function UpdateProduct({ id }: { id: string }) {
     })
 
     const [updateProduct] = useMutation(UPDATE_PRODUCT, {
-     
+
     })
 
 
@@ -122,6 +125,7 @@ export default function UpdateProduct({ id }: { id: string }) {
             qty: 1,
             ref: "",
             state: "",
+            terms: false
         }
     })
 
@@ -142,7 +146,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                     ? (product.type.charAt(0).toUpperCase() + product.type.slice(1).toLowerCase()) as "New" | "Used" | "Rental"
                     : product.type,
                 category: product.category?.id, // or use find(categoryOptions) if needed
-                colors: product.color.map((el:any) => el.toLowerCase()) || [],
+                colors: product.color.map((el: any) => el.toLowerCase()) || [],
                 selectedColor: product.selectedColor || "",
                 sizes: product.size?.map((s: any) => s.value) || [],
                 material: product.material || "",
@@ -188,20 +192,14 @@ export default function UpdateProduct({ id }: { id: string }) {
         const files = e.target.files
         if (!files) return
 
-        // Limit to 5 images
-        if (!user?.subscription) {
-            // Limit to 5 images
-            if (images.length + files.length > 5) {
+        if (maxMediaPerDress !== "unlimited" && images.length + files.length > maxMediaPerDress) {
 
-                enqueueSnackbar('Maximum 5 images allowed. Upgrade your subscription to add more.', {
-                    variant: 'error',
-                    anchorOrigin: { horizontal: "center", vertical: "bottom" },
-                });
-                return
-            }
-
+            enqueueSnackbar(`Maximum ${maxMediaPerDress} images allowed, upgrade your subscription to add more.`, {
+                variant: 'error',
+                anchorOrigin: { horizontal: "center", vertical: "bottom" },
+            });
+            return
         }
-
         // Create preview URLs for the images
         Array.from(files).forEach((file) => {
             const reader = new FileReader()
@@ -318,7 +316,7 @@ export default function UpdateProduct({ id }: { id: string }) {
 
     const price = watch('price')
     console.log(price, "Price")
-    console.log(errors, "Errors")
+    console.log(images, "images")
     return (
         <div className="min-h-screen bg-slate-50 py-8 md:py-12">
             <div className="container px-4 md:px-6">
@@ -350,7 +348,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                                                 type="file"
                                                 id="images"
                                                 multiple
-                                                accept="image/*"
+                                                accept={user?.subscription?.plan === "BASIC" ? `image/*` : `image/*,video/*`}
                                                 className="hidden"
                                                 onChange={handleImageUpload}
                                             />
@@ -365,7 +363,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                                         </div>
 
                                         {/* Existing image previews */}
-                                        {existingImages.length > 0 && (
+                                        {/* {existingImages.length > 0 && (
                                             <div className="space-y-2">
                                                 <p className="text-sm font-medium">{t('updateProduct.current_images')}</p>
                                                 <div className="grid grid-cols-2 gap-2">
@@ -390,32 +388,95 @@ export default function UpdateProduct({ id }: { id: string }) {
                                                     ))}
                                                 </div>
                                             </div>
+                                        )} */}
+                                        {existingImages.length > 0 && (
+                                            <div className="space-y-2">
+                                                <p className="text-sm font-medium">
+                                                    {t("updateProduct.new_images")} ({images.length}/5)
+                                                </p>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {existingImages.map((src, index) => {
+                                                        // const isVideo = typeof src === "string" && /\.(mp4|webm|ogg)$/i.test(src);
+                                                        const isVideo = typeof src?.path === "string" && /\.(mp4|webm|ogg)$/i.test((src as any).path);
+
+                                                        return (
+                                                            <div key={index} className="relative group">
+                                                                <div className="aspect-square relative rounded-md overflow-hidden bg-gray-100">
+                                                                    {isVideo ? (
+                                                                        <video
+                                                                            src={config.API_URL + (src as any)?.path}
+                                                                            controls
+                                                                            className="w-full h-full object-cover"
+                                                                        />
+                                                                    ) : (
+                                                                        <Image
+                                                                            src={config.API_URL + src.path || "/placeholder.svg"}
+                                                                            alt={`Media ${index + 1}`}
+                                                                            fill
+                                                                            className="object-cover"
+                                                                        />
+                                                                    )}
+                                                                </div>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => removeImage(index)}
+                                                                    className="absolute top-1 right-1 bg-white/80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                >
+                                                                    <X className="h-4 w-4 text-red-500" />
+                                                                </button>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
                                         )}
 
                                         {/* New image previews */}
-                                        {images.length > 0 && (
+                                        {files.length > 0 && (
                                             <div className="space-y-2">
-                                                <p className="text-sm font-medium">{t('updateProduct.new_images')} ({images.length}/5)</p>
+                                                <p className="text-sm font-medium">
+                                                    {t("updateProduct.new_images")} ({files.length}/5)
+                                                </p>
                                                 <div className="grid grid-cols-2 gap-2">
-                                                    {images.map((image, index) => (
-                                                        <div key={index} className="relative group">
-                                                            <div className="aspect-square relative rounded-md overflow-hidden">
-                                                                <Image
-                                                                    src={image || "/placeholder.svg"}
-                                                                    alt={`New dress image ${index + 1}`}
-                                                                    fill
-                                                                    className="object-cover"
-                                                                />
+                                                    {files.map((fileOrUrl, index) => {
+                                                        const src =
+                                                            typeof fileOrUrl === "string"
+                                                                ? fileOrUrl
+                                                                : URL.createObjectURL(fileOrUrl);
+
+                                                        const isVideo =
+                                                            typeof fileOrUrl === "string"
+                                                                ? /\.(mp4|webm|ogg)$/i.test(fileOrUrl)
+                                                                : fileOrUrl.type.startsWith("video");
+
+                                                        return (
+                                                            <div key={index} className="relative group">
+                                                                <div className="aspect-square relative rounded-md overflow-hidden bg-gray-100">
+                                                                    {isVideo ? (
+                                                                        <video
+                                                                            src={src}
+                                                                            controls
+                                                                            className="w-full h-full object-cover"
+                                                                        />
+                                                                    ) : (
+                                                                        <Image
+                                                                            src={src || "/placeholder.svg"}
+                                                                            alt={`Media ${index + 1}`}
+                                                                            fill
+                                                                            className="object-cover"
+                                                                        />
+                                                                    )}
+                                                                </div>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => removeImage(index)}
+                                                                    className="absolute top-1 right-1 bg-white/80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                >
+                                                                    <X className="h-4 w-4 text-red-500" />
+                                                                </button>
                                                             </div>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => removeImage(index)}
-                                                                className="absolute top-1 right-1 bg-white/80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                            >
-                                                                <X className="h-4 w-4 text-red-500" />
-                                                            </button>
-                                                        </div>
-                                                    ))}
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
                                         )}
@@ -433,20 +494,41 @@ export default function UpdateProduct({ id }: { id: string }) {
                                         name="type"
                                         control={control}
                                         render={({ field }) => (
+
+
+
+
+
                                             <RadioGroup
                                                 value={field.value}
                                                 onValueChange={field.onChange}
                                                 className="space-y-3"
                                             >
-                                                <div className="flex items-center space-x-2">
-                                                    <RadioGroupItem value={t('productTypes.new')} id="type-new" />
-                                                    <Label htmlFor="type-new" className="flex items-center">
-                                                        <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
-                                                            {t("createProduct.dressType.new.label")}
-                                                        </span>
-                                                        {t("createProduct.dressType.new.description")}
-                                                    </Label>
-                                                </div>
+                                                {!allowedDressTypes.includes('new') ?
+                                                    <TooltipBox text={"Upgrade plan to add new dresses"}>
+
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem disabled value={t('productTypes.new')} id="type-new" />
+                                                            <Label htmlFor="type-new" className="flex items-center">
+                                                                <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
+                                                                    {t("createProduct.dressType.new.label")}
+                                                                </span>
+                                                                {t("createProduct.dressType.new.description")}
+                                                            </Label>
+                                                        </div>
+                                                    </TooltipBox>
+                                                    :
+
+                                                    <div className="flex items-center space-x-2">
+                                                        <RadioGroupItem value={t('productTypes.new')} id="type-new" />
+                                                        <Label htmlFor="type-new" className="flex items-center">
+                                                            <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
+                                                                {t("createProduct.dressType.new.label")}
+                                                            </span>
+                                                            {t("createProduct.dressType.new.description")}
+                                                        </Label>
+                                                    </div>
+                                                }
                                                 <div className="flex items-center space-x-2">
                                                     <RadioGroupItem value={t('productTypes.used')} id="type-used" />
                                                     <Label htmlFor="type-used" className="flex items-center">
@@ -715,7 +797,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                                     </div>
 
                                     {/* Selected Color */}
-                                    <div className="space-y-2">
+                                    {/* <div className="space-y-2">
                                         <Label htmlFor="selectedColor">
                                             {t("createProduct.specifications.colors.selectedColor.label")} <span className="text-red-500">*</span>
                                         </Label>
@@ -735,7 +817,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                                             )}
                                         />
                                         {errors.selectedColor && <p className="text-sm text-red-500">{errors.selectedColor.message}</p>}
-                                    </div>
+                                    </div> */}
 
                                     <Separator />
 
@@ -757,7 +839,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                                             {errors.material && <p className="text-sm text-red-500">{errors.material.message}</p>}
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="careInstructions">{t("createProduct.specifications.careInstructions.label")} <span className="text-red-500">*</span></Label>
+                                            <Label htmlFor="careInstructions">{t("createProduct.specifications.careInstructions.label")}</Label>
                                             <Controller
                                                 name="careInstructions"
                                                 control={control}
@@ -962,7 +1044,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                                             {errors.qty && <p className="text-sm text-red-500">{errors.qty.message}</p>}
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="ref">{t("createProduct.specifications.reference.label")} <span className="text-red-500">*</span></Label>
+                                            <Label htmlFor="ref">{t("createProduct.specifications.reference.label")} </Label>
                                             <Controller
                                                 name="ref"
                                                 control={control}
@@ -980,7 +1062,7 @@ export default function UpdateProduct({ id }: { id: string }) {
 
                                     {/* State */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="state">{t("createProduct.specifications.state.label")} <span className="text-red-500">*</span></Label>
+                                        <Label htmlFor="state">{t("createProduct.specifications.city.label")} <span className="text-red-500">*</span></Label>
                                         <Controller
                                             name="state"
                                             control={control}
@@ -988,7 +1070,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                                                 <Input
                                                     id="state"
                                                     {...field}
-                                                    placeholder={t("createProduct.specifications.state.placeholder")}
+                                                    placeholder={t("createProduct.specifications.city.placeholder")}
                                                 />
                                             )}
                                         />
@@ -1003,17 +1085,39 @@ export default function UpdateProduct({ id }: { id: string }) {
 
 
                                     <div className="flex items-center space-x-2 pt-2">
-                                        <Checkbox id="terms" />
-                                        <Label htmlFor="terms" className="text-sm">
-                                            {t("createProduct.terms.agree")}{" "}
-                                            <Link href="#" className="text-gold hover:underline">
-                                                {t("createProduct.terms.terms")}
-                                            </Link>{" "}
 
-                                            <Link href="#" className="text-gold hover:underline">
-                                                {t("createProduct.terms.privacy")}
-                                            </Link>
-                                        </Label>
+
+                                        <Controller
+                                            name="terms"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <div className="flex items-center space-x-2">
+                                                    <Checkbox id="terms"
+                                                    
+                                                     onCheckedChange={(checked) => {
+                                                                    if (checked) {
+                                                                        setValue("terms", true)
+                                                                    } else {
+                                                                        setValue("terms", false)
+                                                                    }
+                                                                }}
+
+                                                    />
+                                                    <Label htmlFor="terms" className="text-sm">
+                                                        {t("createProduct.terms.agree")}{" "}
+                                                        <Link href="#" className="text-gold hover:underline">
+                                                            {t("createProduct.terms.terms")}
+                                                        </Link>{" "}
+
+                                                        <Link href="#" className="text-gold hover:underline">
+                                                            {t("createProduct.terms.privacy")}
+                                                        </Link>
+                                                    </Label>
+                                                </div>
+                                            )}
+                                        />
+                                        {errors.terms && <p className="text-sm text-red-500">{errors.terms.message}</p>}
+
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">

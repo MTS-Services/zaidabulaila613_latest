@@ -4,7 +4,7 @@ export const heroContent = {
   description: "Win a $100 gift by registering on our website",
   cta: {
     text: "Register Now",
-    href: "#",
+    href: "/signup",
   },
   announcement: {
     prefix: "Special Offer:",

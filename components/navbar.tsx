@@ -261,7 +261,7 @@ export default function Navbar() {
             <NavLinkWithDropdown
               label={t("navbar.shop")}
               items={[
-                { label: t("navbar.allProducts"), href: "/products" },
+                // { label: t("navbar.allProducts"), href: "/products" },
                 ...displayProductTypes
               ]}
             />
@@ -332,7 +332,7 @@ export default function Navbar() {
         </div>
 
         {/* Right - Icons */}
-        <div className="flex items-center gap-4 w-[200px] justify-end">
+        <div className="flex items-center gap-4 w-[750px] justify-end">
           {/* Search Icon */}
           <div className={`hidden lg:block transition-all duration-300 ${searchExpanded ? 'w-[300px]' : 'w-auto'}`}>
             <div className="search-container">
@@ -362,7 +362,9 @@ export default function Navbar() {
           </div>
 
           {/* Upload Icon Button - Updated size and position */}
-          <Link href="/dashboard/upload" className="hidden lg:flex flex-col items-center justify-center relative p-2 rounded-full transition-colors">
+          <Link href="/dashboard/dress/create" className="hidden lg:flex flex-col items-center justify-center relative p-2 rounded-full transition-colors">
+            
+            <div className="flex gap-2 items-center w-full">
             <div className="group cursor-pointer outline-none hover:rotate-90 duration-300">
               <svg
                 className="stroke-gold fill-none group-hover:fill-black/20 group-hover:stroke-gold group-active:stroke-gold/50 group-active:fill-gold group-active:duration-0 duration-300 h-10 w-10"
@@ -376,6 +378,9 @@ export default function Navbar() {
                 <path strokeWidth="1.5" d="M8 12H16"></path>
                 <path strokeWidth="1.5" d="M12 16V8"></path>
               </svg>
+            </div>
+            <p className="text-gold-dark mb-0 font-semibold">Upload Dress</p>
+
             </div>
           </Link>
 

@@ -23,9 +23,9 @@ export const pricingPlans: PricingPlan[] = [
             'Basic visibility'
         ],
         prices: {
-            monthly: { price: 9.99, priceId: 'price_1RYgmZInHvXcV9Pz2seilITg' },
-            quarterly: { price: 26.97, priceId: 'price_1RYgmZInHvXcV9PzMyZltjkq' }, // 10% discount
-            yearly: { price: 80, priceId: 'price_1RYgmZInHvXcV9PzMPJnMNDc' } // 20% discount
+            monthly: { price: 0, priceId: 'price_1RYgmZInHvXcV9Pz2seilITg' },
+            quarterly: { price: 0, priceId: 'price_1RYgmZInHvXcV9PzMyZltjkq' }, // 10% discount
+            yearly: { price: 0, priceId: 'price_1RYgmZInHvXcV9PzMPJnMNDc' } // 20% discount
         }
     },
     {

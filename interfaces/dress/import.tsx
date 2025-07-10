@@ -7,6 +7,8 @@ import { useMutation } from '@apollo/client';
 import { enqueueSnackbar } from 'notistack';
 import { Button } from '@/components/ui/button';
 import ProductLoader from '@/components/productLoader';
+import { useUserSubscription } from '@/hooks/useSubscription';
+import { useAuth } from '@/contexts/auth-context';
 
 const REQUIRED_HEADERS = [
     "language",
@@ -44,7 +46,9 @@ export default function ImportDress() {
     const [loading, setIsLoading] = useState(false);
     const [uploading, setUploading] = useState(false)
     const [productCount, setProductsCount] = useState<number>(0)
-
+    const {bulkUpload, maxDresses} = useUserSubscription()
+    const {user} = useAuth()
+    console.log(user?.productsCount, "user products count")
     const [uploadCsv] = useMutation(IMPORT_PRODUCT, {
         
     })
@@ -72,6 +76,10 @@ export default function ImportDress() {
                 if (rows.length === 0) {
                     setError('CSV file contains no rows.');
                     return;
+                }
+
+                if(!bulkUpload){
+                    setError('Upgrade your subscription.');
                 }
 
                 setCsvFile(file)

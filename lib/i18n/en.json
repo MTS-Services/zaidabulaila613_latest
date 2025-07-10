@@ -103,7 +103,12 @@
             "state": {
                 "label": "State",
                 "placeholder": "e.g., New York"
+            },
+            "city": {
+                "label": "City",
+                "placeholder": "e.g., New York"
             }
+
         },
         "terms": {
             "agree": "I agree to the",

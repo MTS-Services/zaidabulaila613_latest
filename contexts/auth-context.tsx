@@ -9,6 +9,7 @@ interface AuthContextType {
   login: (data: LoginUser) => void;
   updateUser: (newAccount: LoginUser["user"]["account"]) => void;
   updateUserSubscription: (subscription: LoginUser["subscription"]) => void;
+  updateUserProductsCount: (count: number) => void;
   logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
@@ -59,6 +60,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   setUser(updatedUser);
   localStorage.setItem("loginUser", JSON.stringify(updatedUser));
 };
+ const updateUserProductsCount = (count: number) => {
+  if (!user) return;
+
+  const updatedUser: LoginUser = {
+    ...user,
+    productsCount: count
+  };
+
+  setUser(updatedUser);
+  localStorage.setItem("loginUser", JSON.stringify(updatedUser));
+};
 
   const logout = () => {
     setUser(null);
@@ -69,7 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const isAuthenticated = !!user?.access_token;
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated, loading, updateUser, updateUserSubscription }}>
+    <AuthContext.Provider value={{ user, login, logout,updateUserProductsCount, isAuthenticated, loading, updateUser, updateUserSubscription }}>
       {children}
     </AuthContext.Provider>
   );

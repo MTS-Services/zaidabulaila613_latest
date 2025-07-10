@@ -22,6 +22,7 @@ import { useCurrency } from "@/contexts/currency-context"
 import ProductCard from "@/components/productCard"
 import Loader from "@/components/loader"
 import { useUpdateQueryParams } from "@/hooks/useSearchParams"
+import Pagination from "@/components/pagination"
 
 
 interface ProductListProps {
@@ -46,12 +47,11 @@ export default function ProductList({ searchPlaceHolder, categoryId,
     // State for filters
     const [productType, setProductType] = useState<string[]>([])
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000])
-    const [filteredProducts, setFilteredProducts] = useState<any[]>([])
-    const [groupedByVendor, setGroupedByVendor] = useState<Record<string, any[]>>({})
     const [selectedVendors, setSelectedVendors] = useState<string[]>([])
     const [searchTerm, setSearchTerm] = useState(searchQuery ? searchQuery : "")
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
     const [activeFilters, setActiveFilters] = useState<string[]>([])
+    const [currentPage, setCurrentPage] = useState(1)
     const { categories } = useCategory()
     const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist()
     const { addToCart } = useCart()
@@ -61,7 +61,7 @@ export default function ProductList({ searchPlaceHolder, categoryId,
     const queryVariables: any = {
         language: language,
         currency: selectedCurrency.code.toLowerCase(),
-        page: 1,
+        page: currentPage,
         limit: 10,
         search: searchQuery ? searchQuery : "",
         sortField: "createdAt",
@@ -111,10 +111,15 @@ export default function ProductList({ searchPlaceHolder, categoryId,
 
     useEffect(() => {
         if (searchQuery) {
+
             setSearchTerm(searchQuery)
             refetch(queryVariables)
         }
     }, [searchQuery])
+
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [searchQuery, categoryId, type, minPrice, maxPrice, colors, categoryIds, vendorParam, sizeParam])
 
     // Apply filters and group by vendor
     // useEffect(() => {
@@ -191,6 +196,11 @@ export default function ProductList({ searchPlaceHolder, categoryId,
         })
     }
 
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page)
+    }
+    const totalPages = data?.products?.total ? Math.ceil(data?.products?.total / 10) : 1
+
     // Handle wishlist toggle
     const handleWishlistToggle = (product: any) => {
         if (isInWishlist(product.id)) {
@@ -239,7 +249,7 @@ export default function ProductList({ searchPlaceHolder, categoryId,
 
     const products = data?.products?.data || []
     const count = data?.products?.total
-const {t} = useTranslation();
+    const { t } = useTranslation();
 
     return (
         <div>
@@ -251,7 +261,7 @@ const {t} = useTranslation();
                         <div className="flex items-center gap-2">
                             <Button variant="outline" className="flex items-center gap-2" onClick={() => setIsFilterModalOpen(true)}>
                                 <SlidersHorizontal className="h-4 w-4" />
-                               {t('productpage.filter')}
+                                {t('productpage.filter')}
                             </Button>
 
                             {/* Search Input */}
@@ -316,6 +326,17 @@ const {t} = useTranslation();
                                             <ProductCard product={el} />
                                         )
                                     })}
+                                </div>
+                                <div className="mt-16">
+                                    {products.length > 0 && (
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+                                            onPageChange={handlePageChange}
+                                            direction={language === "AR" ? "rtl" : "ltr"}
+                                        />
+                                    )}
+
                                 </div>
                             </div>
 

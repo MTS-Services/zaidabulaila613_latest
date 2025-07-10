@@ -3,15 +3,16 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { useWishlist } from "@/hooks/use-wishlist"
+import { useWishlist, WishlistItem } from "@/hooks/use-wishlist"
 
 interface HeartButtonProps {
-  productId: number
+  productId: string
   className?: string
   size?: "sm" | "md" | "lg"
+  product:WishlistItem;
 }
 
-export default function HeartButton({ productId, className = "", size = "md" }: HeartButtonProps) {
+export default function HeartButton({ productId, className = "", size = "md", product }: HeartButtonProps) {
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist()
   const [isLiked, setIsLiked] = useState(false)
 
@@ -29,16 +30,7 @@ export default function HeartButton({ productId, className = "", size = "md" }: 
     } else {
       // We need product details to add to wishlist, but we only have ID here
       // In a real implementation, you'd either pass the full product or fetch it
-      addToWishlist({
-        id: productId,
-        name: "Product", // This would be replaced with actual product data
-        price: "0",
-        images: ["/placeholder.svg"],
-        vendor: {
-          name: "Vendor",
-          slug: "vendor",
-        },
-      })
+      addToWishlist(product)
     }
 
     setIsLiked(!isLiked)

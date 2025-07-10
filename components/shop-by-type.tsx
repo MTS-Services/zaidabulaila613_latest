@@ -3,10 +3,13 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { shopTypeContent } from "@/constants/shop/shop-type"
+import { useLanguage } from "@/contexts/language-context"
+import { arProductTypes, enProductTypes } from "@/constants/product"
 
 export default function ShopByType() {
   const router = useRouter()
   const [activeButton, setActiveButton] = useState<string | null>(null)
+  const {language} = useLanguage()
   const { buttons, styles } = shopTypeContent
 
   const handleButtonClick = (buttonId: string, link: string) => {
@@ -15,6 +18,8 @@ export default function ShopByType() {
       router.push(link)
     }, shopTypeContent.navigationDelay)
   }
+
+  const prTypes = language === "AR" ? arProductTypes : enProductTypes
 
   return (
     <section className="py-12 md:py-16 bg-white lg:hidden">
@@ -32,19 +37,19 @@ export default function ShopByType() {
 
         <div className="max-w-xs mx-auto">
           <div className="customCheckBoxHolder">
-            {buttons.map((button) => (
-              <div key={button.id} className="w-full">
+            {prTypes.map((button, index) => (
+              <div key={index} className="w-full">
                 <input
                   className="customCheckBoxInput"
-                  id={`type-${button.id}`}
+                  id={`type-${index}`}
                   type="radio"
                   name="dressType"
-                  checked={activeButton === button.id}
-                  onChange={() => handleButtonClick(button.id, button.link)}
+                  checked={activeButton === button}
+                  onChange={() => handleButtonClick(button, `/products?type=${button.toLowerCase()}`)}
                 />
-                <label className={`customCheckBoxWrapper ${button.className}`} htmlFor={`type-${button.id}`}>
+                <label className={`customCheckBoxWrapper`} htmlFor={`type-${index}`}>
                   <div className="customCheckBox">
-                    <div className="inner">{button.title}</div>
+                    <div className="inner">{button}</div>
                   </div>
                 </label>
               </div>

@@ -10,6 +10,7 @@ import { useWishlist } from "@/hooks/use-wishlist"
 import { useCart } from "@/hooks/use-cart"
 import { useTranslation } from "@/hooks/use-translation"
 import { useCurrency } from "@/contexts/currency-context"
+import { config } from "@/constants/app"
 
 export default function WishlistPage() {
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist()
@@ -47,7 +48,7 @@ const {selectedCurrency} = useCurrency()
                     <Link href={`/products/${item.id}`}>
                       <div className="aspect-[3/4] relative overflow-hidden">
                         <Image
-                          src={item.images?.[0] || "/placeholder.svg?height=400&width=300"}
+                          src={config.API_URL && config.API_URL+item.images?.[0] || "/placeholder.svg?height=400&width=300"}
                           alt={item.name}
                           fill
                           className="object-cover transition-transform hover:scale-105"

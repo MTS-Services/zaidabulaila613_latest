@@ -90,6 +90,7 @@ export default function Product({id}:{id:string}) {
       setMainImage(data?.productById.pictures[0])
     }
   }, [data])
+  const {t} = useTranslation();
 
   const product = data?.productById
   if (loading) {
@@ -158,7 +159,8 @@ export default function Product({id}:{id:string}) {
 const matchedColors = (language === "AR" ? arColors : enColors).filter((color) =>
   product.color.some((c: string) => c.toLowerCase() === color.value.toLowerCase())
 );
-const {t} = useTranslation();
+
+
 
   return (
     <div className="min-h-screen bg-white">
@@ -352,9 +354,19 @@ const {t} = useTranslation();
                 addToCart={addToCart}
             />
 
-              {/* <div className="h-10 w-10 flex items-center justify-center">
-                <HeartButton productId={product.id} size="md" />
-              </div> */}
+              <div className="h-10 w-10 flex items-center justify-center">
+                <HeartButton productId={product.id} size="md" product={{
+                  id:product.id,
+                  name:product.name,
+                  price:product.price || 0,
+                  vendor:{
+                    name: '',
+                    slug:''
+                  },
+                  images:product.pictures.map((el) => el.path),
+                  originalPrice: product.oldPrice || 0
+                }}/>
+              </div>
             </div>
 
             {/* Payment Methods */}

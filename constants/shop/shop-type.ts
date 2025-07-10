@@ -6,19 +6,19 @@ export const shopTypeContent = {
     {
       id: "used",
       title: "Used",
-      link: "/shop-by-type?type=Used",
+      link: "/products?type=Used",
       className: "top-button",
     },
     {
       id: "rental",
       title: "Rent",
-      link: "/shop-by-type?type=Rental",
+      link: "/products?type=Rental",
       className: "middle-button",
     },
     {
       id: "new",
       title: "New",
-      link: "/shop-by-type?type=New",
+      link: "/products?type=New",
       className: "bottom-button",
     },
   ],

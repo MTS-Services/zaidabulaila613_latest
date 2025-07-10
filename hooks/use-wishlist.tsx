@@ -4,8 +4,8 @@ import type React from "react"
 
 import { createContext, useContext, useState, useEffect } from "react"
 
-type WishlistItem = {
-  id: number
+export type WishlistItem = {
+  id: string
   name: string
   price: number | string
   originalPrice?: number | string
@@ -20,9 +20,9 @@ type WishlistItem = {
 type WishlistContextType = {
   wishlist: WishlistItem[]
   addToWishlist: (item: WishlistItem) => void
-  removeFromWishlist: (id: number) => void
+  removeFromWishlist: (id: string) => void
   clearWishlist: () => void
-  isInWishlist: (id: number) => boolean
+  isInWishlist: (id: string) => boolean
   wishlistCount: () => number
 }
 
@@ -65,7 +65,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   }
 
   // Remove item from wishlist
-  const removeFromWishlist = (id: number) => {
+  const removeFromWishlist = (id: string) => {
     setWishlist((prevWishlist) => prevWishlist.filter((item) => item.id !== id))
   }
 
@@ -75,7 +75,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   }
 
   // Check if item is in wishlist
-  const isInWishlist = (id: number) => {
+  const isInWishlist = (id: string) => {
     return wishlist.some((item) => item.id === id)
   }
 

@@ -28,7 +28,7 @@ import ReactCountryFlag from "react-country-flag"
 import { useDrawer } from "@/contexts/drawer-context"
 import { contactInfo, shippingInfo } from "@/constants/contact"
 import { useCurrency } from "@/contexts/currency-context"
-import { currencies } from "@/lib/utils"
+import { arCurrencies, enCurrencies } from "@/lib/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { useLanguage } from "@/contexts/language-context"
 import { useCategory } from "@/contexts/category-context"
@@ -107,6 +107,8 @@ export default function Navbar() {
       href: `/products?type=${el.toLowerCase()}`
     }
   })
+
+  const currencies = language === "AR" ? arCurrencies : enCurrencies
 
   const handleSelect = (lang: "EN" | "AR") => {
     setLanguage(lang);
@@ -352,7 +354,7 @@ export default function Navbar() {
                   e.preventDefault()
                   updateQuery({ search: searchTerm })
                 }}>
-                  <input className="search-input" placeholder="Search" type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                  <input className="search-input" placeholder={t("common.search")} type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
 
 
                 </form>
@@ -363,23 +365,23 @@ export default function Navbar() {
 
           {/* Upload Icon Button - Updated size and position */}
           <Link href="/dashboard/dress/create" className="hidden lg:flex flex-col items-center justify-center relative p-2 rounded-full transition-colors">
-            
+
             <div className="flex gap-2 items-center w-full">
-            <div className="group cursor-pointer outline-none hover:rotate-90 duration-300">
-              <svg
-                className="stroke-gold fill-none group-hover:fill-black/20 group-hover:stroke-gold group-active:stroke-gold/50 group-active:fill-gold group-active:duration-0 duration-300 h-10 w-10"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeWidth="1.5"
-                  d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                ></path>
-                <path strokeWidth="1.5" d="M8 12H16"></path>
-                <path strokeWidth="1.5" d="M12 16V8"></path>
-              </svg>
-            </div>
-            <p className="text-gold-dark mb-0 font-semibold">Upload Dress</p>
+              <div className="group cursor-pointer outline-none hover:rotate-90 duration-300">
+                <svg
+                  className="stroke-gold fill-none group-hover:fill-black/20 group-hover:stroke-gold group-active:stroke-gold/50 group-active:fill-gold group-active:duration-0 duration-300 h-10 w-10"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeWidth="1.5"
+                    d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                  ></path>
+                  <path strokeWidth="1.5" d="M8 12H16"></path>
+                  <path strokeWidth="1.5" d="M12 16V8"></path>
+                </svg>
+              </div>
+              <p className="text-gold-dark mb-0 font-semibold">Upload Dress</p>
 
             </div>
           </Link>
@@ -425,7 +427,7 @@ export default function Navbar() {
           >
             <span className="text-sm font-medium">العربية</span>
           </button> */}
-          <div className="relative inline-block text-left">
+          <div className="hidden relative lg:inline-block text-left">
             <button
               onClick={() => setOpen(!open)}
               className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
@@ -501,7 +503,7 @@ export default function Navbar() {
                 svg
                 style={{ width: "1em", height: "1em" }}
               />
-              <span>{selectedCurrency.code}</span>
+              <span>{selectedCurrency.symbol}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="12"
@@ -528,7 +530,7 @@ export default function Navbar() {
                 >
                   <span className="flex items-center gap-2">
                     <ReactCountryFlag countryCode={currency.countryCode} svg style={{ width: "1em", height: "1em" }} />
-                    <span>{currency.code}</span>
+                    <span>{currency.symbol}</span>
                     <span className="text-xs text-slate-500 ml-1">- {currency.name}</span>
                   </span>
                 </button>
@@ -554,10 +556,10 @@ export default function Navbar() {
         <div className="p-4 border-b">
           <div className="search-container w-full">
             <input
-              checked={!searchExpanded}
+              checked={false}
               className="search-checkbox"
               type="checkbox"
-              onChange={() => setSearchExpanded(!searchExpanded)}
+            // onChange={() => setSearchExpanded(!searchExpanded)}
             />
             <div className="search-mainbox w-full">
               <div className={language === "AR" ? `search-iconContainer-ar` : `search-iconContainer`}>
@@ -565,8 +567,99 @@ export default function Navbar() {
                   <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path>
                 </svg>
               </div>
-              <input className="search-input" placeholder="Search" type="text" />
+              <form onSubmit={(e) => {
+                e.preventDefault()
+                updateQuery({ search: searchTerm })
+              }}>
+                <input className="search-input" placeholder={t("common.search")} type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+
+
+              </form>
             </div>
+          </div>
+          <div className="flex mt-3 justify-center gap-5 items-center">
+            <div className="relative inline-block text-left">
+              <button
+                onClick={() => setOpen(!open)}
+                className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+              >
+                {language === "EN" ? "English" : "العربية"}
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 11.187l3.71-3.955a.75.75 0 011.08 1.04l-4.25 4.52a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              {open && (
+                <div className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                  <div className="py-1">
+                    <button
+                      onClick={() => handleSelect("EN")}
+                      className={`w-full text-left px-4 py-2 text-sm ${language === "EN" ? "bg-gray-100 text-gray-900 font-medium" : "text-gray-700"
+                        }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      onClick={() => handleSelect("AR")}
+                      className={`w-full text-left px-4 py-2 text-sm ${language === "AR" ? "bg-gray-100 text-gray-900 font-medium" : "text-gray-700"
+                        }`}
+                    >
+                      العربية
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="relative group">
+              <button className="flex items-center gap-2 text-sm text-slate-600 hover:text-gold">
+                <ReactCountryFlag
+                  countryCode={selectedCurrency.countryCode}
+                  svg
+                  style={{ width: "1em", height: "1em" }}
+                />
+                <span>{selectedCurrency.symbol}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+
+              {/* Desktop currency selector */}
+              <div className="absolute right-0 top-full mt-1 w-56 bg-white rounded-md shadow-lg py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                {currencies.map((currency) => (
+                  <button
+                    key={currency.id}  // Changed from currency.code to currency.id
+                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 ${selectedCurrency.code === currency.code ? "text-gold font-medium" : "text-slate-700"
+                      }`}
+                    onClick={() => setSelectedCurrency(currency)}
+                  >
+                    <span className="flex items-center gap-2">
+                      <ReactCountryFlag countryCode={currency.countryCode} svg style={{ width: "1em", height: "1em" }} />
+                      <span>{currency.symbol}</span>
+                      <span className="text-xs text-slate-500 ml-1">- {currency.name}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -577,13 +670,13 @@ export default function Navbar() {
               className={`py-3 font-medium text-center ${activeTab === "menu" ? "bg-white border-b-2 border-gold" : "bg-slate-50"}`}
               onClick={() => setActiveTab("menu")}
             >
-              MENU
+              {t("common.menu")}
             </button>
             <button
               className={`py-3 font-medium text-center ${activeTab === "categories" ? "bg-white border-b-2 border-gold" : "bg-slate-50"}`}
               onClick={() => setActiveTab("categories")}
             >
-              CATEGORIES
+              {t("navbar.categories")}
             </button>
           </div>
         </div>
@@ -594,120 +687,58 @@ export default function Navbar() {
           {/* Adjusted for search bar */}
           {activeTab === "menu" ? (
             <div className="flex flex-col divide-y">
-              <NavItem
-                href="#"
-                label="Demo"
-                hasChildren
-                isExpanded={expandedMenus.includes("Demo")}
-                onToggle={(e) => toggleSubmenu(e, "Demo")}
-              >
-                <div className="bg-slate-50 pl-8 divide-y">
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    Demo 1
-                  </Link>
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    Demo 2
-                  </Link>
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    Demo 3
-                  </Link>
-                </div>
-              </NavItem>
 
               <NavItem
                 href="#"
-                label="Shop"
+                label={t("navbar.shops")}
                 hasChildren
                 isExpanded={expandedMenus.includes("Shop")}
                 onToggle={(e) => toggleSubmenu(e, "Shop")}
               >
                 <div className="bg-slate-50 pl-8 divide-y">
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    All Products
-                  </Link>
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    New Arrivals
-                  </Link>
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    Best Sellers
-                  </Link>
-                </div>
-              </NavItem>
+                  {displayProductTypes.map((el) => {
+                    return (
+                      <Link href={el.href} className="block py-2 px-4 hover:bg-slate-100">
+                        {el.label}
+                      </Link>
 
-              <NavItem
-                href="#"
-                label="Product"
-                hasChildren
-                isExpanded={expandedMenus.includes("Product")}
-                onToggle={(e) => toggleSubmenu(e, "Product")}
-              >
-                <div className="bg-slate-50 pl-8 divide-y">
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    Product Details
-                  </Link>
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    Product Reviews
-                  </Link>
-                </div>
-              </NavItem>
-
-              <NavItem href="#" label="Sale" />
-
-              <NavItem
-                href="#"
-                label="Portfolio"
-                hasChildren
-                isExpanded={expandedMenus.includes("Portfolio")}
-                onToggle={(e) => toggleSubmenu(e, "Portfolio")}
-              >
-                <div className="bg-slate-50 pl-8 divide-y">
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    Portfolio 1
-                  </Link>
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    Portfolio 2
-                  </Link>
-                </div>
-              </NavItem>
-
-              <NavItem
-                href="#"
-                label="Lookbook"
-                hasChildren
-                isExpanded={expandedMenus.includes("Lookbook")}
-                onToggle={(e) => toggleSubmenu(e, "Lookbook")}
-              >
-                <div className="bg-slate-50 pl-8 divide-y">
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    Summer Collection
-                  </Link>
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    Winter Collection
-                  </Link>
-                </div>
-              </NavItem>
-
-              <NavItem
-                href="#"
-                label="Blog"
-                hasChildren
-                isExpanded={expandedMenus.includes("Blog")}
-                onToggle={(e) => toggleSubmenu(e, "Blog")}
-              >
-                <div className="bg-slate-50 pl-8 divide-y">
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
-                    Blog Grid
-                  </Link>
-                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
+                    )
+                  })}
+                  {/* <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
                     Blog List
                   </Link>
                   <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
                     Blog Single
+                  </Link> */}
+                </div>
+              </NavItem>
+              <NavItem
+                href="#"
+                label={t("navbar.vendors")}
+                hasChildren
+                isExpanded={expandedMenus.includes("Vendor")}
+                onToggle={(e) => toggleSubmenu(e, "Vendor")}
+              >
+                <div className="bg-slate-50 pl-8 divide-y">
+                  {displayVendors.map((el) => {
+                    return (
+                      <Link href={el.href} className="block py-2 px-4 hover:bg-slate-100">
+                        {el.label}
+                      </Link>
+
+                    )
+                  })}
+                  {/* <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
+                    Blog List
                   </Link>
+                  <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
+                    Blog Single
+                  </Link> */}
                 </div>
               </NavItem>
 
-              <NavItem href="/wishlist" label="Wishlist" icon={<Heart className="h-4 w-4" />} />
+
+              {/* <NavItem href="/wishlist" label="Wishlist" icon={<Heart className="h-4 w-4" />} />
 
               <NavItem
                 href="#"
@@ -742,10 +773,30 @@ export default function Navbar() {
                     </button>
                   ))}
                 </div>
-              </NavItem>
+              </NavItem> */}
+              {/* 
+              <NavLinkWithDropdown
+                label={t("navbar.shop")}
+                items={[
+                  // { label: t("navbar.allProducts"), href: "/products" },
+                  ...displayProductTypes
+                ]}
+              />
+              <NavLinkWithDropdown
+                label={t("navbar.categories")}
+                items={displayCategories}
+              />
+              <NavLinkWithDropdown
+                label={t("navbar.vendors")}
+                items={[
+                  { label: t("navbar.allVendors"), href: "/vendors" },
+                  ...displayVendors,
+
+                ]}
+              /> */}
 
               <div className="py-4 px-4">
-                <h3 className="font-medium mb-3">Need Help?</h3>
+                <h3 className="font-medium mb-3">{t("common.needHelp")}</h3>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     <Phone className="h-4 w-4 text-slate-500" />
@@ -753,26 +804,24 @@ export default function Navbar() {
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Mail className="h-4 w-4 text-slate-500" />
-                    <span>claue@domain.com</span>
+                    <span>support@layls.com</span>
                   </div>
                 </div>
               </div>
             </div>
           ) : (
             <div className="flex flex-col divide-y">
-              <CategoryItem href="#" label="Women's Clothing" icon={<Shirt className="h-5 w-5" />} />
-              <CategoryItem href="#" label="Men's Clothing" icon={<TShirt className="h-5 w-5" />} />
-              <CategoryItem href="#" label="Watches" icon={<Watch className="h-5 w-5" />} />
-              <CategoryItem href="#" label="Accessories" icon={<Sparkles className="h-5 w-5" />} />
-              <CategoryItem href="#" label="Electric" icon={<Zap className="h-5 w-5" />} />
-              <CategoryItem href="#" label="Shoes" icon={<ShoppingCart className="h-5 w-5" />} />
-              <CategoryItem href="#" label="Jewellery" icon={<Gem className="h-5 w-5" />} />
-              <CategoryItem href="#" label="T-Shirt" icon={<TShirt className="h-5 w-5" />} />
-              <CategoryItem href="#" label="Toys, Kids Baby" icon={<Baby className="h-5 w-5" />} />
-              <CategoryItem href="#" label="Decor" icon={<Home className="h-5 w-5" />} />
+              {displayCategories.map((el) => {
+                return (
+                  <CategoryItem href={el.href} label={el.label} />
+
+                )
+              })}
+
             </div>
           )}
         </div>
+
       </div>
     </header>
   )

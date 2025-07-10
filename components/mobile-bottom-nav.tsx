@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Home, Grid, ShoppingBag, User } from "lucide-react"
 import { useCart } from "@/hooks/use-cart"
 import { useWishlist } from "@/hooks/use-wishlist"
+import { useTranslation } from "@/hooks/use-translation"
 
 export default function MobileBottomNav() {
   const [isVisible, setIsVisible] = useState(true)
@@ -13,6 +14,7 @@ export default function MobileBottomNav() {
   const { cartCount } = useCart()
   const { wishlistCount } = useWishlist()
   const { isDrawerOpen } = useDrawer()
+  const {t} = useTranslation()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,9 +50,8 @@ export default function MobileBottomNav() {
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 transition-transform duration-300 md:hidden ${
-        isVisible && !isDrawerOpen ? "translate-y-0" : "translate-y-full"
-      }`}
+      className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 transition-transform duration-300 md:hidden ${isVisible && !isDrawerOpen ? "translate-y-0" : "translate-y-full"
+        }`}
     >
       <div className="flex justify-around items-center h-16">
         <Link
@@ -58,18 +59,19 @@ export default function MobileBottomNav() {
           className="flex flex-col items-center justify-center w-full h-full text-slate-600 hover:text-gold"
         >
           <Home className="h-5 w-5" />
-          <span className="text-xs mt-1">Home</span>
+          <span className="text-xs mt-1">{t("dashboard.sidebar.home")}</span>
         </Link>
 
         <Link
-          href="/categories"
+          href="/products"
           className="flex flex-col items-center justify-center w-full h-full text-slate-600 hover:text-gold"
         >
           <Grid className="h-5 w-5" />
-          <span className="text-xs mt-1">Categories</span>
+          <span className="text-xs mt-1">{t('dashboard.sidebar.shop')}</span>
         </Link>
 
-        <Link href="/upload" className="flex flex-col items-center justify-center w-full h-full relative">
+        <Link href="/dashboard/dress/create" className="flex flex-col items-center justify-center w-full h-full relative">
+
           <div className="group cursor-pointer outline-none hover:rotate-90 duration-300">
             <svg
               className="stroke-gold fill-none group-hover:fill-gold/80 group-active:stroke-gold/50 group-active:fill-gold group-active:duration-0 duration-300 h-[50px] w-[50px]"
@@ -96,15 +98,15 @@ export default function MobileBottomNav() {
               {cartCount()}
             </span>
           )}
-          <span className="text-xs mt-1">Cart</span>
+          <span className="text-xs mt-1">{t("common.cart")}</span>
         </Link>
 
         <Link
-          href="/account"
+          href="/dashboard"
           className="flex flex-col items-center justify-center w-full h-full text-slate-600 hover:text-gold"
         >
           <User className="h-5 w-5" />
-          <span className="text-xs mt-1">Account</span>
+          <span className="text-xs mt-1">{t("common.account")}</span>
         </Link>
       </div>
     </div>

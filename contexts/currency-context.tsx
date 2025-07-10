@@ -1,7 +1,8 @@
 "use client";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useAuth } from "./auth-context";
-import { currencies } from "@/lib/utils";
+import { arCurrencies, enCurrencies } from "@/lib/utils";
+import { useTranslation } from "@/hooks/use-translation";
 
 export type Currency = {
     id: string;
@@ -16,12 +17,16 @@ type CurrencyContextType = {
     setSelectedCurrency: (currency: Currency) => void;
 };
 
-const defaultCurrency: Currency = currencies.find(c => c.code === "USD")!;
+
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useAuth();
+    const { language } = useTranslation(); // "en" or "ar"
+
+    const currentCurrencyList = language === "AR" ? arCurrencies : enCurrencies;
+    const defaultCurrency = currentCurrencyList.find((c) => c.code === "USD")!;
     const [selectedCurrency, setSelectedCurrencyState] = useState<Currency>(defaultCurrency);
 
     useEffect(() => {
@@ -30,7 +35,7 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
         const userCurrencyCode = user?.user?.account?.currency?.value;
 
         if (userCurrencyCode) {
-            const matched = currencies.find((c: any) => c.code === (userCurrencyCode).toUpperCase());
+            const matched = currentCurrencyList.find((c: any) => c.code === (userCurrencyCode).toUpperCase());
             if (matched) {
                 setSelectedCurrencyState(matched);
                 localStorage.setItem("selectedCurrency", JSON.stringify(matched));

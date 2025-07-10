@@ -175,7 +175,13 @@
         "view": "View",
         "edit": "Edit",
         "delete": "Delete",
-        "import": "Import"
+        "import": "Import",
+        "search":"Search",
+        "menu":"Menu",
+        "needHelp":"Need Help?",
+        "cart":"Cart",
+        "account":"Account"
+        
     },
     "updateProduct": {
         "title": "Update Your Dress",

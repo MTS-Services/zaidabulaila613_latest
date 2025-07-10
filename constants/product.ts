@@ -1,2 +1,2 @@
-export const arProductTypes = ["الكل", "جديد", "مستعمل", "الإيجار"]
-export const enProductTypes = ["All", "New", "Used", "Rental"]
+export const arProductTypes = ["جديد", "مستعمل", "الإيجار"]
+export const enProductTypes = ["New", "Used", "Rental"]

@@ -94,6 +94,74 @@ export const resetPasswordValidator = z.object({
     }
 })
 
+export const createDressformSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    description: z.string().min(1, "Description is required"),
+    price: z.number().min(0, "Price must be positive"),
+    oldPrice: z.number().min(0, "Original price must be positive").optional(),
+    type: z.string().min(1, "Type is required"),
+    category: z.string().min(1, "Category is required"),
+    colors: z.array(z.string()).min(1, "At least one color is required"),
+    selectedColor: z.string().optional(),
+    sizes: z.array(z.string()).min(1, "At least one size is required"),
+    material: z.string().min(1, "Material is required"),
+    careInstructions: z.string().optional(),
+    chest: z.number().min(0, "Chest measurement must be positive").optional(),
+    waist: z.number().min(0, "Waist measurement must be positive").optional(),
+    hip: z.number().min(0, "Hip measurement must be positive").optional(),
+    shoulder: z.number().min(0, "Shoulder measurement must be positive").optional().nullable(),
+    high: z.number().min(0, "Height measurement must be positive").optional(),
+    length: z.number().min(0, "Length measurement must be positive").optional(),
+    sleeve: z.boolean().optional(),
+    underlay: z.boolean().optional(),
+    qty: z.number().min(1, "Quantity must be at least 1"),
+    ref: z.string().optional(),
+    state: z.string().min(1, "State is required"),
+    terms: z.boolean().refine(val => val, "You must accept the terms and conditions")
+})
+
+export const updateDressFormSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    description: z.string().min(1, "Description is required"),
+    price: z.number().min(0, "Price must be positive"),
+    oldPrice: z.number().min(0, "Original price must be positive").optional(),
+    type: z.string().min(1, "Product type is required"),
+    category: z.string().min(1, "Category is required"),
+    colors: z.array(z.string()).min(1, "At least one color is required"),
+    selectedColor: z.string().optional(),
+    sizes: z.array(z.string()).min(1, "At least one size is required"),
+    material: z.string().min(1, "Material is required"),
+    careInstructions: z.string().optional(),
+    chest: z.number().min(0, "Chest measurement must be positive").optional(),
+    waist: z.number().min(0, "Waist measurement must be positive").optional(),
+    hip: z.number().min(0, "Hip measurement must be positive").optional(),
+    shoulder: z.number().min(0, "Shoulder measurement must be positive").optional().nullable(),
+    high: z.number().min(0, "Height measurement must be positive").optional(),
+    length: z.number().min(0, "Length measurement must be positive").optional(),
+    sleeve: z.boolean().optional(),
+    underlay: z.boolean().optional(),
+    qty: z.number().min(1, "Quantity must be at least 1"),
+    ref: z.string().optional(),
+    state: z.string().min(1, "State is required"),
+    terms: z.boolean().refine(val => val, "You must accept the terms and conditions")
+
+})
+
+export const shopFormSchema = z.object({
+    shopName: z.string().min(2, 'validator.shop.shopName'),
+    description: z.string().min(10, 'validator.shop.description'),
+    contact: z.string().min(10, 'validator.shop.contact'),
+    tags: z.string().min(1, 'validator.shop.tags'),
+    coverImage: z.any(),
+    profileImage: z.any(),
+});
+
+export type ShopFormSchema = z.infer<typeof shopFormSchema>;
+
+export type FormSchemaUpdateDress = z.infer<typeof updateDressFormSchema>
+
+export type FormSchemaCreateDress = z.infer<typeof createDressformSchema>
+
 export type FormSchemaSignUpType = z.input<typeof signUpValidator>;
 export type FormSchemaSignInType = z.input<typeof signInValidator>;
 export type FormSchemaForgotPasswordType = z.input<typeof forgetPasswordValidator>;

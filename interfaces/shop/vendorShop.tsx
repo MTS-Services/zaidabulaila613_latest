@@ -11,17 +11,9 @@ import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/use-translation';
 import { GET_SHOP } from '@/graphql/query';
 import { config } from '@/constants/app';
+import { shopFormSchema, ShopFormSchema } from '@/lib/validators/auth';
 
-const shopFormSchema = z.object({
-    shopName: z.string().min(2, 'Shop name is required'),
-    description: z.string().min(10, 'Description must be at least 10 characters'),
-    contact: z.string().min(10, 'Contact number is required'),
-    tags: z.string().min(1, 'At least one tag is required'),
-    coverImage: z.any(),
-    profileImage: z.any(),
-});
 
-type ShopFormData = z.infer<typeof shopFormSchema>;
 
 export default function CreateShop() {
     const {
@@ -30,7 +22,7 @@ export default function CreateShop() {
         setValue,
         reset,
         formState: { errors },
-    } = useForm<ShopFormData>({
+    } = useForm<ShopFormSchema>({
         resolver: zodResolver(shopFormSchema),
         defaultValues: {
             shopName: '',
@@ -42,7 +34,7 @@ export default function CreateShop() {
         },
     });
 
-    const { language } = useTranslation()
+    const {t, language} = useTranslation();
 
     const { data, loading, refetch, error } = useQuery(GET_SHOP, {
         variables: { language }, // if required
@@ -74,7 +66,7 @@ export default function CreateShop() {
         }
     }, [data, reset]);
 
-    const onSubmit = async (data: ShopFormData) => {
+    const onSubmit = async (data: ShopFormSchema) => {
         console.log('Form data:', data);
         // You can now POST formData to an API
         if (!coverPreview) {
@@ -156,7 +148,6 @@ export default function CreateShop() {
             Error loading shop: {error.message}
         </div>
     }
-    const {t} = useTranslation();
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto space-y-6">
@@ -186,7 +177,7 @@ export default function CreateShop() {
                     </div>
                 )}
             />
-            {errors.coverImage && <p className="text-red-500 text-sm">{errors.coverImage?.message?.toString()}</p>}
+            {errors.coverImage && <p className="text-red-500 text-sm">{t(errors.coverImage?.message as string)}</p>}
 
             {/* Profile Image Upload */}
             <Controller
@@ -215,7 +206,7 @@ export default function CreateShop() {
                 )}
             />
             {errors.profileImage?.message && (
-                <p className="text-red-500 text-sm">{errors.profileImage.message?.toString()}</p>
+                <p className="text-red-500 text-sm">{t(errors.profileImage?.message as string)}</p>
             )}
 
             {/* Shop Name */}
@@ -234,7 +225,7 @@ export default function CreateShop() {
                         )}
                     />
                     {errors.shopName && (
-                        <p className="text-red-500 text-sm">{errors.shopName.message}</p>
+                        <p className="text-red-500 text-sm">{t(errors.shopName.message as string)}</p>
                     )}
                 </div>
 
@@ -254,7 +245,7 @@ export default function CreateShop() {
                         )}
                     />
                     {errors.description && (
-                        <p className="text-red-500 text-sm">{errors.description.message}</p>
+                        <p className="text-red-500 text-sm">{t(errors.description.message as string)}</p>
                     )}
                 </div>
 
@@ -274,7 +265,7 @@ export default function CreateShop() {
                         )}
                     />
                     {errors.contact && (
-                        <p className="text-red-500 text-sm">{errors.contact.message}</p>
+                        <p className="text-red-500 text-sm">{t(errors.contact.message as string)}</p>
                     )}
                 </div>
 
@@ -293,7 +284,7 @@ export default function CreateShop() {
                             />
                         )}
                     />
-                    {errors.tags && <p className="text-red-500 text-sm">{errors.tags.message}</p>}
+                    {errors.tags && <p className="text-red-500 text-sm">{t(errors.tags.message as string)}</p>}
                 </div>
 
                 {/* Submit */}

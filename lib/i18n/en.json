@@ -108,7 +108,6 @@
                 "label": "City",
                 "placeholder": "e.g., New York"
             }
-
         },
         "terms": {
             "agree": "I agree to the",
@@ -176,12 +175,11 @@
         "edit": "Edit",
         "delete": "Delete",
         "import": "Import",
-        "search":"Search",
-        "menu":"Menu",
-        "needHelp":"Need Help?",
-        "cart":"Cart",
-        "account":"Account"
-        
+        "search": "Search",
+        "menu": "Menu",
+        "needHelp": "Need Help?",
+        "cart": "Cart",
+        "account": "Account"
     },
     "updateProduct": {
         "title": "Update Your Dress",
@@ -530,5 +528,15 @@
         "try": "Try adjusting your search criteria",
         "clear": "Clear Search",
         "contact": "Contact Vendor"
+    },
+    "validator": {
+        "shop": {
+            "shopName": "Shop name is required",
+            "description": "Description must be at least 10 characters",
+            "contact": "Contact number is required",
+            "tags": "At least one tag is required",
+            "coverImage": "",
+            "profileImage": ""
+        }
     }
 }

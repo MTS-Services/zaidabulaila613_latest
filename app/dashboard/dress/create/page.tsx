@@ -31,35 +31,10 @@ import { useTranslation } from "@/hooks/use-translation"
 import { arColors, enColors } from "@/constants/colors"
 import { useUserSubscription } from "@/hooks/useSubscription"
 import TooltipBox from "@/components/tooltipBox"
+import { createDressformSchema, FormSchemaCreateDress } from "@/lib/validators/auth"
 
 // Zod schema for form validation
-const formSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    description: z.string().min(1, "Description is required"),
-    price: z.number().min(0, "Price must be positive"),
-    oldPrice: z.number().min(0, "Original price must be positive").optional(),
-    type: z.string().min(1, "Type is required"),
-    category: z.string().min(1, "Category is required"),
-    colors: z.array(z.string()).min(1, "At least one color is required"),
-    selectedColor: z.string().optional(),
-    sizes: z.array(z.string()).min(1, "At least one size is required"),
-    material: z.string().min(1, "Material is required"),
-    careInstructions: z.string().optional(),
-    chest: z.number().min(0, "Chest measurement must be positive").optional(),
-    waist: z.number().min(0, "Waist measurement must be positive").optional(),
-    hip: z.number().min(0, "Hip measurement must be positive").optional(),
-    shoulder: z.number().min(0, "Shoulder measurement must be positive").optional().nullable(),
-    high: z.number().min(0, "Height measurement must be positive").optional(),
-    length: z.number().min(0, "Length measurement must be positive").optional(),
-    sleeve: z.boolean().optional(),
-    underlay: z.boolean().optional(),
-    qty: z.number().min(1, "Quantity must be at least 1"),
-    ref: z.string().optional(),
-    state: z.string().min(1, "State is required"),
-      terms: z.boolean().refine(val => val, "You must accept the terms and conditions")
-})
 
-type FormValues = z.infer<typeof formSchema>
 
 export default function UploadPage() {
     const router = useRouter()
@@ -83,8 +58,8 @@ export default function UploadPage() {
 
     console.log(categoryOptions, "Category ees")
 
-    const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<FormSchemaCreateDress>({
+        resolver: zodResolver(createDressformSchema),
         defaultValues: {
             name: "",
             description: "",
@@ -174,7 +149,7 @@ export default function UploadPage() {
 
 
     // Handle form submission
-    const onSubmit = async (data: FormValues) => {
+    const onSubmit = async (data: FormSchemaCreateDress) => {
 
 
         if (files.length < 2) {

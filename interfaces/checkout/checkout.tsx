@@ -19,19 +19,10 @@ import { CREATE_ORDER_MUTATION } from '@/graphql/mutation';
 import { enqueueSnackbar } from 'notistack';
 import { useTranslation } from '@/hooks/use-translation';
 import { useCurrency } from '@/contexts/currency-context';
+import { CheckoutFormData, checkoutSchema } from '@/lib/validators/auth';
 
 // Define Zod schema
-const checkoutSchema = z.object({
-    address: z.object({
-        city: z.string().min(1, 'City is required').max(50, 'City is too long'),
-        appartment: z.string().min(1, 'Apartment is required').max(50, 'Apartment is too long'),
-        street: z.string().min(1, 'Street is required').max(100, 'Street is too long'),
-    }),
-    paymentMethod: z.enum(['cash', 'online']),
-    additionalNotes: z.string().max(500, 'Notes are too long').optional(),
-});
 
-type FormData = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
 
@@ -58,7 +49,7 @@ export default function CheckoutPage() {
         formState: { errors, isSubmitting },
         reset,
         watch
-    } = useForm<FormData>({
+    } = useForm<CheckoutFormData>({
         resolver: zodResolver(checkoutSchema),
         defaultValues: {
             address: {
@@ -73,7 +64,7 @@ export default function CheckoutPage() {
 
     const [submitSuccess, setSubmitSuccess] = useState(false);
 
-    const onSubmit = async (formData: FormData) => {
+    const onSubmit = async (formData: CheckoutFormData) => {
 
         try {
             setSubmitSuccess(true);
@@ -129,7 +120,7 @@ export default function CheckoutPage() {
 
 
     const paymentMethod = watch('paymentMethod')
-const {t} = useTranslation();
+    const { t } = useTranslation();
 
     return (
         <>
@@ -143,7 +134,7 @@ const {t} = useTranslation();
                         <h1 className="text-2xl md:text-3xl font-bold">{t('checkout.title')}</h1>
                         <Link href="/" className="flex items-center text-sm text-slate-600 hover:text-slate-900">
                             <ChevronLeft className="h-4 w-4 mr-1" />
-                             {t('cartpage.continue')}
+                            {t('cartpage.continue')}
                         </Link>
                     </div>
 

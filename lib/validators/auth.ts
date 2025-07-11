@@ -156,6 +156,18 @@ export const shopFormSchema = z.object({
     profileImage: z.any(),
 });
 
+export const checkoutSchema = z.object({
+    address: z.object({
+        city: z.string().min(1, 'City is required').max(50, 'City is too long'),
+        appartment: z.string().min(1, 'Apartment is required').max(50, 'Apartment is too long'),
+        street: z.string().min(1, 'Street is required').max(100, 'Street is too long'),
+    }),
+    paymentMethod: z.enum(['cash', 'online']),
+    additionalNotes: z.string().max(500, 'Notes are too long').optional(),
+});
+
+export type CheckoutFormData = z.infer<typeof checkoutSchema>;
+
 export type ShopFormSchema = z.infer<typeof shopFormSchema>;
 
 export type FormSchemaUpdateDress = z.infer<typeof updateDressFormSchema>

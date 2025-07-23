@@ -539,6 +539,61 @@
             "tags": "At least one tag is required",
             "coverImage": "",
             "profileImage": ""
+        },
+        "dress": {
+            "name": "Name is required",
+            "description": "Description is required",
+            "price": "Price must be positive",
+            "orgprice": "Original price must be positive",
+            "product": "Product type is required",
+            "category": "Category is required",
+            "color": "At least one color is required",
+            "size": "At least one size is required",
+            "material": "Material is required",
+            "chest": "Chest measurement must be positive",
+            "waist": "Waist measurement must be positive",
+            "hip": "Hip measurement must be positive",
+            "sholder": "Shoulder measurement must be positive",
+            "height": "Height measurement must be positive",
+            "lenght": "Length measurement must be positive",
+            "quantity": "Quantity must be at least 1",
+            "state": "State is required",
+            "term": "You must accept the terms and conditions"
+        },
+        "checkout": {
+            "city": "City is required",
+            "citylong": "City is too long",
+            "apartment": "Apartment is required",
+            "apartmentlong": "Apartment is too long",
+            "street": "Street is required",
+            "streetlong": "Street is too long",
+            "note": "Notes are too long"
+        },
+        "profile": {
+            "firstname": "First name is required",
+            "firstleast": "First name must be at least 2 characters",
+            "lastname": "Last name is required",
+            "lastleast": "Last name must be at least 2 characters",
+            "email": "Email is required",
+            "invalid": "Email is invalid",
+            "mobile": "Mobile number is required",
+            "mobileinvalid": "Invalid phone number",
+            "mobileleast": "Mobile number must be at least 10 digits",
+            "country": "Country is required",
+            "countryleast": "Country name must be at least 2 characters",
+            "lang": "Language is required",
+            "langstreet": "Language must be at least 2 characters",
+            "otp": "OTP is Required",
+            "forgot": "ForgotPassword",
+            "reg": "Register"
+        },
+        "reset": {
+            "password": "Password is Required",
+            "passwordleast": "Password must contain at least 6 character(s)",
+            "confirm": "Confirm password is Required",
+            "confirmleast": "Confirm password must contain at least 6 character(s)",
+            "notmatch": "The passwords did not match",
+            "phone": "Email or Phone is Required"
         }
     }
 }

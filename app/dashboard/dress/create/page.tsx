@@ -461,7 +461,7 @@ export default function UploadPage() {
                                             {...register("name")}
                                             placeholder={t("createProduct.basicInfo.name.placeholder")}
                                         />
-                                        {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+                                        {errors.name && <p className="text-sm text-red-500">{t(errors.name.message as string)}</p>}
                                     </div>
 
                                     {/* Description */}
@@ -475,7 +475,7 @@ export default function UploadPage() {
                                             placeholder={t("createProduct.basicInfo.description.placeholder")}
                                             rows={4}
                                         />
-                                        {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
+                                        {errors.description && <p className="text-sm text-red-500">{t(errors.description.message as string)}</p>}
                                     </div>
 
                                     {/* Category */}
@@ -498,7 +498,7 @@ export default function UploadPage() {
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        {errors.category && <p className="text-sm text-red-500">{errors.category.message}</p>}
+                                        {errors.category && <p className="text-sm text-red-500">{t(errors.category.message as string)}</p>}
                                     </div>
 
                                     {/* Price Information */}
@@ -552,7 +552,7 @@ export default function UploadPage() {
                                                     })}
                                                 />
                                             </div>
-                                            {errors.price && <p className="text-sm text-red-500">{errors.price.message}</p>}
+                                            {errors.price && <p className="text-sm text-red-500">{t(errors.price.message as string)}</p>}
                                         </div>
 
                                         <div className="space-y-2">
@@ -642,7 +642,7 @@ export default function UploadPage() {
                                                 </div>
                                             ))}
                                         </div>
-                                        {errors.sizes && <p className="text-sm text-red-500">{errors.sizes.message}</p>}
+                                        {errors.sizes && <p className="text-sm text-red-500">{t(errors.sizes.message as string)}</p>}
                                     </div>
 
                                     <Separator />
@@ -674,7 +674,7 @@ export default function UploadPage() {
                                                 </div>
                                             ))}
                                         </div>
-                                        {errors.colors && <p className="text-sm text-red-500">{errors.colors.message}</p>}
+                                        {errors.colors && <p className="text-sm text-red-500">{t(errors.colors.message as string)}</p>}
                                     </div>
 
                                     {/* Selected Color */}
@@ -714,7 +714,11 @@ export default function UploadPage() {
                                                 {...register("material")}
                                                 placeholder={t("createProduct.specifications.material.placeholder")}
                                             />
+<<<<<<< HEAD
                                             {/* {errors.material && <p className="text-sm text-red-500">{errors.material.message}</p>} */}
+=======
+                                            {errors.material && <p className="text-sm text-red-500">{t(errors.material.message as string)}</p>}
+>>>>>>> 5865002ca4e18ce89eabb54847ef4f8e225d5dd7
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="careInstructions">{t("createProduct.specifications.careInstructions.label")}</Label>
@@ -723,7 +727,7 @@ export default function UploadPage() {
                                                 {...register("careInstructions")}
                                                 placeholder={t("createProduct.specifications.careInstructions.placeholder")}
                                             />
-                                            {errors.careInstructions && <p className="text-sm text-red-500">{errors.careInstructions.message}</p>}
+                                            {errors.careInstructions && <p className="text-sm text-red-500">{t(errors.careInstructions.message as string)}</p>}
                                         </div>
                                     </div>
 
@@ -837,6 +841,7 @@ export default function UploadPage() {
 
                                     {/* Quantity and Reference */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+<<<<<<< HEAD
                                         {
                                             !isVendor ?
 
@@ -897,6 +902,18 @@ export default function UploadPage() {
                                                     )}
                                                 </div>
                                         }
+=======
+                                        <div className="space-y-2">
+                                            <Label htmlFor="qty">{t("createProduct.specifications.quantity.label")} <span className="text-red-500">*</span></Label>
+                                            <Input
+                                                id="qty"
+                                                type="number"
+                                                min="1"
+                                                {...register("qty", { valueAsNumber: true })}
+                                            />
+                                            {errors.qty && <p className="text-sm text-red-500">{t(errors.qty.message as string)}</p>}
+                                        </div>
+>>>>>>> 5865002ca4e18ce89eabb54847ef4f8e225d5dd7
                                         <div className="space-y-2">
                                             <Label htmlFor="ref">{t("createProduct.specifications.reference.label")} </Label>
                                             <Input
@@ -904,7 +921,7 @@ export default function UploadPage() {
                                                 {...register("ref")}
                                                 placeholder={t("createProduct.specifications.reference.placeholder")}
                                             />
-                                            {errors.ref && <p className="text-sm text-red-500">{errors.ref.message}</p>}
+                                            {errors.ref && <p className="text-sm text-red-500">{t(errors.ref.message as string)}</p>}
                                         </div>
                                     </div>
 
@@ -916,7 +933,7 @@ export default function UploadPage() {
                                             {...register("state")}
                                             placeholder={t("createProduct.specifications.city.placeholder")}
                                         />
-                                        {errors.state && <p className="text-sm text-red-500">{errors.state.message}</p>}
+                                        {errors.state && <p className="text-sm text-red-500">{t(errors.state.message as string)}</p>}
                                     </div>
                                 </CardContent>
                             </Card>
@@ -950,7 +967,7 @@ export default function UploadPage() {
                                             </Link>
                                         </Label>
                                     </div>
-                                    {errors.terms && <p className="text-sm text-red-500">{errors.terms.message}</p>}
+                                    {errors.terms && <p className="text-sm text-red-500">{t(errors.terms.message as string)}</p>}
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
                                     <Button variant="outline" type="button" onClick={() => router.back()}>

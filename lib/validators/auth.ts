@@ -3,147 +3,147 @@ import { z } from "zod";
 
 export const signInValidator = z.object({
     username: z
-        .string({ message: "Email or Phone is Required" })
+        .string({ message: 'validator.reset.phone' })
         .min(1),
     password: z
-        .string({ message: "Password is Required" })
-        .min(6, "Password must contain at least 6 character(s)"),
+        .string({ message: 'validator.reset.password' })
+        .min(6, 'validator.reset.passwordleast'),
 });
 
 export const signUpValidator = z.object({
     firstName: z
-        .string({ message: "First name is required" })
-        .min(2, "First name must be at least 2 characters"),
+        .string({ message: 'validator.profile.firstname' })
+        .min(2, 'validator.profile.firstleast'),
     lastName: z
-        .string({ message: "Last name is required" })
-        .min(2, "Last name must be at least 2 characters"),
+        .string({ message: 'validator.profile.lastname' })
+        .min(2, 'validator.profile.lastleast'),
     email: z
-        .string({ message: "Email is required" })
-        .email({ message: "Email is invalid" }),
+        .string({ message: 'validator.profile.email' })
+        .email({ message: 'validator.profile.invalid' }),
     password: z
-        .string({ message: "Password is required" })
-        .min(6, "Password must contain at least 6 characters"),
+        .string({ message: 'validator.reset.password' })
+        .min(6, 'validator.reset.passwordleast'),
     confirmPassword: z
-        .string({ message: "Confirm password is Required" })
-        .min(6, "Confirm password must contain at least 6 character(s)"),
+        .string({ message: 'validator.reset.confirm' })
+        .min(6, 'validator.reset.confirmleast'),
     mobile: z
-        .string({ message: "Mobile number is required" })
-        .refine(isValidPhoneNumber, { message: "Invalid phone number" }),
+        .string({ message: 'validator.profile.mobile' })
+        .refine(isValidPhoneNumber, { message: 'validator.profile.mobileinvalid' }),
     country: z
-        .string({ message: "Country is required" })
-        .min(2, "Country name must be at least 2 characters"),
+        .string({ message: 'validator.profile.country' })
+        .min(2, 'validator.profile.countryleast'),
     lang: z
-        .string({ message: "Language is required" })
-        .min(2, "Language must be at least 2 characters"),
+        .string({ message: 'validator.profile.lang' })
+        .min(2, 'validator.profile.langleast'),
 }).superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
         ctx.addIssue({
             code: "custom",
-            message: "The passwords did not match",
+            message: 'validator.reset.notmatch',
             path: ['confirmPassword']
         });
     }
 })
 export const profileValidator = z.object({
     firstName: z
-        .string({ message: "First name is required" })
-        .min(2, "First name must be at least 2 characters"),
+        .string({ message: 'validator.profile.firstname' })
+        .min(2, 'validator.profile.firstleast'),
     lastName: z
-        .string({ message: "Last name is required" })
-        .min(2, "Last name must be at least 2 characters"),
+        .string({ message: 'validator.profile.lastname' })
+        .min(2, 'validator.profile.lastleast'),
     email: z
-        .string({ message: "Email is required" })
-        .email({ message: "Email is invalid" }),
+        .string({ message: 'validator.profile.email' })
+        .email({ message: 'validator.profile.invalid' }),
     mobile: z
-        .string({ message: "Mobile number is required" })
-        .min(10, "Mobile number must be at least 10 digits"),
+        .string({ message: 'validator.profile.mobile' })
+        .min(10, 'validator.profile.mobileleast'),
     country: z
-        .string({ message: "Country is required" })
-        .min(2, "Country name must be at least 2 characters"),
+        .string({ message: 'validator.profile.country' })
+        .min(2, 'validator.profile.countryleast'),
     lang: z
-        .string({ message: "Language is required" })
-        .min(2, "Language must be at least 2 characters"),
+        .string({ message: 'validator.profile.lang' })
+        .min(2, 'validator.profile.langleast'),
 });
 
 export const forgetPasswordValidator = z.object({
     email: z
-        .string({ message: "Email is Required" })
-        .email({ message: "Email is Invalid" }),
+        .string({ message: 'validator.profile.email' })
+        .email({ message: 'validator.profile.invalid' }),
 });
 export const verifyOTPValidator = z.object({
     email: z
-        .string({ message: "Email is Required" })
-        .email({ message: "Email is Invalid" }),
-    otp: z.string({ message: "OTP is Required" }),
-    type: z.enum(["Register", "ForgotPassword"]),
+        .string({ message: 'validator.profile.email' })
+        .email({ message: 'validator.profile.invalid' }),
+    otp: z.string({ message: 'validator.profile.otp' }),
+    type: z.enum(['validator.profile.reg', 'validator.profile.forgot']),
 });
 export const resetPasswordValidator = z.object({
     password: z
-        .string({ message: "Password is Required" })
-        .min(6, "Password must contain at least 6 character(s)"),
+        .string({ message: 'validator.reset.password' })
+        .min(6, 'validator.reset.passwordleast'),
     confirmPassword: z
-        .string({ message: "Confirm password is Required" })
-        .min(6, "Confirm password must contain at least 6 character(s)"),
+        .string({ message: 'validator.reset.confirm' })
+        .min(6, 'validator.reset.confirmleast'),
 }).superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
         ctx.addIssue({
             code: "custom",
-            message: "The passwords did not match",
+            message: 'validator.reset.notmatch',
             path: ['confirmPassword']
         });
     }
 })
 
 export const createDressformSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    description: z.string().min(1, "Description is required"),
-    price: z.number().min(0, "Price must be positive"),
-    oldPrice: z.number().min(0, "Original price must be positive").optional(),
-    type: z.string().min(1, "Type is required"),
-    category: z.string().min(1, "Category is required"),
-    colors: z.array(z.string()).min(1, "At least one color is required"),
+    name: z.string().min(1, 'validator.dress.name'),
+    description: z.string().min(1, 'validator.dress.description'),
+    price: z.number().min(0, 'validator.dress.price'),
+    oldPrice: z.number().min(0, 'validator.dress.orgprice').optional(),
+    type: z.string().min(1,'validator.dress.product'),
+    category: z.string().min(1, 'validator.dress.category'),
+    colors: z.array(z.string()).min(1, 'validator.dress.color'),
     selectedColor: z.string().optional(),
-    sizes: z.array(z.string()).min(1, "At least one size is required"),
-    material: z.string().optional(),
+    sizes: z.array(z.string()).min(1, 'validator.dress.size'),
+    material: z.string().min(1, 'validator.dress.material'),
     careInstructions: z.string().optional(),
-    chest: z.number().min(0, "Chest measurement must be positive").optional(),
-    waist: z.number().min(0, "Waist measurement must be positive").optional(),
-    hip: z.number().min(0, "Hip measurement must be positive").optional(),
-    shoulder: z.number().min(0, "Shoulder measurement must be positive").optional().nullable(),
-    high: z.number().min(0, "Height measurement must be positive").optional(),
-    length: z.number().min(0, "Length measurement must be positive").optional(),
+    chest: z.number().min(0, 'validator.dress.chest').optional(),
+    waist: z.number().min(0, 'validator.dress.waist').optional(),
+    hip: z.number().min(0, 'validator.dress.hip').optional(),
+    shoulder: z.number().min(0, 'validator.dress.shoulder').optional().nullable(),
+    high: z.number().min(0, 'validator.dress.height').optional(),
+    length: z.number().min(0, 'validator.dress.lenght').optional(),
     sleeve: z.boolean().optional(),
     underlay: z.boolean().optional(),
-    qty: z.number().min(1, "Quantity must be at least 1"),
+    qty: z.number().min(1, 'validator.dress.quantity'),
     ref: z.string().optional(),
-    state: z.string().min(1, "State is required"),
-    terms: z.boolean().refine(val => val, "You must accept the terms and conditions")
+    state: z.string().min(1, 'validator.dress.state'),
+    terms: z.boolean().refine(val => val, 'validator.dress.term')
 })
 
 export const updateDressFormSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    description: z.string().min(1, "Description is required"),
-    price: z.number().min(0, "Price must be positive"),
-    oldPrice: z.number().min(0, "Original price must be positive").optional(),
-    type: z.string().min(1, "Product type is required"),
-    category: z.string().min(1, "Category is required"),
-    colors: z.array(z.string()).min(1, "At least one color is required"),
+    name: z.string().min(1, 'validator.dress.name'),
+    description: z.string().min(1, 'validator.dress.description'),
+    price: z.number().min(0, 'validator.dress.price'),
+    oldPrice: z.number().min(0, 'validator.dress.orgprice').optional(),
+    type: z.string().min(1, 'validator.dress.product'),
+    category: z.string().min(1, 'validator.dress.category'),
+    colors: z.array(z.string()).min(1, 'validator.dress.color'),
     selectedColor: z.string().optional(),
-    sizes: z.array(z.string()).min(1, "At least one size is required"),
-    material: z.string().optional(),
+    sizes: z.array(z.string()).min(1, 'validator.dress.size'),
+    material: z.string().min(1, 'validator.dress.material'),
     careInstructions: z.string().optional(),
-    chest: z.number().min(0, "Chest measurement must be positive").optional(),
-    waist: z.number().min(0, "Waist measurement must be positive").optional(),
-    hip: z.number().min(0, "Hip measurement must be positive").optional(),
-    shoulder: z.number().min(0, "Shoulder measurement must be positive").optional().nullable(),
-    high: z.number().min(0, "Height measurement must be positive").optional(),
-    length: z.number().min(0, "Length measurement must be positive").optional(),
+    chest: z.number().min(0, 'validator.dress.chest').optional(),
+    waist: z.number().min(0, 'validator.dress.waist').optional(),
+    hip: z.number().min(0, 'validator.dress.hip').optional(),
+    shoulder: z.number().min(0, 'validator.dress.shoulder').optional().nullable(),
+    high: z.number().min(0, 'validator.dress.height').optional(),
+    length: z.number().min(0, 'validator.dress.lenght').optional(),
     sleeve: z.boolean().optional(),
     underlay: z.boolean().optional(),
-    qty: z.number().min(1, "Quantity must be at least 1"),
+    qty: z.number().min(1, 'validator.dress.quantity'),
     ref: z.string().optional(),
-    state: z.string().min(1, "State is required"),
-    terms: z.boolean().refine(val => val, "You must accept the terms and conditions")
+    state: z.string().min(1, 'validator.dress.state'),
+    terms: z.boolean().refine(val => val, 'validator.dress.term')
 
 })
 
@@ -158,12 +158,12 @@ export const shopFormSchema = z.object({
 
 export const checkoutSchema = z.object({
     address: z.object({
-        city: z.string().min(1, 'City is required').max(50, 'City is too long'),
-        appartment: z.string().min(1, 'Apartment is required').max(50, 'Apartment is too long'),
-        street: z.string().min(1, 'Street is required').max(100, 'Street is too long'),
+        city: z.string().min(1, 'validator.checkout.city').max(50, 'validator.checkout.citylong'),
+        appartment: z.string().min(1, 'validator.checkout.apartment').max(50, 'validator.checkout.apartmentlong'),
+        street: z.string().min(1, 'validator.checkout.street').max(100, 'validator.checkout.streetlong'),
     }),
     paymentMethod: z.enum(['cash', 'online']),
-    additionalNotes: z.string().max(500, 'Notes are too long').optional(),
+    additionalNotes: z.string().max(500, 'validator.checkout.note').optional(),
 });
 
 export type CheckoutFormData = z.infer<typeof checkoutSchema>;

@@ -156,7 +156,7 @@ export default function CheckoutPage() {
                                                     {...register("address.city")}
                                                     placeholder=""
                                                 />
-                                                {errors.address?.city && <p className="text-sm text-red-500">{errors.address.city.message}</p>}
+                                                {errors.address?.city && <p className="text-sm text-red-500">{t(errors.address.city.message as string)}</p>}
                                             </div>
 
 
@@ -170,7 +170,7 @@ export default function CheckoutPage() {
                                                     {...register("address.appartment")}
                                                     placeholder=""
                                                 />
-                                                {errors.address?.appartment && <p className="text-sm text-red-500">{errors.address.appartment.message}</p>}
+                                                {errors.address?.appartment && <p className="text-sm text-red-500">{t(errors.address.appartment.message as string)}</p>}
                                             </div>
 
 
@@ -183,7 +183,7 @@ export default function CheckoutPage() {
                                                     {...register("address.street")}
                                                     placeholder=""
                                                 />
-                                                {errors.address?.street && <p className="text-sm text-red-500">{errors.address.street.message}</p>}
+                                                {errors.address?.street && <p className="text-sm text-red-500">{t(errors.address.street.message as string)}</p>}
                                             </div>
                                         </div>
                                     </div>
@@ -245,7 +245,7 @@ export default function CheckoutPage() {
                                             placeholder=""
                                             rows={4}
                                         />
-                                        {errors.additionalNotes && <p className="text-sm text-red-500">{errors.additionalNotes.message}</p>}
+                                        {errors.additionalNotes && <p className="text-sm text-red-500">{t(errors.additionalNotes.message  as string)}</p>}
                                     </div>
 
 

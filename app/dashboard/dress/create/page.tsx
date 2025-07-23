@@ -83,7 +83,7 @@ export default function UploadPage() {
             qty: 1,
             ref: "",
             state: "",
-              terms: false
+            terms: false
         }
     })
 
@@ -235,7 +235,7 @@ export default function UploadPage() {
     const colorOptions = language === 'AR' ? arColors : enColors
 
     console.log(language)
-
+    const isVendor = user?.subscription?.plan?.toUpperCase() === "VENDOR";
     // Category options
     // const categoryOptions = [
     //     "Wedding",
@@ -708,13 +708,13 @@ export default function UploadPage() {
                                     {/* Material and Care */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label htmlFor="material">{t("createProduct.specifications.material.label")} <span className="text-red-500">*</span></Label>
+                                            <Label htmlFor="material">{t("createProduct.specifications.material.label")} </Label>
                                             <Input
                                                 id="material"
                                                 {...register("material")}
                                                 placeholder={t("createProduct.specifications.material.placeholder")}
                                             />
-                                            {errors.material && <p className="text-sm text-red-500">{errors.material.message}</p>}
+                                            {/* {errors.material && <p className="text-sm text-red-500">{errors.material.message}</p>} */}
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="careInstructions">{t("createProduct.specifications.careInstructions.label")}</Label>
@@ -837,16 +837,66 @@ export default function UploadPage() {
 
                                     {/* Quantity and Reference */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="qty">{t("createProduct.specifications.quantity.label")} <span className="text-red-500">*</span></Label>
-                                            <Input
-                                                id="qty"
-                                                type="number"
-                                                min="1"
-                                                {...register("qty", { valueAsNumber: true })}
-                                            />
-                                            {errors.qty && <p className="text-sm text-red-500">{errors.qty.message}</p>}
-                                        </div>
+                                        {
+                                            !isVendor ?
+
+                                                <TooltipBox text={t("common.upgradeToVendor")}>
+
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="qty">
+                                                            {t("createProduct.specifications.quantity.label")}
+                                                            <span className="text-red-500">*</span>
+                                                        </Label>
+
+                                                        <Input
+                                                            id="qty"
+                                                            type="number"
+                                                            disabled={!isVendor}
+                                                            min={1}
+                                                            /* ⬇️  allow >1 only for Vendor  */
+                                                            max={isVendor ? undefined : 1}
+                                                            /* react‑hook‑form validation */
+                                                            {...register("qty", {
+                                                                valueAsNumber: true,
+                                                                min: { value: 1, message: t("validation.minOne") },
+                                                                validate: value =>
+                                                                    isVendor || value <= 1 || t("validation.needVendorForMore"),
+                                                            })}
+                                                        />
+
+                                                        {errors.qty && (
+                                                            <p className="text-sm text-red-500">{errors.qty.message}</p>
+                                                        )}
+                                                    </div>
+                                                </TooltipBox>
+                                                :
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="qty">
+                                                        {t("createProduct.specifications.quantity.label")}
+                                                        <span className="text-red-500">*</span>
+                                                    </Label>
+
+                                                    <Input
+                                                        id="qty"
+                                                        type="number"
+                                                        disabled={!isVendor}
+                                                        min={1}
+                                                        /* ⬇️  allow >1 only for Vendor  */
+                                                        max={isVendor ? undefined : 1}
+                                                        /* react‑hook‑form validation */
+                                                        {...register("qty", {
+                                                            valueAsNumber: true,
+                                                            min: { value: 1, message: t("validation.minOne") },
+                                                            validate: value =>
+                                                                isVendor || value <= 1 || t("validation.needVendorForMore"),
+                                                        })}
+                                                    />
+
+                                                    {errors.qty && (
+                                                        <p className="text-sm text-red-500">{errors.qty.message}</p>
+                                                    )}
+                                                </div>
+                                        }
                                         <div className="space-y-2">
                                             <Label htmlFor="ref">{t("createProduct.specifications.reference.label")} </Label>
                                             <Input
@@ -879,14 +929,14 @@ export default function UploadPage() {
                                     <div className="flex items-center space-x-2 pt-2">
                                         <Checkbox
                                             id="terms"
-                                          {...register("terms")} 
-                                           onCheckedChange={(checked) => {
-                                                    if (checked) {
-                                                        setValue("terms", true)
-                                                    } else {
-                                                        setValue("terms", false)
-                                                    }
-                                                }}
+                                            {...register("terms")}
+                                            onCheckedChange={(checked) => {
+                                                if (checked) {
+                                                    setValue("terms", true)
+                                                } else {
+                                                    setValue("terms", false)
+                                                }
+                                            }}
 
                                         />
                                         <Label htmlFor="terms" className="text-sm">

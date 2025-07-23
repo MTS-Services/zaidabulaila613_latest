@@ -798,7 +798,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                                     {/* Material and Care */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label htmlFor="material">{t("createProduct.specifications.material.label")}  <span className="text-red-500">*</span></Label>
+                                            <Label htmlFor="material">{t("createProduct.specifications.material.label")}  </Label>
                                             <Controller
                                                 name="material"
                                                 control={control}
@@ -810,7 +810,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                                                     />
                                                 )}
                                             />
-                                            {errors.material && <p className="text-sm text-red-500">{errors.material.message}</p>}
+                                            {/* {errors.material && <p className="text-sm text-red-500">{errors.material.message}</p>} */}
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="careInstructions">{t("createProduct.specifications.careInstructions.label")}</Label>

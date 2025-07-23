@@ -56,6 +56,9 @@ export const LOGIN_USER_MUTATION = gql`
     userId
     status
     plan
+    stripePriceId
+      currentPeriodStart
+      currentPeriodEnd
     }
     }
   }
@@ -108,6 +111,7 @@ export const CREATE_SUBSCRIPTION_MUTATION = gql`
       stripeProductId
       status
       currentPeriodStart
+      currentPeriodEnd
       cancelAtPeriodEnd
       plan
       canceledAt

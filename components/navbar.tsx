@@ -381,7 +381,7 @@ export default function Navbar() {
                   <path strokeWidth="1.5" d="M12 16V8"></path>
                 </svg>
               </div>
-              <p className="text-gold-dark mb-0 font-semibold">Upload Dress</p>
+              <p className="text-gold-dark mb-0 font-semibold">{t("common.uploadDress")}</p>
 
             </div>
           </Link>

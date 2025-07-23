@@ -29,31 +29,27 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
     const defaultCurrency = currentCurrencyList.find((c) => c.code === "USD")!;
     const [selectedCurrency, setSelectedCurrencyState] = useState<Currency>(defaultCurrency);
 
-    useEffect(() => {
-        const saved = localStorage.getItem("selectedCurrency");
+ useEffect(() => {
+    const currentCurrencyList = language === "AR" ? arCurrencies : enCurrencies;
+    const defaultCurrency = currentCurrencyList.find((c) => c.code === "USD")!;
+    const saved = localStorage.getItem("selectedCurrency");
+    const userCurrencyCode = user?.user?.account?.currency?.value;
 
-        const userCurrencyCode = user?.user?.account?.currency?.value;
+    let matched: Currency | undefined;
 
-        if (userCurrencyCode) {
-            const matched = currentCurrencyList.find((c: any) => c.code === (userCurrencyCode).toUpperCase());
-            if (matched) {
-                setSelectedCurrencyState(matched);
-                localStorage.setItem("selectedCurrency", JSON.stringify(matched));
-                return;
-            }
+    if (userCurrencyCode) {
+        matched = currentCurrencyList.find((c) => c.code === userCurrencyCode.toUpperCase());
+    } else if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            matched = currentCurrencyList.find((c) => c.code === parsed.code);
+        } catch {
+            matched = defaultCurrency;
         }
+    }
 
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                setSelectedCurrencyState(parsed);
-            } catch {
-                setSelectedCurrencyState(defaultCurrency);
-            }
-        } else {
-            setSelectedCurrencyState(defaultCurrency);
-        }
-    }, [user]);
+    setSelectedCurrencyState(matched ?? defaultCurrency);
+}, [user, language]);
 
     const setSelectedCurrency = (currency: Currency) => {
         localStorage.setItem("selectedCurrency", JSON.stringify(currency));

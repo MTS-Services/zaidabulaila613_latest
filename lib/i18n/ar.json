@@ -179,7 +179,9 @@
         "menu": "القائمة",
         "needHelp": "هل تحتاج إلى مساعدة؟",
         "cart": "سلة التسوق",
-        "account": "الحساب"
+        "account": "الحساب",
+        "uploadDress": "اضافة فستان",
+        "upgradeToVendor": "قم بترقية اشتراكك إلى بائع"
     },
     "updateProduct": {
         "title": "تحديث الفستان الخاص بك",
@@ -380,9 +382,10 @@
                 "feature2": "5 صور لكل فستان",
                 "feature3": "تحرير وتحميل الصور",
                 "feature4": "رؤية أساسية",
-                "monpr": "9.99",
-                "quarpr": "26.97",
-                "yearpr": "80"
+                "monpr": "مجاني",
+                "quarpr": "مجاني",
+                "yearpr": "مجاني"
+                
             },
             "platinumplan": {
                 "name": "بلاتيني",

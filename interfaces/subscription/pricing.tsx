@@ -14,7 +14,7 @@ const Pricing = () => {
 
     const [selectedDuration, setSelectedDuration] = useState<PlanDuration>('monthly');
 
-    const durations: PlanDuration[] = ['monthly', 'quarterly', 'yearly'];
+    const durations: PlanDuration[] = ['monthly', 'yearly'];
 
     const getSavings = (plan: typeof pricingPlans[0], duration: PlanDuration) => {
         if (duration === 'monthly') return 0;
@@ -74,6 +74,8 @@ const Pricing = () => {
             }
         }
     ];
+
+
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
@@ -112,8 +114,10 @@ const Pricing = () => {
 
                 {/* Pricing Cards */}
                 <div className="mt-12 space-y-8 sm:space-y-0 sm:grid sm:grid-cols-[repeat(auto-fill,_minmax(300px,_auto))] sm:gap-8 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:mx-0">
-                    {user && user?.subscription ? pricingPlans.filter((el) => el.name.toLowerCase() !== user.subscription?.plan.toLowerCase()).map((plan) => {
+                    {user && user?.subscription ? pricingPlans.map((plan) => {
                         const savings = getSavings(plan, selectedDuration);
+                        // const currentDate = new Date(user?.subscription.currentPeriodStart);
+                        // const endDate = new Date(user?.subscription?.currentPeriodEnd);
                         return (
                             <div
                                 key={plan.name}
@@ -130,19 +134,26 @@ const Pricing = () => {
                                         </h3>
                                         <div className="mt-4 flex items-center justify-center">
                                             <span className="px-3 flex items-center sm:items-start text-[30px]  sm:text-[50px] tracking-tight text-gray-900">
+                                                {plan.name !== "Basic" && 
                                                 <span className="sm:mt-2 mr-2 sm:text-4xl font-medium">$</span>
+                                                
+                                                }
                                                 <span className="font-extrabold">
                                                     {plan.prices[selectedDuration].price}
                                                 </span>
                                             </span>
-                                            <span className="text-xl font-medium text-gray-500">
-                                                /
+                                            {
+                                                plan.name !== "Basic" &&
+                                                <span className="text-xl font-medium text-gray-500">
+                                                    /
 
-                                                {selectedDuration === "monthly" ? t('dashboard.subcription.month') :
-                                                    selectedDuration === "yearly" ? t('dashboard.subcription.year') :
-                                                        selectedDuration === "quarterly" ? t('dashboard.subcription.quarter') :
-                                                            null}
-                                            </span>
+                                                    {selectedDuration === "monthly" ? t('dashboard.subcription.month') :
+                                                        selectedDuration === "yearly" ? t('dashboard.subcription.year') :
+                                                            selectedDuration === "quarterly" ? t('dashboard.subcription.quarter') :
+                                                                null}
+                                                </span>
+
+                                            }
                                         </div>
                                         {savings > 0 && (
                                             <p className="mt-2 text-center text-sm text-green-600">
@@ -180,24 +191,35 @@ const Pricing = () => {
                                         ))}
                                     </ul>
                                     <div className="mt-8">
-                                        <button
-                                            className={`w-full flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white ${plan.name === 'Platinum'
-                                                ? 'bg-indigo-600 hover:bg-indigo-700'
-                                                : 'bg-gray-800 hover:bg-gray-900'
-                                                }`}
-                                            onClick={() => {
-                                                console.log("asd", plan.prices[selectedDuration])
-                                                router.push(`/dashboard/subscription/pricing/${plan.prices[selectedDuration].priceId}`)
 
-                                            }
-                                            }
+                                        {user?.subscription?.stripePriceId === plan.prices[selectedDuration].priceId &&
+                                            <div>
+                                                <ul>
+                                                    <li className='flex gap-2 mb-2'>
+                                                        <p className='text-gray-500'>Date Start: </p>
+                                                        <p>{new Date(parseInt(user?.subscription?.currentPeriodStart)).toLocaleDateString()}</p>
+                                                    </li>
+                                                    <li className='flex gap-2'>
+                                                        <p className='text-gray-500'>Date End: </p>
+                                                        <p>{new Date(parseInt(user?.subscription?.currentPeriodEnd)).toLocaleDateString()}</p>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        }
 
-                                        >
+                                        {user?.subscription?.stripePriceId !== plan.prices[selectedDuration].priceId && plan.name !== "Basic" && (
+                                            <button
+                                                className={`w-full flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white ${plan.name === 'Platinum'
+                                                    ? 'bg-indigo-600 hover:bg-indigo-700'
+                                                    : 'bg-gray-800 hover:bg-gray-900'
+                                                    }`}
+                                                onClick={() => {
+                                                    router.push(`/dashboard/subscription/pricing/${plan.prices[selectedDuration].priceId}`)
+                                                }}
+                                            >
                                                 {t('dashboard.subcription.upgrade')}
-                                            {/* <Link href={`/dashboard/subscription/pricing/${plan.prices[selectedDuration].priceId}`}>
-
-                                            </Link> */}
-                                        </button>
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             </div>

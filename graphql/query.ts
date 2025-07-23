@@ -534,6 +534,9 @@ export const GET_USER_PROFILE = gql`
     userId
     status
     plan
+    stripePriceId
+      currentPeriodStart
+      currentPeriodEnd
     }
     }
     

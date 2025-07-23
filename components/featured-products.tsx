@@ -187,7 +187,7 @@ export default function FeaturedProducts() {
       slider.removeEventListener("touchmove", handleTouchMove)
     }
   }, [])
-  const filterTags = language === 'AR' ? arProductTypes : enProductTypes
+  const filterTags = language === 'AR' ? ["الكل",...arProductTypes] : ["All", ...enProductTypes]
 
 
   useEffect(() => {

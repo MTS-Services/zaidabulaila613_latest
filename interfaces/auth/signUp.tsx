@@ -127,7 +127,7 @@
 import { z } from 'zod';
 import Form, { Field } from '@/components/form';
 import { FormSchemaSignUpType, signUpValidator } from '@/lib/validators/auth';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { useMutation, useQuery } from '@apollo/client';
 import { CREATE_USER_MUTATION } from '@/graphql/mutation';
 import Link from 'next/link';
@@ -135,6 +135,7 @@ import { ChevronLeft } from 'lucide-react';
 import { enqueueSnackbar } from 'notistack';
 import { useAuth } from '@/contexts/auth-context';
 import { useTranslation } from '@/hooks/use-translation';
+import { useEffect } from 'react';
 
 
 export default function SignUp() {
@@ -151,7 +152,12 @@ export default function SignUp() {
         { type: "Input", name: 'confirmPassword', label: t('signup.confirmpassword'), inputType: 'password' },
     ];
     const router = useRouter()
-    const { login } = useAuth();
+    const { login, user } = useAuth();
+    useEffect(() => {
+        if(user){
+            redirect('/dashboard')
+        }
+    }, [user])
     const [createUser, { data, loading, error }] = useMutation(CREATE_USER_MUTATION)
     const handleSubmit = async (data: any) => {
         try {

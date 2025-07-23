@@ -24,6 +24,9 @@ export interface ISubscription {
   userId: string;
   status: string;
   plan: string;
+  stripePriceId: string;
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
 }
 
 export interface LoginUser {

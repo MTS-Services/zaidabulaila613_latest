@@ -89,7 +89,11 @@ const CheckoutForm = ({ priceId }: { priceId: string }) => {
                     id: subscription?._id,
                     plan: subscription.plan,
                     status: subscription.status,
-                    userId: user.user.id
+                    userId: user.user.id,
+                    stripePriceId: subscription.stripePriceId,
+                    currentPeriodStart: subscription.currentPeriodStart,
+                    currentPeriodEnd: subscription.currentPeriodEnd
+
                 })
                 router.push('/dashboard')
                 enqueueSnackbar({ message: "Subscription purchased successfully", variant: 'success', anchorOrigin: { horizontal: "center", vertical: "bottom" } })
@@ -138,7 +142,7 @@ export function PaymentForm({ priceId }: { priceId: string }) {
     );
 }
 
-export function getPlanByPriceId(priceId: string, pricingPlans:any[]): {
+export function getPlanByPriceId(priceId: string, pricingPlans: any[]): {
     plan: PricingPlan;
     duration: PlanDuration;
 } | null {

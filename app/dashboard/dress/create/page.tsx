@@ -714,11 +714,7 @@ export default function UploadPage() {
                                                 {...register("material")}
                                                 placeholder={t("createProduct.specifications.material.placeholder")}
                                             />
-<<<<<<< HEAD
-                                            {/* {errors.material && <p className="text-sm text-red-500">{errors.material.message}</p>} */}
-=======
                                             {errors.material && <p className="text-sm text-red-500">{t(errors.material.message as string)}</p>}
->>>>>>> 5865002ca4e18ce89eabb54847ef4f8e225d5dd7
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="careInstructions">{t("createProduct.specifications.careInstructions.label")}</Label>
@@ -841,68 +837,6 @@ export default function UploadPage() {
 
                                     {/* Quantity and Reference */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-<<<<<<< HEAD
-                                        {
-                                            !isVendor ?
-
-                                                <TooltipBox text={t("common.upgradeToVendor")}>
-
-                                                    <div className="space-y-2">
-                                                        <Label htmlFor="qty">
-                                                            {t("createProduct.specifications.quantity.label")}
-                                                            <span className="text-red-500">*</span>
-                                                        </Label>
-
-                                                        <Input
-                                                            id="qty"
-                                                            type="number"
-                                                            disabled={!isVendor}
-                                                            min={1}
-                                                            /* ⬇️  allow >1 only for Vendor  */
-                                                            max={isVendor ? undefined : 1}
-                                                            /* react‑hook‑form validation */
-                                                            {...register("qty", {
-                                                                valueAsNumber: true,
-                                                                min: { value: 1, message: t("validation.minOne") },
-                                                                validate: value =>
-                                                                    isVendor || value <= 1 || t("validation.needVendorForMore"),
-                                                            })}
-                                                        />
-
-                                                        {errors.qty && (
-                                                            <p className="text-sm text-red-500">{errors.qty.message}</p>
-                                                        )}
-                                                    </div>
-                                                </TooltipBox>
-                                                :
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="qty">
-                                                        {t("createProduct.specifications.quantity.label")}
-                                                        <span className="text-red-500">*</span>
-                                                    </Label>
-
-                                                    <Input
-                                                        id="qty"
-                                                        type="number"
-                                                        disabled={!isVendor}
-                                                        min={1}
-                                                        /* ⬇️  allow >1 only for Vendor  */
-                                                        max={isVendor ? undefined : 1}
-                                                        /* react‑hook‑form validation */
-                                                        {...register("qty", {
-                                                            valueAsNumber: true,
-                                                            min: { value: 1, message: t("validation.minOne") },
-                                                            validate: value =>
-                                                                isVendor || value <= 1 || t("validation.needVendorForMore"),
-                                                        })}
-                                                    />
-
-                                                    {errors.qty && (
-                                                        <p className="text-sm text-red-500">{errors.qty.message}</p>
-                                                    )}
-                                                </div>
-                                        }
-=======
                                         <div className="space-y-2">
                                             <Label htmlFor="qty">{t("createProduct.specifications.quantity.label")} <span className="text-red-500">*</span></Label>
                                             <Input
@@ -913,7 +847,6 @@ export default function UploadPage() {
                                             />
                                             {errors.qty && <p className="text-sm text-red-500">{t(errors.qty.message as string)}</p>}
                                         </div>
->>>>>>> 5865002ca4e18ce89eabb54847ef4f8e225d5dd7
                                         <div className="space-y-2">
                                             <Label htmlFor="ref">{t("createProduct.specifications.reference.label")} </Label>
                                             <Input

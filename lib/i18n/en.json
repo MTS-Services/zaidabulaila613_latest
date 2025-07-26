@@ -557,7 +557,7 @@
             "height": "Height measurement must be positive",
             "lenght": "Length measurement must be positive",
             "quantity": "Quantity must be at least 1",
-            "state": "State is required",
+            "state": "City is required",
             "term": "You must accept the terms and conditions"
         },
         "checkout": {

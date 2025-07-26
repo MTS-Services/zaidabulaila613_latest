@@ -6,6 +6,7 @@ import Image from "next/image"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { heroContent } from "@/constants/hero/hero-section"
 import { useTranslation } from "@/hooks/use-translation"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function HeroSection() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
@@ -14,7 +15,8 @@ export default function HeroSection() {
   const isMobile = useIsMobile()
   const [scrollY, setScrollY] = useState(0)
 
-  const {t} = useTranslation()
+  const { t } = useTranslation()
+  const { user } = useAuth()
 
   // const slides = [
   //   {
@@ -73,7 +75,7 @@ export default function HeroSection() {
   }, [emblaApi, onSelect])
 
   // Remove the slides array and use heroContent.slides instead
-  
+
   return (
     <section className="relative h-screen">
       {/* Overlay for better text visibility */}
@@ -122,11 +124,14 @@ export default function HeroSection() {
               </h1>
             </div>
             <p className="text-white/90 text-xl md:text-2xl">{t('hero.description')}</p>
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <a href={heroContent.cta.href} className="fancy-button fancy-button-primary pointer-events-auto">
-                {t('hero.button')}
-              </a>
-            </div>
+            {!user &&
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <a href={heroContent.cta.href} className="fancy-button fancy-button-primary pointer-events-auto">
+                  {t('hero.button')}
+                </a>
+              </div>
+
+            }
           </div>
         </div>
       </div>
@@ -137,9 +142,8 @@ export default function HeroSection() {
           <button
             key={index}
             onClick={() => scrollTo(index)}
-            className={`w-2 h-2 rounded-full transition-all ${
-              selectedIndex === index ? "w-6 bg-white" : "bg-white/50"
-            }`}
+            className={`w-2 h-2 rounded-full transition-all ${selectedIndex === index ? "w-6 bg-white" : "bg-white/50"
+              }`}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}

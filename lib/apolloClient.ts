@@ -55,7 +55,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
 // 🧠 Upload support
 const httpLink = createUploadLink({
-  uri: 'https://q9sv8mxn-3000.asse.devtunnels.ms/api',
+  uri: 'https://api.layls.com/api',
   credentials: 'include',
 });
 

@@ -179,8 +179,8 @@ export default function SignUp() {
             })
             const result = response?.data?.createUser;
             console.log(data, "Data")
-            login(result);
-            enqueueSnackbar({ message: "Signup successful", variant: 'success', anchorOrigin: { horizontal: "center", vertical: "bottom" } })
+            // login(result);
+            enqueueSnackbar({ message: "Confirmation link sent to your email!", variant: 'success', anchorOrigin: { horizontal: "center", vertical: "bottom" }, transitionDuration:10000 })
             router.push('/')
         } catch (e: any) {
             console.error("GraphQL Signup Error:", e);

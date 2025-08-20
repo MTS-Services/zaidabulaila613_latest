@@ -15,7 +15,7 @@ import { useTranslation } from '@/hooks/use-translation';
 
 
 export default function SignIn() {
-const {t} = useTranslation();
+    const { t } = useTranslation();
 
     const formFields: Field[] = [
         { type: "Input", name: 'username', label: t('login.phonelabel'), inputType: 'text' },
@@ -37,8 +37,10 @@ const {t} = useTranslation();
                 }
             })
             const result = response?.data?.loginUser;
-
-            console.log(data, "Data")
+            if (!result?.user?.isVerified) {
+                router.push(`verify-account?email=${values?.username}`)
+                return
+            }
             login(result);
             enqueueSnackbar({ message: "Login successful", variant: 'success', anchorOrigin: { horizontal: "center", vertical: "bottom" } })
             if (redirect) {

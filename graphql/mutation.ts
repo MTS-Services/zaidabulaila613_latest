@@ -37,6 +37,7 @@ export const LOGIN_USER_MUTATION = gql`
       access_token
         user{
             id
+            isVerified
             account{
             firstName
             lastName
@@ -162,6 +163,16 @@ export const CREATE_ORDER_MUTATION = gql`
 export const CHANGE_ORDER_STATUS = gql`
   mutation ChangeStatus($id: String, $status:String) {
     changeStatus(id: $id, status:$status)
+  }
+`;
+export const VERIFY_EMAIL = gql`
+  mutation VerifyEmail($token: String!, $email: String!) {
+    verifyEmail(token: $token, email: $email) 
+  }
+`;
+export const EMAIL_CONFIRM = gql`
+  mutation EmailConfirm($email: String!) {
+    emailConfirm(email: $email)
   }
 `;
 

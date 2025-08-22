@@ -668,7 +668,7 @@ export default function Navbar() {
           </div>
         </div>
         {
-          isDashboard ? <div className="flex flex-col divide-y" onClick={() => setIsDrawerOpen(false)}>
+          isDashboard ? <div className="flex flex-col divide-y pl-2" onClick={() => setIsDrawerOpen(false)}>
             <CategoryItem href={'/dashboard'} label={t('dashboard.sidebar.home')} />
             <CategoryItem href={'/dashboard/orders'} label={t('dashboard.sidebar.order')} />
             <CategoryItem href={'/dashboard/dress'} label={t('dashboard.sidebar.dress')} />

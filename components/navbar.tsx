@@ -28,17 +28,18 @@ import ReactCountryFlag from "react-country-flag"
 import { useDrawer } from "@/contexts/drawer-context"
 import { contactInfo, shippingInfo } from "@/constants/contact"
 import { useCurrency } from "@/contexts/currency-context"
-import { arCurrencies, enCurrencies } from "@/lib/utils"
+import { arCurrencies, cn, enCurrencies } from "@/lib/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { useLanguage } from "@/contexts/language-context"
 import { useCategory } from "@/contexts/category-context"
 import { useQuery } from "@apollo/client"
 import { ShopsResponse } from "@/types/shop"
 import { GET_SHOPS } from "@/graphql/query"
-import { useSearchParams } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { useUpdateQueryParams } from "@/hooks/useSearchParams"
 import { useTranslation } from "@/hooks/use-translation"
 import { arProductTypes, enProductTypes } from "@/constants/product"
+import { useAuth } from "@/contexts/auth-context"
 
 // Add this currencies array near the top of the file, after the imports
 
@@ -48,6 +49,10 @@ export default function Navbar() {
 
   const params = useSearchParams()
   const search = params.get("search")
+  const pathname = usePathname();
+
+  const isDashboard = pathname?.includes("/dashboard");
+  const { logout } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const { cartCount } = useCart()
   const { wishlistCount } = useWishlist()
@@ -662,83 +667,103 @@ export default function Navbar() {
 
           </div>
         </div>
+        {
+          isDashboard ? <div className="flex flex-col divide-y" onClick={() => setIsDrawerOpen(false)}>
+            <CategoryItem href={'/dashboard'} label={t('dashboard.sidebar.home')} />
+            <CategoryItem href={'/dashboard/orders'} label={t('dashboard.sidebar.order')} />
+            <CategoryItem href={'/dashboard/dress'} label={t('dashboard.sidebar.dress')} />
+            <CategoryItem href={'/dashboard/profile'} label={t('dashboard.sidebar.profile')} />
+            <CategoryItem href={'/dashboard/subscription'} label={t('dashboard.sidebar.subcription')} />
+            <CategoryItem href={'/dashboard/shop'} label={t('dashboard.sidebar.shop')} />
+            {/* <CategoryItem href={'/dashboard/dress'} label={t('dashboard.sidebar.logout')} /> */}
+            <button
+              onClick={() => logout()}
+              className={cn(
+                "flex items-center gap-3 py-3 px-4 hover:bg-slate-50",
 
-        {/* Tabs */}
-        <div className="border-b">
-          <div className="grid grid-cols-2 w-full">
-            <button
-              className={`py-3 font-medium text-center ${activeTab === "menu" ? "bg-white border-b-2 border-gold" : "bg-slate-50"}`}
-              onClick={() => setActiveTab("menu")}
+              )}
             >
-              {t("common.menu")}
-            </button>
-            <button
-              className={`py-3 font-medium text-center ${activeTab === "categories" ? "bg-white border-b-2 border-gold" : "bg-slate-50"}`}
-              onClick={() => setActiveTab("categories")}
-            >
-              {t("navbar.categories")}
+              {t('dashboard.sidebar.logout')}
             </button>
           </div>
-        </div>
+            :
+            <>
+              {/* Tabs */}
+              <div className="border-b">
+                <div className="grid grid-cols-2 w-full">
+                  <button
+                    className={`py-3 font-medium text-center ${activeTab === "menu" ? "bg-white border-b-2 border-gold" : "bg-slate-50"}`}
+                    onClick={() => setActiveTab("menu")}
+                  >
+                    {t("common.menu")}
+                  </button>
+                  <button
+                    className={`py-3 font-medium text-center ${activeTab === "categories" ? "bg-white border-b-2 border-gold" : "bg-slate-50"}`}
+                    onClick={() => setActiveTab("categories")}
+                  >
+                    {t("navbar.categories")}
+                  </button>
+                </div>
+              </div>
 
-        {/* Tab Content */}
-        <div className="overflow-y-auto h-[calc(100%-48px-56px)]">
-          {" "}
-          {/* Adjusted for search bar */}
-          {activeTab === "menu" ? (
-            <div className="flex flex-col divide-y">
+              {/* Tab Content */}
+              <div className="overflow-y-auto h-[calc(100%-48px-56px)]">
+                {" "}
+                {/* Adjusted for search bar */}
+                {activeTab === "menu" ? (
+                  <div className="flex flex-col divide-y">
 
-              <NavItem
-                href="#"
-                label={t("navbar.shops")}
-                hasChildren
-                isExpanded={expandedMenus.includes("Shop")}
-                onToggle={(e) => toggleSubmenu(e, "Shop")}
-              >
-                <div className="bg-slate-50 pl-8 divide-y">
-                  {displayProductTypes.map((el) => {
-                    return (
-                      <Link href={el.href} className="block py-2 px-4 hover:bg-slate-100">
-                        {el.label}
-                      </Link>
+                    <NavItem
+                      href="#"
+                      label={t("navbar.shops")}
+                      hasChildren
+                      isExpanded={expandedMenus.includes("Shop")}
+                      onToggle={(e) => toggleSubmenu(e, "Shop")}
+                    >
+                      <div className="bg-slate-50 pl-8 divide-y">
+                        {displayProductTypes.map((el) => {
+                          return (
+                            <Link href={el.href} className="block py-2 px-4 hover:bg-slate-100">
+                              {el.label}
+                            </Link>
 
-                    )
-                  })}
-                  {/* <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
+                          )
+                        })}
+                        {/* <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
                     Blog List
                   </Link>
                   <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
                     Blog Single
                   </Link> */}
-                </div>
-              </NavItem>
-              <NavItem
-                href="#"
-                label={t("navbar.vendors")}
-                hasChildren
-                isExpanded={expandedMenus.includes("Vendor")}
-                onToggle={(e) => toggleSubmenu(e, "Vendor")}
-              >
-                <div className="bg-slate-50 pl-8 divide-y">
-                  {displayVendors.map((el) => {
-                    return (
-                      <Link href={el.href} className="block py-2 px-4 hover:bg-slate-100">
-                        {el.label}
-                      </Link>
+                      </div>
+                    </NavItem>
+                    <NavItem
+                      href="#"
+                      label={t("navbar.vendors")}
+                      hasChildren
+                      isExpanded={expandedMenus.includes("Vendor")}
+                      onToggle={(e) => toggleSubmenu(e, "Vendor")}
+                    >
+                      <div className="bg-slate-50 pl-8 divide-y">
+                        {displayVendors.map((el) => {
+                          return (
+                            <Link href={el.href} className="block py-2 px-4 hover:bg-slate-100">
+                              {el.label}
+                            </Link>
 
-                    )
-                  })}
-                  {/* <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
+                          )
+                        })}
+                        {/* <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
                     Blog List
                   </Link>
                   <Link href="#" className="block py-2 px-4 hover:bg-slate-100">
                     Blog Single
                   </Link> */}
-                </div>
-              </NavItem>
+                      </div>
+                    </NavItem>
 
 
-              {/* <NavItem href="/wishlist" label="Wishlist" icon={<Heart className="h-4 w-4" />} />
+                    {/* <NavItem href="/wishlist" label="Wishlist" icon={<Heart className="h-4 w-4" />} />
 
               <NavItem
                 href="#"
@@ -774,7 +799,7 @@ export default function Navbar() {
                   ))}
                 </div>
               </NavItem> */}
-              {/* 
+                    {/* 
               <NavLinkWithDropdown
                 label={t("navbar.shop")}
                 items={[
@@ -795,32 +820,37 @@ export default function Navbar() {
                 ]}
               /> */}
 
-              <div className="py-4 px-4">
-                <h3 className="font-medium mb-3">{t("common.needHelp")}</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-slate-500" />
-                    <span>+01 23456789</span>
+                    <div className="py-4 px-4">
+                      <h3 className="font-medium mb-3">{t("common.needHelp")}</h3>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Phone className="h-4 w-4 text-slate-500" />
+                          <span>+01 23456789</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Mail className="h-4 w-4 text-slate-500" />
+                          <span>support@layls.com</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-4 w-4 text-slate-500" />
-                    <span>support@layls.com</span>
+                ) : (
+                  <div className="flex flex-col divide-y">
+                    {displayCategories.map((el) => {
+                      return (
+                        <CategoryItem href={el.href} label={el.label} />
+
+                      )
+                    })}
+
                   </div>
-                </div>
+                )}
               </div>
-            </div>
-          ) : (
-            <div className="flex flex-col divide-y">
-              {displayCategories.map((el) => {
-                return (
-                  <CategoryItem href={el.href} label={el.label} />
 
-                )
-              })}
+            </>
+        }
 
-            </div>
-          )}
-        </div>
+
 
       </div>
     </header>
@@ -921,7 +951,7 @@ function NavItem({ href, label, icon, hasChildren, isExpanded, onToggle, childre
 // Category Item Component for Mobile
 function CategoryItem({ href, label, icon }: { href: string; label: string; icon?: React.ReactNode }) {
   return (
-    <Link href={href} className="flex items-center gap-3 py-3 px-4 hover:bg-slate-50">
+    <Link href={href} className="flex items-center gap-3 py-3 px-4 hover:bg-slate-50" >
       {icon && <span className="text-slate-500">{icon}</span>}
       <span>{label}</span>
     </Link>

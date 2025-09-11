@@ -1,0 +1,599 @@
+{
+    "createProduct": {
+        "title": "Create New Product",
+        "description": "Share your beautiful dress with our community",
+        "perDay": "Per Day",
+        "images": {
+            "title": "Dress Images",
+            "description": "Upload up to 5 images of your dress",
+            "uploadText": "Click to upload",
+            "uploadHint": "PNG, JPG, WEBP up to 5MB",
+            "uploadedImages": "Uploaded Images"
+        },
+        "dressType": {
+            "title": "Dress Type",
+            "description": "Select the type of listing",
+            "new": {
+                "label": "New",
+                "description": "Brand new dress with tags"
+            },
+            "used": {
+                "label": "Used",
+                "description": "Pre-owned dress in good condition"
+            },
+            "rental": {
+                "label": "Rental",
+                "description": "Available for rental only"
+            }
+        },
+        "basicInfo": {
+            "title": "Basic Information",
+            "subtitle": "Enter the details of your dress",
+            "name": {
+                "label": "Dress Name",
+                "placeholder": "e.g., Elegant Silk Wedding Gown"
+            },
+            "description": {
+                "label": "Description",
+                "placeholder": "Describe your dress, including details about style, fit, and any special features"
+            },
+            "category": {
+                "label": "Category",
+                "placeholder": "Select a category"
+            },
+            "price": {
+                "label": "Price ",
+                "placeholder": "0.00"
+            },
+            "oldPrice": {
+                "label": "Original Price ",
+                "tooltip": "For used or rental items, specify the original retail price to show the discount"
+            }
+        },
+        "specifications": {
+            "title": "Specifications",
+            "description": "Add details about size, color, and materials",
+            "sizes": {
+                "label": "Available Sizes",
+                "guide": "Size Guide",
+                "guideContent": {
+                    "title": "Size Guide",
+                    "xs": "XS: US 0-2",
+                    "s": "S: US 4-6",
+                    "m": "M: US 8-10",
+                    "l": "L: US 12-14",
+                    "xl": "XL: US 16-18",
+                    "xxl": "XXL: US 20-22"
+                }
+            },
+            "colors": {
+                "label": "Available Colors",
+                "selectedColor": {
+                    "label": "Selected Color",
+                    "placeholder": "Select the main color"
+                }
+            },
+            "material": {
+                "label": "Material",
+                "placeholder": "e.g., 100% Silk, Polyester blend"
+            },
+            "careInstructions": {
+                "label": "Care Instructions",
+                "placeholder": "e.g., Dry clean only"
+            },
+            "measurements": {
+                "chest": "Chest (in)",
+                "waist": "Waist (in)",
+                "hip": "Hip (in)",
+                "shoulder": "Shoulder (in)",
+                "height": "Height (in)",
+                "length": "Length (in)"
+            },
+            "options": {
+                "sleeve": "Has Sleeves",
+                "underlay": "Has Underlay"
+            },
+            "quantity": {
+                "label": "Quantity"
+            },
+            "reference": {
+                "label": "Reference",
+                "placeholder": "e.g., Designer reference number"
+            },
+            "state": {
+                "label": "State",
+                "placeholder": "e.g., New York"
+            },
+            "city": {
+                "label": "City",
+                "placeholder": "e.g., New York"
+            }
+        },
+        "terms": {
+            "agree": "I agree to the",
+            "terms": "terms and conditions",
+            "privacy": "privacy policy"
+        },
+        "actions": {
+            "cancel": "Cancel",
+            "publish": "Publish"
+        },
+        "messages": {
+            "success": "Your dress has been submitted for review.",
+            "minImages": "Please upload minimum 2 images.",
+            "maxImages": "Maximum 5 images allowed, upgrade your subscription to add more."
+        },
+        "errors": {
+            "REQUIRED_NAME": "Please provide a name for your product",
+            "REQUIRED_DESCRIPTION": "Please provide a description",
+            "MIN_PRICE": "Price must be positive",
+            "MIN_OLD_PRICE": "Original price must be positive",
+            "REQUIRED_CATEGORY": "Please select a category",
+            "REQUIRED_COLORS": "Please select at least one color",
+            "REQUIRED_SELECTED_COLOR": "Please select the main color",
+            "REQUIRED_SIZES": "Please select at least one size",
+            "REQUIRED_MATERIAL": "Please specify the material",
+            "REQUIRED_CARE_INSTRUCTIONS": "Please provide care instructions",
+            "MIN_QUANTITY": "Quantity must be at least 1",
+            "REQUIRED_REFERENCE": "Please provide a reference",
+            "REQUIRED_STATE": "Please specify the state",
+            "MIN_CHEST": "Chest measurement must be positive",
+            "MIN_WAIST": "Waist measurement must be positive",
+            "MIN_HIP": "Hip measurement must be positive",
+            "MIN_SHOULDER": "Shoulder measurement must be positive",
+            "MIN_HEIGHT": "Height measurement must be positive",
+            "MIN_LENGTH": "Length measurement must be positive",
+            "generic": "Please fix the errors in the form"
+        }
+    },
+    "userProducts": {
+        "products": "Products",
+        "image": "Image",
+        "name": "Name",
+        "price": "Price",
+        "type": "Type",
+        "quantity": "Quantity",
+        "category": "Category",
+        "approved": "Approved",
+        "notApproved": "Not approved",
+        "actions": "Actions",
+        "noImage": "No Image",
+        "searchProducts": "Search products...",
+        "addDress": "Add Dress",
+        "loading": "Loading...",
+        "error": "Error",
+        "deleteSuccess": "Your dress has been deleted successfully.",
+        "deleteFailed": "Something went wrong during deleting dress.",
+        "createFirstDress": "Create your first dress",
+        "approvedStatus": {
+            "true": "Approved",
+            "false": "Not approved"
+        }
+    },
+    "common": {
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "import": "Import",
+        "search": "Search",
+        "menu": "Menu",
+        "needHelp": "Need Help?",
+        "cart": "Cart",
+        "account": "Account",
+        "uploadDress": "Upload Dress",
+        "upgradeToVendor":"Upgrade your subscription to vendor."
+    },
+    "updateProduct": {
+        "title": "Update Your Dress",
+        "description": "Update your dress listing with the latest information",
+        "current_images": "Current Images",
+        "new_images": "New Images"
+    },
+    "productTypes": {
+        "new": "New",
+        "used": "Used",
+        "rental": "Rental"
+    },
+    "hero": {
+        "subtitle": "Ready to Find Your Perfect Dress?",
+        "tittle": "Upload your dress and WIN",
+        "description": "Win a $100 gift by registering on our website",
+        "button": "Register Now"
+    },
+    "animatedloaderContent": {
+        "prefix": "You Can",
+        "buy": "BUY",
+        "sell": "SELL",
+        "rent": "RENT",
+        "browse": "BROWSE"
+    },
+    "vendorSelection": {
+        "title": "Featured Vendors & Boutiques",
+        "description": "Discover independent designers and exclusive collections",
+        "button": "VIEW ALL VENDORS"
+    },
+    "categorySelection": {
+        "title": "Shop By Category"
+    },
+    "shopByType": {
+        "title": "Featured Dresses",
+        "description": "Discover our most popular dresses across all categories",
+        "button": "View All Dresses"
+    },
+    "benefit": {
+        "title": "Why Choose Us?",
+        "fast": {
+            "title": "Fast Delivery",
+            "description": "Get your dress delivered quickly, even for rentals",
+            "fasticon": "TruckIcon",
+            "fasticonbgcolor": "bg-gold/10",
+            "fasticoncolor": "text-gold"
+        },
+        "easy": {
+            "icon": "RefreshCw",
+            "title": "Easy Returns",
+            "description": "Hassle-free return process if the dress isn't perfect",
+            "iconbgcolor": "bg-gold/10",
+            "iconcolor": "text-gold"
+        },
+        "quantity": {
+            "icon": "ShieldCheck",
+            "title": "Quality Guarantee",
+            "description": "All dresses are verified for quality and condition",
+            "iconbgcolor": "bg-gold/10",
+            "iconcolor": "text-gold"
+        }
+    },
+    "ready": {
+        "title": "Ready to Find Your Perfect Dress?",
+        "description": "Start your search now and discover thousands of options from trusted vendors",
+        "button": "Start Shopping"
+    },
+    "footer": {
+        "shop": "Shop",
+        "help": "Help",
+        "about": "About",
+        "connect": "Connect",
+        "newarrival": "New Arrivals",
+        "useddresses": "Used Dresses",
+        "rentaloptions": "Rental Options",
+        "vendors": "Vendors",
+        "faq": "FAQ",
+        "shipping": "Shipping",
+        "returns": "Returns",
+        "contactus": "Contact Us",
+        "ourstory": "Our Story",
+        "careers": "Careers",
+        "press": "Press",
+        "instagram": "Instagram",
+        "facebook": "Facebook",
+        "pinterest": "Pinterest",
+        "twitter": "Twitter",
+        "copyright": "© 2025 DressMarket. All rights reserved.",
+        "privacypolicy": "Privacy Policy",
+        "termservice": "Terms of Service"
+    },
+    "backtotop": {
+        "text": "Back to Top"
+    },
+    "login": {
+        "title": "Login",
+        "phonelabel": "Email / phone",
+        "password": "Password",
+        "button": "Login",
+        "signup": "Signup",
+        "forgot": "Forgot Password?"
+    },
+    "signup": {
+        "title": "Signup",
+        "firstname": "First Name",
+        "lastname": "Last Name",
+        "email": "Email",
+        "mobile": "Mobile",
+        "country": "Country",
+        "language": "Language",
+        "password": "Password",
+        "confirmpassword": "Confirm Password",
+        "button": "Signup"
+    },
+    "forgetpassword": {
+        "title": "Forget Password",
+        "email": "Email",
+        "button": "Submit"
+    },
+    "dashboard": {
+        "title": "Welcome to dashboard",
+        "pendingOrders": "Pending Orders",
+        "inProcessOrders": "In Process Orders",
+        "totalOrders": "Total Orders",
+        "completedOrders": "Completed Orders",
+        "sidebar": {
+            "order": "My Orders",
+            "dress": "My Dresses",
+            "profile": "Profile",
+            "subcription": "Subscription",
+            "shop": "Shop",
+            "logout": "Logout",
+            "home": "Home"
+        },
+        "order": {
+            "title": "My Orders",
+            "description": "Manage your placed orders",
+            "placebtn": "Placed Orders",
+            "plcnoOrder": "No orders placed",
+            "plcnodesc": "You haven't placed any orders yet.",
+            "recievedbtn": "Received Orders",
+            "rectitle": "Incoming Orders",
+            "recdescription": "Manage your received orders",
+            "recnoOrder": "No orders received",
+            "recnodesc": "You haven't received any orders yet.",
+            "order": "Order",
+            "orderitem": "Order Items",
+            "orderdetail": "Order Details",
+            "method": "Payment Method",
+            "status": "Payment Status",
+            "address": "Delivery Address",
+            "note": "Notes",
+            "pending": "Pending",
+            "cash": "Cash",
+            "online": "Online",
+            "processing": "Processing",
+            "print": "Print Order",
+            "updstatus": "Update Status",
+            "paid": "Paid",
+            "customerNotes": "Customer Notes"
+        },
+        "profile": {
+            "title": "Profile",
+            "firstname": "First Name",
+            "lastname": "Last Name",
+            "email": "Email",
+            "mobile": "Mobile",
+            "country": "Country",
+            "language": "Language",
+            "updbtn": "Update"
+        },
+        "shop": {
+            "shopname": "Shop Name",
+            "description": "Description",
+            "contact": "Contact Number",
+            "tags": "Tags",
+            "savebtn": "Save Shop"
+        },
+        "subcription": {
+            "title": "Pricing Plans",
+            "description": "Choose the perfect plan for your needs",
+            "monthly": "Monthly",
+            "quarterly": "Quarterly",
+            "yearly": "Yearly",
+            "getstarted": "Get started",
+            "save": "Save",
+            "vs": "% vs monthly",
+            "month": "month",
+            "quarter": "quarter",
+            "year": "year",
+            "upgrade": "Upgrade",
+            "completeSub": "Complete Your Subscription",
+            "plan": "Plan",
+            "basicplan": {
+                "name": "Basic",
+                "description": "For individuals getting started with dress listings",
+                "feature1": "Add up to 5 dresses",
+                "feature2": "5 images per dress",
+                "feature3": "Edit and upload images",
+                "feature4": "Basic visibility",
+                "monpr": "Free",
+                "quarpr": "Free",
+                "yearpr": "Free"
+            },
+            "platinumplan": {
+                "name": "Platinum",
+                "description": "For serious sellers who want more visibility",
+                "feature1": "Priority visibility on homepage",
+                "feature2": "Add unlimited dresses",
+                "feature3": "Add more photos and videos per dress",
+                "feature4": "Moderate visibility for listings",
+                "feature5": "Advanced dress management",
+                "monpr": "29.99",
+                "quarpr": "80.97",
+                "yearpr": "287.88"
+            },
+            "vendorplan": {
+                "name": "Vendor",
+                "description": "For professional vendors and boutiques",
+                "feature1": "Create and manage a storefront",
+                "feature2": "Access advanced analytics",
+                "feature3": "Bulk upload dresses",
+                "feature4": "Highest visibility priority",
+                "feature5": "Dedicated support",
+                "feature6": "API access",
+                "monpr": "99.99",
+                "quarpr": "269.97",
+                "yearpr": "959.88"
+            }
+        }
+    },
+    "navbar": {
+        "offer": "Free shipping on orders over $100",
+        "allVendors": "All Vendors",
+        "allShops": "All Shops",
+        "allCategories": "All Categories",
+        "categories": "Categories",
+        "vendors": "Vendors",
+        "shops": "Shops",
+        "products": "Products",
+        "allProducts": "All Products",
+        "shop": "Shop"
+    },
+    "productpage": {
+        "filter": "Filter",
+        "searchproduct": "Search products",
+        "showing": "Showing",
+        "products": "Products",
+        "bycolor": "By Color",
+        "byvendor": "By Vendor",
+        "bysize": "By Size",
+        "bycategory": "By Category",
+        "bytitle": "By Title",
+        "placeholder": "Search for product title",
+        "byprice": "By Price",
+        "price": "Price",
+        "applyfilter": "APPLY FILTERS",
+        "resetfilter": "Reset Filters",
+        "clearall": "Clear All",
+        "activefilter": "Active Filters",
+        "noproduct": "No products found",
+        "try": "Try adjusting your filters to find what you're looking for."
+    },
+    "productpageid": {
+        "zoom": "Click to zoom",
+        "color": "COLOR",
+        "size": "SIZE",
+        "sizeguide": "Size Guide",
+        "addtocart": "Add to Cart",
+        "added": "Added",
+        "ref": "REF",
+        "categories": "Categories",
+        "share": "Share",
+        "description": "Description",
+        "additionalinformation": "Additional Information",
+        "productdetail": "Product Details",
+        "material": "Material",
+        "care": "Care",
+        "chest": "Chest",
+        "waist": "Waist",
+        "length": "Length",
+        "height": "Height",
+        "hip": "Hip",
+        "safe": "Safe & Secure",
+        "guarant": "Guaranteed",
+        "free": "Free Shipping",
+        "overon": "On orders over $100",
+        "hassle": "Hassle-Free Returns",
+        "moneyback": "30 day money back",
+        "authentic": "100% Authentic",
+        "guarantproduct": "Guaranteed Products"
+    },
+    "cartpage": {
+        "title": "Shopping Cart",
+        "continue": "Continue Shopping",
+        "size": "SIZE",
+        "color": "COLOR",
+        "save": "Save",
+        "remove": "Remove",
+        "clearcart": "Clear Cart",
+        "item": "item",
+        "items": "items",
+        "incart": "in cart",
+        "ordersummary": "Order Summary",
+        "subtotal": "Subtotal",
+        "shipping": "Shipping",
+        "tax": "Tax",
+        "total": "Total",
+        "promo": "Promo Code",
+        "apply": "Apply",
+        "checkout": "Checkout",
+        "secure": "Secure checkout powered by Stripe",
+        "free": "Free shipping on orders over $100",
+        "freeshipping": "Free",
+        "return": "30-day easy returns",
+        "empty": "Your cart is empty",
+        "look": "Looks like you haven't added any items to your cart yet.",
+        "startshopping": "Start Shopping"
+    },
+    "wishlist": {
+        "title": "My Wishlist",
+        "clear": "Clear Wishlist",
+        "inwishlist": "in wishlist",
+        "empty": "Your wishlist is empty",
+        "love": "Save items you love to your wishlist and revisit them anytime.",
+        "number": "number"
+    },
+    "checkout": {
+        "title": "Checkout",
+        "info": "Address Information",
+        "city": "City",
+        "apartment": "Apartment",
+        "street": "Street",
+        "payment": "Payment Method",
+        "cash": "Cash",
+        "online": "Online",
+        "additioninfo": "Additional Notes (Optional)",
+        "complete": "Complete Order",
+        "processing": "Processing..."
+    },
+    "vendorpage": {
+        "title": "Our Vendors",
+        "description": "Discover our curated selection of trusted dress vendors",
+        "placeholder": "Search Vendors...",
+        "novendor": "No vendors found",
+        "try": "Try adjusting your search criteria",
+        "clear": "Clear Search",
+        "contact": "Contact Vendor"
+    },
+    "validator": {
+        "shop": {
+            "shopName": "Shop name is required",
+            "description": "Description must be at least 10 characters",
+            "contact": "Contact number is required",
+            "tags": "At least one tag is required",
+            "coverImage": "",
+            "profileImage": ""
+        },
+        "dress": {
+            "name": "Name is required",
+            "description": "Description is required",
+            "price": "Price must be positive",
+            "orgprice": "Original price must be positive",
+            "product": "Product type is required",
+            "category": "Category is required",
+            "color": "At least one color is required",
+            "size": "At least one size is required",
+            "material": "Material is required",
+            "chest": "Chest measurement must be positive",
+            "waist": "Waist measurement must be positive",
+            "hip": "Hip measurement must be positive",
+            "sholder": "Shoulder measurement must be positive",
+            "height": "Height measurement must be positive",
+            "lenght": "Length measurement must be positive",
+            "quantity": "Quantity must be at least 1",
+            "state": "City is required",
+            "term": "You must accept the terms and conditions"
+        },
+        "checkout": {
+            "city": "City is required",
+            "citylong": "City is too long",
+            "apartment": "Apartment is required",
+            "apartmentlong": "Apartment is too long",
+            "street": "Street is required",
+            "streetlong": "Street is too long",
+            "note": "Notes are too long"
+        },
+        "profile": {
+            "firstname": "First name is required",
+            "firstleast": "First name must be at least 2 characters",
+            "lastname": "Last name is required",
+            "lastleast": "Last name must be at least 2 characters",
+            "email": "Email is required",
+            "invalid": "Email is invalid",
+            "mobile": "Mobile number is required",
+            "mobileinvalid": "Invalid phone number",
+            "mobileleast": "Mobile number must be at least 10 digits",
+            "country": "Country is required",
+            "countryleast": "Country name must be at least 2 characters",
+            "lang": "Language is required",
+            "langstreet": "Language must be at least 2 characters",
+            "otp": "OTP is Required",
+            "forgot": "ForgotPassword",
+            "reg": "Register"
+        },
+        "reset": {
+            "password": "Password is Required",
+            "passwordleast": "Password must contain at least 6 character(s)",
+            "confirm": "Confirm password is Required",
+            "confirmleast": "Confirm password must contain at least 6 character(s)",
+            "notmatch": "The passwords did not match",
+            "phone": "Email or Phone is Required"
+        }
+    }
+}

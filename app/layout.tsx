@@ -1,8 +1,26 @@
 import type React from 'react';
 import type { Metadata } from 'next';
+<<<<<<< HEAD
 
 import './globals.css';
 import './embla.css'; // Import the Embla CSS
+=======
+import { Inter, Playfair_Display, Great_Vibes } from 'next/font/google';
+
+import './globals.css';
+import './embla.css'; // Import the Embla CSS
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+});
+const greatVibes = Great_Vibes({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-great-vibes',
+});
+>>>>>>> 7c864076cf0cfb89946626cda5691c0f96ebce6e
 import { CartProvider } from '@/hooks/use-cart';
 import { WishlistProvider } from '@/hooks/use-wishlist';
 import { DrawerProvider } from '@/contexts/drawer-context';
@@ -32,8 +50,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+<<<<<<< HEAD
     <html lang='en'>
       <body>
+=======
+    <html lang='en' dir='ltr'>
+      <body
+        className={`${inter.variable} font-sans pt-16`}
+        suppressHydrationWarning={true}
+      >
+>>>>>>> 7c864076cf0cfb89946626cda5691c0f96ebce6e
         <ApolloClientProvider>
           <AuthProvider>
             <LanguageProvider>

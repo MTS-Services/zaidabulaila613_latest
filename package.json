@@ -47,7 +47,7 @@
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
     "embla-carousel-react": "latest",
-    "framer-motion": "latest",
+    "framer-motion": "^12.23.12",
     "graphql": "^16.11.0",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",

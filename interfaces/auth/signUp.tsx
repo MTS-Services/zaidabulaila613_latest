@@ -7,7 +7,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useAuth } from '@/contexts/auth-context';
 import { useTranslation } from '@/hooks/use-translation';
 import { useEffect, useState } from 'react';
-import React from 'react'; // Make sure React is in scope
+import React from 'react'; 
 
 // --- Integrated Password Strength UI ---
 // This component is now inside your SignUp file to avoid import issues.

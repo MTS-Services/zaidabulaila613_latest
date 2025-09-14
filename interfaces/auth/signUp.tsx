@@ -76,7 +76,6 @@ const PasswordStrengthMeter = ({ password }: { password: string }) => {
     </div>
   );
 };
-// --- End of Integrated Component ---
 
 export default function SignUp() {
   const { t } = useTranslation();

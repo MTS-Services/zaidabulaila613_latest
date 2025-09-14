@@ -123,7 +123,7 @@ export default function SignUp() {
       onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
         setPassword(e.target.value),
       onFocus: () => setIsPasswordFocused(true),
-      onBlur: () => setIsPasswordFocused(false), // Optional: hide when user clicks away
+      onBlur: () => setIsPasswordFocused(false), 
     },
     {
       type: 'Input',

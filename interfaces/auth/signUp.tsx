@@ -120,7 +120,6 @@ export default function SignUp() {
       name: 'password',
       label: t('signup.password'),
       inputType: 'password',
-      // 2. Add event handlers to show/hide the meter and update the password
       onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
         setPassword(e.target.value),
       onFocus: () => setIsPasswordFocused(true),

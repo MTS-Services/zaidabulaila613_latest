@@ -3,7 +3,6 @@ import Form, { Field } from '@/components/form';
 import { FormSchemaSignUpType, signUpValidator } from '@/lib/validators/auth';
 import { redirect, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { enqueueSnackbar } from 'notistack';
 import { useAuth } from '@/contexts/auth-context';
 import { useTranslation } from '@/hooks/use-translation';
 import { useEffect, useState } from 'react';
@@ -85,7 +84,7 @@ export default function SignUp() {
               formFields={formFields}
               onSubmit={handleSubmit}
               isPending={isLoading}
-              showPasswordStrength={true} // <-- শুধু এই লাইনটি যোগ করা হয়েছে
+              showPasswordStrength={true} 
               defaultValues={{
                 firstName: '',
                 lastName: '',
@@ -96,7 +95,7 @@ export default function SignUp() {
                 confirmPassword: '',
                 lang: 'en',
               }}
-              buttonTitle='Signup' // <-- বাটনটির নাম সরাসরি "Signup" করা হয়েছে
+              buttonTitle='Signup' 
             />
             <div className='mt-6 pt-6 border-t border-gray-200'>
               <p className='text-center text-sm text-gray-500'>

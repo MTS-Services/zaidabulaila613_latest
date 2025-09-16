@@ -361,14 +361,14 @@ export default function SignUp() {
               <ToggleGroupItem
                 value='whatsapp'
                 aria-label='Toggle WhatsApp'
-                className='inline-flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=on]:bg-white data-[state=on]:text-black data-[state=on]:shadow-sm'
+                className='inline-flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=on]:bg-[#CC9765] data-[state=on]:text-black data-[state=on]:shadow-sm'
               >
                 WhatsApp
               </ToggleGroupItem>
               <ToggleGroupItem
                 value='email'
                 aria-label='Toggle Email'
-                className='inline-flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=on]:bg-white data-[state=on]:text-black data-[state=on]:shadow-sm'
+                className='inline-flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=on]:bg-[#CC9765] data-[state=on]:text-black data-[state=on]:shadow-sm'
               >
                 Email
               </ToggleGroupItem>

@@ -413,7 +413,6 @@ export default function Navbar() {
           </div>
 
           {/* Upload Icon Button - Updated size and position */}
-          {/* Upload Icon Button - Updated size and position */}
           {isAuthenticated && (
             <Link
               href='/dashboard/dress/create'
@@ -442,7 +441,6 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Wishlist Icon */}
           <Link
             href='/wishlist'
             className='text-slate-700 hover:text-slate-900 relative p-2 rounded-full hover:bg-slate-100 transition-colors'

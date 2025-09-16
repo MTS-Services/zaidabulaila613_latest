@@ -54,7 +54,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const isDashboard = pathname?.includes('/dashboard');
-  const { logout } = useAuth();
+  const { logout, isAuthenticated } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
@@ -413,30 +413,34 @@ export default function Navbar() {
           </div>
 
           {/* Upload Icon Button - Updated size and position */}
-          <Link
-            href='/dashboard/dress/create'
-            className='hidden lg:flex flex-col items-center justify-center relative p-2 rounded-full transition-colors'
-          >
-            <div className='flex gap-2 items-center w-full'>
-              <div className='group cursor-pointer outline-none hover:rotate-90 duration-300'>
-                <svg
-                  className='stroke-gold fill-none group-hover:fill-black/20 group-hover:stroke-gold group-active:stroke-gold/50 group-active:fill-gold group-active:duration-0 duration-300 h-10 w-10'
-                  viewBox='0 0 24 24'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <path
-                    strokeWidth='1.5'
-                    d='M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z'
-                  ></path>
-                  <path strokeWidth='1.5' d='M8 12H16'></path>
-                  <path strokeWidth='1.5' d='M12 16V8'></path>
-                </svg>
+          {/* Upload Icon Button - Updated size and position */}
+          {isAuthenticated && (
+            <Link
+              href='/dashboard/dress/create'
+              className='hidden lg:flex flex-col items-center justify-center relative p-2 rounded-full transition-colors'
+            >
+              {/* ... বাটনের ভেতরের SVG এবং p ট্যাগ অপরিবর্তিত থাকবে ... */}
+              <div className='flex gap-2 items-center w-full'>
+                <div className='group cursor-pointer outline-none hover:rotate-90 duration-300'>
+                  <svg
+                    className='stroke-gold fill-none group-hover:fill-black/20 group-hover:stroke-gold group-active:stroke-gold/50 group-active:fill-gold group-active:duration-0 duration-300 h-10 w-10'
+                    viewBox='0 0 24 24'
+                    xmlns='http://www.w3.org/2000/svg'
+                  >
+                    <path
+                      strokeWidth='1.5'
+                      d='M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z'
+                    ></path>
+                    <path strokeWidth='1.5' d='M8 12H16'></path>
+                    <path strokeWidth='1.5' d='M12 16V8'></path>
+                  </svg>
+                </div>
+                <p className='text-gold-dark mb-0 font-semibold'>
+                  {t('common.uploadDress')}
+                </p>
               </div>
-              <p className='text-gold-dark mb-0 font-semibold'>
-                {t('common.uploadDress')}
-              </p>
-            </div>
-          </Link>
+            </Link>
+          )}
 
           {/* Wishlist Icon */}
           <Link

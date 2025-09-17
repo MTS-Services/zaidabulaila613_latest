@@ -5,8 +5,6 @@ import { gql, useMutation } from "@apollo/client";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { EMAIL_CONFIRM } from "@/graphql/mutation";
 
-
-
 export default function VerifyEmail() {
     const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
     const [message, setMessage] = useState("");
@@ -98,3 +96,6 @@ export default function VerifyEmail() {
         </div>
     );
 }
+
+//=================================// 9-13-2025
+

@@ -1,5 +1,3 @@
-// In: src/app/reset-password-verify/page.tsx
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -67,11 +65,10 @@ export default function ResetPasswordVerifyPage() {
           );
         }
 
-        // Save the token for the FINAL step
         sessionStorage.setItem('passwordResetToken', resetToken);
 
         enqueueSnackbar('OTP verified successfully!', { variant: 'success' });
-        router.push('/set-new-password'); // Redirect to the final page
+        router.push('/set-new-password');
       } catch (error: any) {
         enqueueSnackbar(error.message, { variant: 'error' });
       } finally {

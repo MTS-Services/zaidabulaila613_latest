@@ -1,5 +1,3 @@
-// In: src/app/set-new-password/page.tsx
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -36,7 +34,6 @@ export default function SetNewPasswordPage() {
     if (token) {
       setResetToken(token);
     } else {
-      // If there's no token, the user shouldn't be here
       enqueueSnackbar('Invalid or expired session. Please start over.', {
         variant: 'error',
       });

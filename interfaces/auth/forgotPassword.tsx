@@ -134,7 +134,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 
-export default function ForgetPassword() {
+export default function ForgotPassword() {
   const router = useRouter();
   const [identifier, setIdentifier] = useState('');
   const [verificationType, setVerificationType] = useState<

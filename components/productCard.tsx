@@ -86,11 +86,11 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
 
         {/* Wishlist Button */}
-        <div className='absolute top-2 right-2 z-20'>
+        {/* <div className='absolute top-2 right-2 z-20'>
           <div className='h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center'>
             <span className='sr-only'>{t('product.addToWishlist')}</span>
           </div>
-        </div>
+        </div> */}
 
         {/* Product Image */}
         <Link href={`/products/${product.id}`} className='block'>

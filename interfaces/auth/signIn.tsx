@@ -120,8 +120,6 @@
 
 //===================================// 9-17-2025
 
-// In: your SignIn.tsx file (e.g., src/interfaces/auth/SignIn.tsx)
-
 'use client';
 
 import { useState } from 'react';
@@ -134,7 +132,6 @@ import { useAuth } from '@/contexts/auth-context';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/hooks/use-translation';
 
-// The component function starts with a curly brace '{' here
 export const SignIn = () => {
   const { t } = useTranslation();
   const router = useRouter();
@@ -215,5 +212,4 @@ export const SignIn = () => {
       </div>
     </div>
   );
-  // The component function ends with a curly brace '}' here
 };

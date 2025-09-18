@@ -240,7 +240,6 @@
 
 //=================================// 9-17-2025 added number with country code
 
-// In: src/app/forgot-password/page.tsx
 
 'use client';
 
@@ -319,7 +318,7 @@ export default function ForgotPasswordPage() {
               onValueChange={(value: 'email' | 'whatsapp') => {
                 if (value) {
                   setVerificationType(value);
-                  setIdentifier(''); // Clear the input when changing method
+                  setIdentifier(''); 
                 }
               }}
               className='inline-flex'
@@ -339,7 +338,6 @@ export default function ForgotPasswordPage() {
                 : 'WhatsApp Number'}
             </label>
 
-            {/* --- Step 2 & 3: Conditional Rendering and State Connection --- */}
             {verificationType === 'email' ? (
               <input
                 id='identifier'
@@ -358,7 +356,7 @@ export default function ForgotPasswordPage() {
                 defaultCountry='KW'
                 value={identifier}
                 onChange={(value) => setIdentifier(value || '')}
-                className='PhoneInputInput' // Use this class for custom styling if needed
+                className='PhoneInputInput' 
                 style={{
                   border: '1px solid #D1D5DB',
                   borderRadius: '0.375rem',

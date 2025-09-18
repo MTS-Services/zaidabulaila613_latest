@@ -125,6 +125,123 @@
 
 //======================================// 9-17-2025
 
+// 'use client';
+
+// import { useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { enqueueSnackbar } from 'notistack';
+// import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+// import { Label } from '@/components/ui/label';
+// import { Button } from '@/components/ui/button';
+
+// export default function ForgotPassword() {
+//   const router = useRouter();
+//   const [identifier, setIdentifier] = useState('');
+//   const [verificationType, setVerificationType] = useState<
+//     'email' | 'whatsapp'
+//   >('email');
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+//     event.preventDefault();
+//     setIsLoading(true);
+
+//     const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/user/forgot-password`;
+//     const payload = { identifier, verificationType };
+
+//     try {
+//       const response = await fetch(apiUrl, {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify(payload),
+//       });
+
+//       const result = await response.json();
+//       if (!response.ok) {
+//         throw new Error(result.message || 'Failed to send reset code.');
+//       }
+
+//       // 1. Save the identifier and type for the next page (OTP page)
+//       sessionStorage.setItem('resetIdentifier', identifier);
+//       sessionStorage.setItem('resetVerificationType', verificationType);
+
+//       enqueueSnackbar('A password reset code has been sent.', {
+//         variant: 'success',
+//       });
+
+//       // 2. Redirect to the page where the user will enter the OTP
+//       router.push('/reset-password-verify');
+//     } catch (error: any) {
+//       enqueueSnackbar(error.message, { variant: 'error' });
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className='flex items-center justify-center min-h-screen bg-gray-50'>
+//       <div className='w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md'>
+//         <div className='text-center'>
+//           <h1 className='text-2xl font-bold'>Forgot Password</h1>
+//           <p className='text-gray-600 mt-2'>
+//             Enter your email or WhatsApp number to receive a verification code.
+//           </p>
+//         </div>
+
+//         <form onSubmit={handleSubmit} className='space-y-6'>
+//           <div className='flex flex-col items-center justify-center'>
+//             <Label className='font-semibold mb-3 text-gray-700'>
+//               Receive Code Via
+//             </Label>
+//             <ToggleGroup
+//               type='single'
+//               value={verificationType}
+//               onValueChange={(value: 'email' | 'whatsapp') => {
+//                 if (value) setVerificationType(value);
+//               }}
+//               className='inline-flex'
+//             >
+//               <ToggleGroupItem value='email'>Email</ToggleGroupItem>
+//               <ToggleGroupItem value='whatsapp'>WhatsApp</ToggleGroupItem>
+//             </ToggleGroup>
+//           </div>
+
+//           <div>
+//             <label
+//               htmlFor='identifier'
+//               className='block text-sm font-medium text-gray-700'
+//             >
+//               {verificationType === 'email'
+//                 ? 'Email Address'
+//                 : 'WhatsApp Number'}
+//             </label>
+//             <input
+//               id='identifier'
+//               name='identifier'
+//               type={verificationType === 'email' ? 'email' : 'tel'}
+//               value={identifier}
+//               onChange={(e) => setIdentifier(e.target.value)}
+//               placeholder={
+//                 verificationType === 'email' ? 'you@example.com' : '+8801...'
+//               }
+//               required
+//               className='w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500'
+//             />
+//           </div>
+
+//           <Button type='submit' disabled={isLoading} className='w-full'>
+//             {isLoading ? 'Sending...' : 'Send Reset Code'}
+//           </Button>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// }
+
+//=================================// 9-17-2025 added number with country code
+
+// In: src/app/forgot-password/page.tsx
+
 'use client';
 
 import { useState } from 'react';
@@ -133,8 +250,13 @@ import { enqueueSnackbar } from 'notistack';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
-export default function ForgetPassword() {
+// --- Step 1: Add the necessary imports ---
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+
+export default function ForgotPasswordPage() {
   const router = useRouter();
   const [identifier, setIdentifier] = useState('');
   const [verificationType, setVerificationType] = useState<
@@ -161,7 +283,6 @@ export default function ForgetPassword() {
         throw new Error(result.message || 'Failed to send reset code.');
       }
 
-      // 1. Save the identifier and type for the next page (OTP page)
       sessionStorage.setItem('resetIdentifier', identifier);
       sessionStorage.setItem('resetVerificationType', verificationType);
 
@@ -169,7 +290,6 @@ export default function ForgetPassword() {
         variant: 'success',
       });
 
-      // 2. Redirect to the page where the user will enter the OTP
       router.push('/reset-password-verify');
     } catch (error: any) {
       enqueueSnackbar(error.message, { variant: 'error' });
@@ -197,7 +317,10 @@ export default function ForgetPassword() {
               type='single'
               value={verificationType}
               onValueChange={(value: 'email' | 'whatsapp') => {
-                if (value) setVerificationType(value);
+                if (value) {
+                  setVerificationType(value);
+                  setIdentifier(''); // Clear the input when changing method
+                }
               }}
               className='inline-flex'
             >
@@ -209,30 +332,57 @@ export default function ForgetPassword() {
           <div>
             <label
               htmlFor='identifier'
-              className='block text-sm font-medium text-gray-700'
+              className='block text-sm font-medium text-gray-700 mb-1'
             >
               {verificationType === 'email'
                 ? 'Email Address'
                 : 'WhatsApp Number'}
             </label>
-            <input
-              id='identifier'
-              name='identifier'
-              type={verificationType === 'email' ? 'email' : 'tel'}
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              placeholder={
-                verificationType === 'email' ? 'you@example.com' : '+8801...'
-              }
-              required
-              className='w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500'
-            />
+
+            {/* --- Step 2 & 3: Conditional Rendering and State Connection --- */}
+            {verificationType === 'email' ? (
+              <input
+                id='identifier'
+                name='identifier'
+                type='email'
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder='you@example.com'
+                required
+                className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500'
+              />
+            ) : (
+              <PhoneInput
+                id='identifier'
+                international
+                defaultCountry='KW'
+                value={identifier}
+                onChange={(value) => setIdentifier(value || '')}
+                className='PhoneInputInput' // Use this class for custom styling if needed
+                style={{
+                  border: '1px solid #D1D5DB',
+                  borderRadius: '0.375rem',
+                  padding: '0.5rem 0.75rem',
+                }}
+              />
+            )}
           </div>
 
           <Button type='submit' disabled={isLoading} className='w-full'>
             {isLoading ? 'Sending...' : 'Send Reset Code'}
           </Button>
         </form>
+        <div className='text-center text-sm'>
+          <p>
+            Remember your password?{' '}
+            <Link
+              href='/login'
+              className='font-medium text-indigo-600 hover:text-indigo-500'
+            >
+              Sign in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

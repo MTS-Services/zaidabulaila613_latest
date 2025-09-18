@@ -355,7 +355,7 @@ export default function ForgotPasswordPage() {
               <PhoneInput
                 id='identifier'
                 international
-                defaultCountry='KW' // Set default country to Kuwait
+                defaultCountry='KW'
                 value={identifier}
                 onChange={(value) => setIdentifier(value || '')}
                 className='PhoneInputInput' // Use this class for custom styling if needed

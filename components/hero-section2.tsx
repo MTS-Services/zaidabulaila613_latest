@@ -8,46 +8,37 @@ import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
-type Banner = {
-  _id: string;
-  bigheading: string;
-  body: string;
-  lowerheading: string;
-  image: string;
-  order: number;
-  isActive: boolean;
-};
-
 export default function HeroSection() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
   const isMobile = useIsMobile();
   const [scrollY, setScrollY] = useState(0);
-  const [banners, setBanners] = useState<Banner[]>([]);
 
   const { t } = useTranslation();
   const { user } = useAuth();
 
-  useEffect(() => {
-    async function fetchBanners() {
-      try {
-        const res = await fetch(
-          "https://newbackend.mtscorporate.com/banners/active"
-        );
-        const json = await res.json();
-        if (json.success && Array.isArray(json.data)) {
-          setBanners(json.data.sort((a, b) => a.order - b.order));
-        }
-      } catch (e) {
-        setBanners([]);
-      }
-    }
-    fetchBanners();
-  }, []);
+  // const slides = [
+  //   {
+  //     image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?q=80&w=1920&auto=format&fit=crop",
+  //     alt: "Elegant woman in a white wedding dress",
+  //   },
+  //   {
+  //     image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=1920&auto=format&fit=crop",
+  //     alt: "Woman in a red evening gown",
+  //   },
+  //   {
+  //     image: "https://images.unsplash.com/photo-1562137369-1a1a0bc66744?q=80&w=1920&auto=format&fit=crop",
+  //     alt: "Woman in a formal blue dress",
+  //   },
+  // ]
 
+  // Handle parallax effect
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -64,12 +55,11 @@ export default function HeroSection() {
   }, [emblaApi]);
 
   useEffect(() => {
-    if (!emblaApi || banners.length === 0) {
-      return;
-    }
+    if (!emblaApi) return;
 
     setScrollSnaps(emblaApi.scrollSnapList());
     onSelect();
+
     emblaApi.on("select", onSelect);
     emblaApi.on("reInit", onSelect);
 
@@ -85,13 +75,15 @@ export default function HeroSection() {
       emblaApi.off("select", onSelect);
       clearInterval(autoplayInterval);
     };
-  }, [emblaApi, onSelect, banners]);
+  }, [emblaApi, onSelect]);
 
-  const slides = banners.length > 0 ? banners : [];
+  // Remove the slides array and use heroContent.slides instead
 
   return (
     <section className="relative h-screen">
+      {/* Overlay for better text visibility */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30 z-10 pointer-events-none" />
+      {/* Announcement Bar */}
       <div className="absolute top-0 left-0 right-0 z-30">
         <div className="bg-gold/90 text-white py-2 px-4 text-center text-sm font-medium">
           <span className="font-bold">{heroContent.announcement.prefix}</span>{" "}
@@ -99,11 +91,12 @@ export default function HeroSection() {
         </div>
       </div>
 
+      {/* Embla Carousel */}
       <div className="embla overflow-hidden h-full" ref={emblaRef}>
         <div className="embla__container flex h-full">
-          {slides.map((slide, index) => (
+          {heroContent.slides.map((slide, index) => (
             <div
-              key={slide._id || index}
+              key={index}
               className="embla__slide flex-[0_0_100%] min-w-0 relative h-full"
             >
               <div
@@ -115,7 +108,7 @@ export default function HeroSection() {
               >
                 <Image
                   src={slide.image || "/placeholder.svg"}
-                  alt={slide.bigheading}
+                  alt={slide.alt}
                   fill
                   className="object-cover"
                   priority={index === 0}
@@ -127,36 +120,36 @@ export default function HeroSection() {
         </div>
       </div>
 
+      {/* Content */}
       <div className="absolute inset-0 z-20 flex items-center pointer-events-none">
         <div className="container px-4 md:px-6">
-          {slides[selectedIndex] && (
-            <div className="max-w-2xl space-y-4">
-              <div className="space-y-2">
-                <p className="text-white/80 font-great-vibes text-2xl md:text-3xl">
-                  {slides[selectedIndex].body}
-                </p>
-                <h1 className="font-playfair text-4xl font-bold tracking-tight text-white sm:text-5xl xl:text-6xl/none elegant-letter-spacing hero-text-shadow">
-                  {slides[selectedIndex].bigheading}
-                </h1>
-              </div>
-              <p className="text-white/90 text-xl md:text-2xl">
-                {slides[selectedIndex].lowerheading}
+          <div className="max-w-2xl space-y-4">
+            <div className="space-y-2">
+              <p className="text-white/80 font-great-vibes text-2xl md:text-3xl">
+                {t("hero.subtitle")}
               </p>
-              {!user && (
-                <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                  <a
-                    href={heroContent.cta.href}
-                    className="fancy-button fancy-button-primary pointer-events-auto"
-                  >
-                    {t("hero.button")}
-                  </a>
-                </div>
-              )}
+              <h1 className="font-playfair text-4xl font-bold tracking-tight text-white sm:text-5xl xl:text-6xl/none elegant-letter-spacing hero-text-shadow">
+                {t("hero.tittle")}
+              </h1>
             </div>
-          )}
+            <p className="text-white/90 text-xl md:text-2xl">
+              {t("hero.description")}
+            </p>
+            {!user && (
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <a
+                  href={heroContent.cta.href}
+                  className="fancy-button fancy-button-primary pointer-events-auto"
+                >
+                  {t("hero.button")}
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Indicators */}
       <div
         className={`absolute ${
           isMobile ? "bottom-24" : "bottom-6"

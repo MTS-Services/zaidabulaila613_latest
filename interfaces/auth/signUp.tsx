@@ -423,6 +423,7 @@ import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 export default function SignUp() {
   const { t } = useTranslation();
@@ -551,6 +552,8 @@ export default function SignUp() {
           </h1>
         </div>
         <div className="container bg-white py-6">
+          {/* Google Sign-In Button */}
+          <GoogleSignInButton buttonText="Sign up with Google" />
           <div className="flex flex-col items-center justify-center mb-8">
             <Label className="font-semibold mb-3 text-gray-700">
               Verification Method

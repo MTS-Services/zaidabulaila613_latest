@@ -412,75 +412,75 @@
 
 //===================================//9-17-2025
 
-'use client';
-import Form, { Field } from '@/components/form';
-import { FormSchemaSignUpType, signUpValidator } from '@/lib/validators/auth';
-import { redirect, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { enqueueSnackbar } from 'notistack';
-import { useAuth } from '@/contexts/auth-context';
-import { useTranslation } from '@/hooks/use-translation';
-import { useEffect, useState, useCallback } from 'react';
-import React from 'react';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Label } from '@/components/ui/label';
+"use client";
+import Form, { Field } from "@/components/form";
+import { Label } from "@/components/ui/label";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useAuth } from "@/contexts/auth-context";
+import { useTranslation } from "@/hooks/use-translation";
+import { FormSchemaSignUpType, signUpValidator } from "@/lib/validators/auth";
+import Link from "next/link";
+import { redirect, useRouter } from "next/navigation";
+import { enqueueSnackbar } from "notistack";
+import { useCallback, useEffect, useState } from "react";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 export default function SignUp() {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [verificationMethod, setVerificationMethod] = useState<
-    'whatsapp' | 'email'
-  >('whatsapp');
+    "whatsapp" | "email"
+  >("whatsapp");
   const router = useRouter();
   const { user } = useAuth();
 
   const formFields: Field[] = [
     {
-      type: 'Input',
-      name: 'firstName',
-      label: t('signup.firstname'),
-      inputType: 'text',
+      type: "Input",
+      name: "firstName",
+      label: t("signup.firstname"),
+      inputType: "text",
     },
     {
-      type: 'Input',
-      name: 'lastName',
-      label: t('signup.lastname'),
-      inputType: 'text',
+      type: "Input",
+      name: "lastName",
+      label: t("signup.lastname"),
+      inputType: "text",
     },
     {
-      type: 'Input',
-      name: 'email',
-      label: t('signup.email'),
-      inputType: 'email',
+      type: "Input",
+      name: "email",
+      label: t("signup.email"),
+      inputType: "email",
     },
-    { type: 'Phone', name: 'mobile', label: t('signup.mobile') },
-    { type: 'Country', name: 'country', label: t('signup.country') },
+    { type: "Phone", name: "mobile", label: t("signup.mobile") },
+    { type: "Country", name: "country", label: t("signup.country") },
     {
-      type: 'Select',
-      name: 'lang',
-      label: t('signup.language'),
+      type: "Select",
+      name: "lang",
+      label: t("signup.language"),
       options: [
-        { label: 'Arabic', value: 'ar' },
-        { label: 'English', value: 'en' },
+        { label: "Arabic", value: "ar" },
+        { label: "English", value: "en" },
       ],
     },
     {
-      type: 'Input',
-      name: 'password',
-      label: t('signup.password'),
-      inputType: 'password',
+      type: "Input",
+      name: "password",
+      label: t("signup.password"),
+      inputType: "password",
     },
     {
-      type: 'Input',
-      name: 'confirmPassword',
-      label: t('signup.confirmpassword'),
-      inputType: 'password',
+      type: "Input",
+      name: "confirmPassword",
+      label: t("signup.confirmpassword"),
+      inputType: "password",
     },
   ];
 
   useEffect(() => {
     if (user) {
-      redirect('/dashboard');
+      redirect("/dashboard");
     }
   }, [user]);
 
@@ -505,8 +505,8 @@ export default function SignUp() {
 
       try {
         const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
 
@@ -514,26 +514,26 @@ export default function SignUp() {
 
         if (!response.ok) {
           // If the API returns an error (like "user already exists"), show it
-          throw new Error(result.message || 'Registration failed.');
+          throw new Error(result.message || "Registration failed.");
         }
 
         // 2. On success, save data to sessionStorage for the OTP page to use
         sessionStorage.setItem(
-          'verificationIdentifier',
+          "verificationIdentifier",
           result.data.identifier
         );
         sessionStorage.setItem(
-          'verificationType',
+          "verificationType",
           result.data.verificationType
         );
 
-        enqueueSnackbar(result.message, { variant: 'success' });
+        enqueueSnackbar(result.message, { variant: "success" });
 
         // 3. Redirect to the new OTP verification page
-        router.push('/verify-account');
+        router.push("/verify-account");
       } catch (error: any) {
-        enqueueSnackbar(error.message || 'Something went wrong.', {
-          variant: 'error',
+        enqueueSnackbar(error.message || "Something went wrong.", {
+          variant: "error",
         });
       } finally {
         setIsLoading(false);
@@ -544,37 +544,39 @@ export default function SignUp() {
   // --- Main Updated Part Ends Here ---
 
   return (
-    <div className='bg-slate-50'>
-      <div className='container pt-[100px]'>
-        <div className='flex items-center justify-center mb-5'>
-          <h1 className='text-2xl md:text-3xl font-bold'>
-            {t('signup.title')}
+    <div className="bg-slate-50">
+      <div className="container pt-[100px]">
+        <div className="flex items-center justify-center mb-5">
+          <h1 className="text-2xl md:text-3xl font-bold">
+            {t("signup.title")}
           </h1>
         </div>
-        <div className='container bg-white py-6'>
-          <div className='flex flex-col items-center justify-center mb-8'>
-            <Label className='font-semibold mb-3 text-gray-700'>
+        <div className="container bg-white py-6">
+          {/* Google Sign-In Button */}
+          <GoogleSignInButton buttonText="Sign up with Google" />
+          <div className="flex flex-col items-center justify-center mb-8">
+            <Label className="font-semibold mb-3 text-gray-700">
               Verification Method
             </Label>
             <ToggleGroup
-              type='single'
-              defaultValue='whatsapp'
-              onValueChange={(value: 'whatsapp' | 'email') => {
+              type="single"
+              defaultValue="whatsapp"
+              onValueChange={(value: "whatsapp" | "email") => {
                 if (value) setVerificationMethod(value);
               }}
-              className='inline-flex h-10 items-center justify-center rounded-lg bg-gray-100 p-1'
+              className="inline-flex h-10 items-center justify-center rounded-lg bg-gray-100 p-1"
             >
               <ToggleGroupItem
-                value='whatsapp'
-                aria-label='Toggle WhatsApp'
-                className='inline-flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=on]:bg-[#CC9765] data-[state=on]:text-white text-black data-[state=on]:shadow-sm'
+                value="whatsapp"
+                aria-label="Toggle WhatsApp"
+                className="inline-flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=on]:bg-[#CC9765] data-[state=on]:text-white text-black data-[state=on]:shadow-sm"
               >
                 WhatsApp
               </ToggleGroupItem>
               <ToggleGroupItem
-                value='email'
-                aria-label='Toggle Email'
-                className='inline-flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=on]:bg-[#CC9765] data-[state=on]:text-white text-black data-[state=on]:shadow-sm'
+                value="email"
+                aria-label="Toggle Email"
+                className="inline-flex items-center justify-center rounded-md px-4 py-1.5 text-sm font-medium transition-all data-[state=on]:bg-[#CC9765] data-[state=on]:text-white text-black data-[state=on]:shadow-sm"
               >
                 Email
               </ToggleGroupItem>
@@ -588,25 +590,25 @@ export default function SignUp() {
             isPending={isLoading}
             showPasswordStrength={true}
             defaultValues={{
-              firstName: '',
-              lastName: '',
-              email: '',
-              mobile: '',
-              country: '',
-              password: '',
-              confirmPassword: '',
-              lang: 'en',
+              firstName: "",
+              lastName: "",
+              email: "",
+              mobile: "",
+              country: "",
+              password: "",
+              confirmPassword: "",
+              lang: "en",
             }}
-            buttonTitle='Signup'
+            buttonTitle="Sign Up"
           />
-          <div className='mt-6 pt-6 border-t border-gray-200'>
-            <p className='text-center text-sm text-gray-500'>
-              {'Already have an account? '}{' '}
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <p className="text-center text-sm text-gray-500">
+              {"Already have an account? "}{" "}
               <Link
-                href='/login'
-                className='font-medium text-indigo-600 hover:text-indigo-500'
+                href="/login"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
               >
-                {'Login'}
+                {"Login"}
               </Link>
             </p>
           </div>

@@ -13,27 +13,25 @@ import { z } from "zod";
 import { Button } from "./ui/button";
 
 // --- START: Password Strength Meter Component ---
-const passwordRules = [
-  { text: "Minimum 8 characters", test: (p: string) => p.length >= 8 },
-  {
-    text: "At least 1 uppercase letter",
-    test: (p: string) => /[A-Z]/.test(p),
-  },
-  {
-    text: "At least 1 lowercase letter",
-    test: (p: string) => /[a-z]/.test(p),
-  },
-  { text: "At least 1 number", test: (p: string) => /[0-9]/.test(p) },
-  {
-    text: "At least 1 special character",
-    test: (p: string) => /[!@#$%^&*(),.?":{}|<>]/.test(p),
-  },
-];
-
 const PasswordStrengthMeter = ({ password }: { password: string }) => {
-  const passedRulesCount = passwordRules.filter((rule) =>
-    rule.test(password)
-  ).length;
+  const rules = [
+    { text: "Minimum 8 characters", test: (p: string) => p.length >= 8 },
+    {
+      text: "At least 1 uppercase letter",
+      test: (p: string) => /[A-Z]/.test(p),
+    },
+    {
+      text: "At least 1 lowercase letter",
+      test: (p: string) => /[a-z]/.test(p),
+    },
+    { text: "At least 1 number", test: (p: string) => /[0-9]/.test(p) },
+    {
+      text: "At least 1 special character",
+      test: (p: string) => /[!@#$%^&*(),.?":{}|<>]/.test(p),
+    },
+  ];
+
+  const passedRulesCount = rules.filter((rule) => rule.test(password)).length;
   let strengthText = "Weak";
   let strengthColorClass = "text-red-500";
 
@@ -72,7 +70,7 @@ const PasswordStrengthMeter = ({ password }: { password: string }) => {
         Password strength: {strengthText}
       </p>
       <ul className="space-y-1">
-        {passwordRules.map((rule) => (
+        {rules.map((rule) => (
           <ValidationItem
             key={rule.text}
             isPassed={rule.test(password)}
@@ -84,11 +82,6 @@ const PasswordStrengthMeter = ({ password }: { password: string }) => {
   );
 };
 // --- END: Password Strength Meter Component ---
-
-// Helper to check if password is strong
-function isPasswordStrong(password: string) {
-  return passwordRules.every((rule) => rule.test(password));
-}
 
 type InputField = {
   type: "Input";
@@ -163,15 +156,6 @@ export default function Form<T extends z.ZodType<any, any>>({
         !["ext.", "Phone number country", "Phone"].includes(label)
     )
     .map(([value, label]) => ({ value, label }));
-
-  // Check if password field exists in formFields
-  const hasPasswordField = formFields.some((f) => f.name === "password");
-
-  // Only enable submit if password is strong (when password field exists and showPasswordStrength is true)
-  const canSubmit =
-    !hasPasswordField ||
-    !showPasswordStrength ||
-    isPasswordStrong(passwordValue || "");
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -265,7 +249,7 @@ export default function Form<T extends z.ZodType<any, any>>({
           />
         ))}
       </div>
-      <Button type="submit" disabled={isPending || !canSubmit}>
+      <Button type="submit" disabled={isPending}>
         {buttonTitle}
       </Button>
     </form>

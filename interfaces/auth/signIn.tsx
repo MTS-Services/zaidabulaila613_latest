@@ -226,13 +226,7 @@ import Link from 'next/link';
 import { enqueueSnackbar } from 'notistack';
 import { useAuth } from '@/contexts/auth-context';
 import { useTranslation } from '@/hooks/use-translation';
-import Script from 'next/script';
-
-declare global {
-  interface Window {
-    google: any;
-  }
-}
+import GoogleSignInButton from '@/components/GoogleSignInButton';
 
 export const SignIn = () => {
   const { t } = useTranslation();
@@ -395,6 +389,8 @@ export const SignIn = () => {
           <h1 className='text-2xl md:text-3xl font-bold'>{t('login.title')}</h1>
         </div>
         <div className='container bg-white py-6 max-w-[500px]'>
+          {/* Google Sign-In Button */}
+          <GoogleSignInButton buttonText='Sign in with Google' />
           <Form
             schema={signInValidator}
             formFields={formFields}

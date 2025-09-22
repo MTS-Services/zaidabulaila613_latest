@@ -424,6 +424,7 @@ import { redirect, useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import Script from "next/script";
 
 export default function SignUp() {
   const { t } = useTranslation();

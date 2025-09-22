@@ -227,6 +227,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useAuth } from '@/contexts/auth-context';
 import { useTranslation } from '@/hooks/use-translation';
 import GoogleSignInButton from '@/components/GoogleSignInButton';
+import Script from 'next/script';
 
 export const SignIn = () => {
   const { t } = useTranslation();

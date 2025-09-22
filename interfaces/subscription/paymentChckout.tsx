@@ -36,10 +36,9 @@ export default function Checkout({ priceId }: { priceId: string }) {
 
             ],
             prices: {
-                monthly: { price: t('dashboard.subcription.platinumplan.monpr'), priceId: 'price_1RiKX1InHvXcV9PzDZw1sBLl' },
-                quarterly: { price: t('dashboard.subcription.platinumplan.quarpr'), priceId: 'price_1RiKX1InHvXcV9PzlO4KAAFl' }, // 10% discount
-                yearly: { price: t('dashboard.subcription.platinumplan.yearpr'), priceId: 'price_1RiKX1InHvXcV9PzNXQeCKbr' } // 20% discount
-
+                monthly: { price: t('dashboard.subcription.platinumplan.monpr'), priceId: 'price_1S8HnQD60jTqpzFUWDXhVTWE' },
+                quarterly: { price: t('dashboard.subcription.platinumplan.quarpr'), priceId: 'price_1RiKX1InHvXcV9PzlO4KAAFl' }, // Quarterly Platinum
+                yearly: { price: t('dashboard.subcription.platinumplan.yearpr'), priceId: 'price_1SA4FTD60jTqpzFUXylDnaYz' } // Yearly Platinum
             }
         },
         {
@@ -55,9 +54,8 @@ export default function Checkout({ priceId }: { priceId: string }) {
             ],
             prices: {
                 monthly: { price: t('dashboard.subcription.vendorplan.monpr'), priceId: 'price_1RiKY9InHvXcV9Pzfl25jzfU' },
-                quarterly: { price: t('dashboard.subcription.vendorplan.quarpr'), priceId: 'price_1RiKZkInHvXcV9PzTruj2Gjg' }, // 10% discount
-                yearly: { price: t('dashboard.subcription.vendorplan.yearpr'), priceId: 'price_1RiKZkInHvXcV9Pzuzj1XGhJ' }
-
+                quarterly: { price: t('dashboard.subcription.vendorplan.quarpr'), priceId: 'price_1RiKZkInHvXcV9PzTruj2Gjg' }, // Quarterly Vendor
+                yearly: { price: t('dashboard.subcription.vendorplan.yearpr'), priceId: 'price_1RiKZkInHvXcV9Pzuzj1XGhJ' } // Yearly Vendor
             }
         }
     ];

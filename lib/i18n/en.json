@@ -415,7 +415,22 @@
         "monpr": "99.99",
         "quarpr": "269.97",
         "yearpr": "959.88"
-      }
+      },
+      "cancel_subscription": "Cancel Subscription",
+      "cancel_confirmation_title": "Cancel Subscription?",
+      "cancel_confirmation_description": "Are you sure you want to cancel your subscription? Your subscription will remain active until the end of your current billing period.",
+      "current_plan": "Current Plan",
+      "access_until": "Access until",
+      "cancel_confirmation_note": "You will not be charged again and will return to the Basic plan after the current period ends.",
+      "keep_subscription": "Keep Subscription",
+      "yes_cancel": "Yes, Cancel",
+      "canceling": "Canceling...",
+      "cancelation_scheduled": "Subscription canceled. Access continues until",
+      "switch_to_monthly": "Switch to Monthly",
+      "switch_to_yearly": "Switch to Yearly",
+      "switch_note": "Your current subscription will be canceled and a new yearly subscription will be activated",
+      "upgrading": "Upgrading...",
+      "upgrade_note": "Your monthly subscription will be canceled and a new yearly subscription will be activated immediately"
     }
   },
   "navbar": {

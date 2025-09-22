@@ -39,10 +39,9 @@ export const pricingPlans: PricingPlan[] = [
             'Advanced dress management'
         ],
         prices: {
-            monthly: { price: 29.99, priceId: 'price_1RiKX1InHvXcV9PzDZw1sBLl' },
-            quarterly: { price: 80.97, priceId: 'price_1RiKX1InHvXcV9PzlO4KAAFl' }, // 10% discount
-            yearly: { price: 287.88, priceId: 'price_1RiKX1InHvXcV9PzNXQeCKbr' } // 20% discount
-
+            monthly: { price: 29.99, priceId: 'price_1S8HnQD60jTqpzFUWDXhVTWE' }, // Monthly Platinum
+            quarterly: { price: 80.97, priceId: 'price_1RiKX1InHvXcV9PzlO4KAAFl' }, // Quarterly Platinum
+            yearly: { price: 287.88, priceId: 'price_1SA4FTD60jTqpzFUXylDnaYz' } // Yearly Platinum
         }
     },
     {
@@ -57,10 +56,9 @@ export const pricingPlans: PricingPlan[] = [
             'API access'
         ],
         prices: {
-            monthly: { price: 99.99, priceId: 'price_1RiKY9InHvXcV9Pzfl25jzfU' },
-            quarterly: { price: 269.97, priceId: 'price_1RiKZkInHvXcV9PzTruj2Gjg' }, // 10% discount
-            yearly: { price: 959.88, priceId: 'price_1RiKZkInHvXcV9Pzuzj1XGhJ' }
-
+            monthly: { price: 99.99, priceId: 'price_1RiKY9InHvXcV9Pzfl25jzfU' }, // Monthly Vendor
+            quarterly: { price: 269.97, priceId: 'price_1RiKZkInHvXcV9PzTruj2Gjg' }, // Quarterly Vendor
+            yearly: { price: 959.88, priceId: 'price_1RiKZkInHvXcV9Pzuzj1XGhJ' } // Yearly Vendor
         }
     }
 ];

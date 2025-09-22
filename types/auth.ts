@@ -27,6 +27,8 @@ export interface ISubscription {
   stripePriceId: string;
   currentPeriodStart: string;
   currentPeriodEnd: string;
+  cancelAtPeriodEnd?: boolean;
+  canceledAt?: string;
 }
 
 export interface LoginUser {

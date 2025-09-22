@@ -122,6 +122,27 @@ export const CREATE_SUBSCRIPTION_MUTATION = gql`
   }
 `;
 
+export const CANCEL_SUBSCRIPTION_MUTATION = gql`
+  mutation CancelSubscription($subscriptionId: String!) {
+    cancelSubscription(subscriptionId: $subscriptionId) {
+      success
+      message
+      subscription {
+        userId
+        stripeCustomerId
+        stripePriceId
+        stripeProductId
+        status
+        currentPeriodStart
+        currentPeriodEnd
+        cancelAtPeriodEnd
+        plan
+        canceledAt
+      }
+    }
+  }
+`;
+
 export const CREATE_PRODUCT = gql`
   mutation CreateProduct($product: ProductInput!, $pictures: [Upload!]!) {
     createProduct(product: $product, pictures: $pictures)

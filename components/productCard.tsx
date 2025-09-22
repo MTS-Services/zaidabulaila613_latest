@@ -97,8 +97,9 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className='aspect-[3/4] relative overflow-hidden rounded-lg'>
             <Image
               src={
-                `${config.API_URL}${product.pictures[0]?.path}` ||
-                '/placeholder.svg'
+                (config.API_URL && product.pictures[0]?.path)
+                  ? `${config.API_URL}${product.pictures[0].path}`
+                  : '/placeholder.svg'
               }
               alt={product.name}
               fill

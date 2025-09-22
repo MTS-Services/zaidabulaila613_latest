@@ -537,8 +537,26 @@ export const GET_USER_PROFILE = gql`
     stripePriceId
       currentPeriodStart
       currentPeriodEnd
+      cancelAtPeriodEnd
+      canceledAt
     }
     }
     
+  }
+`;
+
+export const GET_MY_SUBSCRIPTION = gql`
+  query GetMySubscription {
+    getMySubscription {
+      id
+      userId
+      status
+      plan
+      stripePriceId
+      currentPeriodStart
+      currentPeriodEnd
+      cancelAtPeriodEnd
+      canceledAt
+    }
   }
 `;

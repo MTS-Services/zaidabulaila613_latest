@@ -43,10 +43,24 @@ const CheckoutForm = ({ priceId }: { priceId: string }) => {
 
     const handleSubscribe = async () => {
 
-        if (!stripe || !elements || !user) return;
+        if (!stripe || !elements || !user) {
+            enqueueSnackbar({ 
+                message: "Payment system not ready. Please refresh the page.", 
+                variant: 'error', 
+                anchorOrigin: { horizontal: "center", vertical: "bottom" } 
+            });
+            return;
+        }
 
         const card = elements.getElement(CardNumberElement);
-        if (!card) return;
+        if (!card) {
+            enqueueSnackbar({ 
+                message: "Please enter your card details.", 
+                variant: 'error', 
+                anchorOrigin: { horizontal: "center", vertical: "bottom" } 
+            });
+            return;
+        }
 
         try {
             setSubmitting(true)
@@ -61,11 +75,15 @@ const CheckoutForm = ({ priceId }: { priceId: string }) => {
 
             if (error || !paymentMethod?.id) {
                 setSubmitting(false)
-                enqueueSnackbar({ message: error?.message, variant: 'error', anchorOrigin: { horizontal: "center", vertical: "bottom" } })
-
+                enqueueSnackbar({ 
+                    message: error?.message || "Invalid payment method. Please check your card details.", 
+                    variant: 'error', 
+                    anchorOrigin: { horizontal: "center", vertical: "bottom" } 
+                });
                 return;
             }
 
+            // Create subscription on backend
             const res = await createSubscription({
                 variables: {
                     input: {
@@ -75,33 +93,112 @@ const CheckoutForm = ({ priceId }: { priceId: string }) => {
                 },
             });
 
+            if (!res.data?.createSubscription?.success) {
+                setSubmitting(false);
+                enqueueSnackbar({ 
+                    message: res.data?.createSubscription?.message || "Failed to create subscription. Please try again.", 
+                    variant: 'error', 
+                    anchorOrigin: { horizontal: "center", vertical: "bottom" } 
+                });
+                return;
+            }
+
             const clientSecret = res.data?.createSubscription?.clientSecret;
             const subscription = res.data?.createSubscription?.subscription;
+
+            if (!clientSecret) {
+                setSubmitting(false);
+                enqueueSnackbar({ 
+                    message: "Payment processing failed. Please try again.", 
+                    variant: 'error', 
+                    anchorOrigin: { horizontal: "center", vertical: "bottom" } 
+                });
+                return;
+            }
+
+            // Check if this is a pre-confirmed success (subscription already active)
+            if (clientSecret.startsWith('pi_success_')) {
+                setSubmitting(false);
+                
+                // Update user subscription in context
+                if (subscription) {
+                    updateUserSubscription({
+                        id: subscription._id,
+                        plan: subscription.plan,
+                        status: subscription.status,
+                        userId: user.user.id,
+                        stripePriceId: subscription.stripePriceId,
+                        currentPeriodStart: subscription.currentPeriodStart,
+                        currentPeriodEnd: subscription.currentPeriodEnd
+                    });
+                }
+                
+                enqueueSnackbar({ 
+                    message: "Subscription purchased successfully! Welcome to your new plan.", 
+                    variant: 'success', 
+                    anchorOrigin: { horizontal: "center", vertical: "bottom" } 
+                });
+                
+                // Redirect to dashboard
+                router.push('/dashboard');
+                return;
+            }
+
+            // Confirm payment with Stripe for incomplete subscriptions
             const confirm = await stripe.confirmCardPayment(clientSecret);
 
             if (confirm.error) {
                 setSubmitting(false)
-                enqueueSnackbar({ message: confirm.error.message, variant: 'error', anchorOrigin: { horizontal: "center", vertical: "bottom" } })
-                // alert(confirm.error.message);
+                enqueueSnackbar({ 
+                    message: confirm.error.message || "Payment confirmation failed. Please try again.", 
+                    variant: 'error', 
+                    anchorOrigin: { horizontal: "center", vertical: "bottom" } 
+                });
             } else {
                 setSubmitting(false)
-                updateUserSubscription({
-                    id: subscription?._id,
-                    plan: subscription.plan,
-                    status: subscription.status,
-                    userId: user.user.id,
-                    stripePriceId: subscription.stripePriceId,
-                    currentPeriodStart: subscription.currentPeriodStart,
-                    currentPeriodEnd: subscription.currentPeriodEnd
-
-                })
-                router.push('/dashboard')
-                enqueueSnackbar({ message: "Subscription purchased successfully", variant: 'success', anchorOrigin: { horizontal: "center", vertical: "bottom" } })
-
+                
+                // Update user subscription in context
+                if (subscription) {
+                    updateUserSubscription({
+                        id: subscription._id,
+                        plan: subscription.plan,
+                        status: subscription.status,
+                        userId: user.user.id,
+                        stripePriceId: subscription.stripePriceId,
+                        currentPeriodStart: subscription.currentPeriodStart,
+                        currentPeriodEnd: subscription.currentPeriodEnd
+                    });
+                }
+                
+                enqueueSnackbar({ 
+                    message: "Subscription purchased successfully! Welcome to your new plan.", 
+                    variant: 'success', 
+                    anchorOrigin: { horizontal: "center", vertical: "bottom" } 
+                });
+                
+                // Navigate to dashboard
+                router.push('/dashboard');
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error('Subscription error:', err);
-            enqueueSnackbar({ message: "Something went wrong.", variant: 'error', anchorOrigin: { horizontal: "center", vertical: "bottom" } })
+            setSubmitting(false);
+            
+            // Handle different types of errors
+            let errorMessage = "Something went wrong. Please try again.";
+            
+            if (err.networkError) {
+                errorMessage = "Network error. Please check your internet connection.";
+            } else if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+                errorMessage = err.graphQLErrors[0].message;
+            } else if (err.message) {
+                errorMessage = err.message;
+            }
+            
+            enqueueSnackbar({ 
+                message: errorMessage, 
+                variant: 'error', 
+                anchorOrigin: { horizontal: "center", vertical: "bottom" } 
+            });
         }
     };
 

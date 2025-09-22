@@ -424,6 +424,7 @@ import { redirect, useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import Script from "next/script";
 
 export default function SignUp() {
   const { t } = useTranslation();
@@ -484,14 +485,12 @@ export default function SignUp() {
     }
   }, [user]);
 
-  // --- Main Updated Part Starts Here ---
   const handleSubmit = useCallback(
     async (data: FormSchemaSignUpType) => {
       setIsLoading(true);
 
       const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/user/signup-with-verification`;
 
-      // 1. Create the correct payload for your new API
       const payload = {
         firstName: data.firstName,
         lastName: data.lastName,
@@ -500,7 +499,7 @@ export default function SignUp() {
         password: data.password,
         country: data.country,
         lang: data.lang,
-        verificationType: verificationMethod, // The value from the toggle switch
+        verificationType: verificationMethod,
       };
 
       try {
@@ -513,11 +512,9 @@ export default function SignUp() {
         const result = await response.json();
 
         if (!response.ok) {
-          // If the API returns an error (like "user already exists"), show it
-          throw new Error(result.message || "Registration failed.");
+          throw new Error(result.message || 'Registration failed.');
         }
 
-        // 2. On success, save data to sessionStorage for the OTP page to use
         sessionStorage.setItem(
           "verificationIdentifier",
           result.data.identifier
@@ -527,10 +524,8 @@ export default function SignUp() {
           result.data.verificationType
         );
 
-        enqueueSnackbar(result.message, { variant: "success" });
-
-        // 3. Redirect to the new OTP verification page
-        router.push("/verify-account");
+        enqueueSnackbar(result.message, { variant: 'success' });
+        router.push('/verify-account');
       } catch (error: any) {
         enqueueSnackbar(error.message || "Something went wrong.", {
           variant: "error",
@@ -539,9 +534,117 @@ export default function SignUp() {
         setIsLoading(false);
       }
     },
-    [verificationMethod, router] // Dependencies for the function
+    [verificationMethod, router]
   );
-  // --- Main Updated Part Ends Here ---
+
+  // --------------- GOOGLE AUTH (updated) ---------------
+  const handleGoogleResponse = async (response: any) => {
+    try {
+      const idToken = response?.credential;
+      if (!idToken) throw new Error('No Google credential received.');
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/google-signin`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken }),
+        }
+      );
+
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.message || 'Google sign-in failed');
+
+      // token extract (from your sample response)
+      const token =
+        json?.data?.access_token ||
+        json?.access_token ||
+        json?.token ||
+        json?.data?.token;
+
+      if (!token) throw new Error('No access token found in response');
+
+      // ✅ Save EXACTLY like your app expects: key = "loginUser", value = JSON string with { access_token: "..." }
+      const loginUser = {
+        access_token: token,
+        // optional but useful:
+        user: json?.data?.user ?? null,
+        subscription: json?.data?.subscription ?? null,
+        authMethod: 'google',
+      };
+
+      try {
+        localStorage.setItem('loginUser', JSON.stringify(loginUser));
+        // (optional) keep sessionStorage mirror if your code reads from there anywhere
+        sessionStorage.setItem('loginUser', JSON.stringify(loginUser));
+      } catch {
+        /* ignore storage errors */
+      }
+
+      // (optional) cookie for middleware/SSR
+      const isSecure = window.location.protocol === 'https:';
+      document.cookie = `access_token=${token}; Path=/; Max-Age=${
+        60 * 60 * 24 * 30
+      }; SameSite=Lax${isSecure ? '; Secure' : ''}`;
+
+      enqueueSnackbar(json?.message || 'Signed in with Google', {
+        variant: 'success',
+      });
+
+      // Hard navigate so guards/providers re-evaluate using `loginUser`
+      window.location.replace('/dashboard');
+      setTimeout(() => {
+        try {
+          // @ts-ignore
+          router.replace('/dashboard');
+        } catch {}
+      }, 50);
+    } catch (err: any) {
+      console.error('[Google Sign-In] error:', err);
+      enqueueSnackbar(
+        err?.message || 'Something went wrong during Google sign-in',
+        { variant: 'error' }
+      );
+    }
+  };
+
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string;
+
+  const initGoogle = useCallback(() => {
+    if (!googleClientId) {
+      console.error('Missing NEXT_PUBLIC_GOOGLE_CLIENT_ID');
+      return;
+    }
+    if (!window.google || !window.google.accounts) return;
+
+    window.google.accounts.id.initialize({
+      client_id: googleClientId,
+      callback: handleGoogleResponse,
+      auto_select: false,
+      cancel_on_tap_outside: false,
+    });
+
+    const container = document.getElementById('google-signup');
+    if (container) {
+      container.innerHTML = '';
+      window.google.accounts.id.renderButton(container, {
+        theme: 'outline',
+        size: 'large',
+        type: 'standard',
+        shape: 'rectangular',
+        text: 'signup_with',
+        width: 320, // number required (fixes GSI_LOGGER)
+      });
+    }
+  }, [googleClientId]);
+
+  // if SDK already present (back nav/HMR), init immediately
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.google?.accounts?.id) {
+      initGoogle();
+    }
+  }, [initGoogle]);
+  // ------------- END GOOGLE AUTH ----------------------
 
   return (
     <div className="bg-slate-50">
@@ -614,6 +717,13 @@ export default function SignUp() {
           </div>
         </div>
       </div>
+
+      {/* Load Google SDK & init */}
+      <Script
+        src='https://accounts.google.com/gsi/client'
+        strategy='afterInteractive'
+        onLoad={initGoogle}
+      />
     </div>
   );
 }

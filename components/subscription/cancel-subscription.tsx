@@ -146,18 +146,18 @@ export function CancelSubscription({ subscription, onCancelSuccess }: CancelSubs
               {t('dashboard.subcription.cancel_confirmation_title')}
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-2">
-              <p>
+              <div>
                 {t('dashboard.subcription.cancel_confirmation_description')}
-              </p>
-              <p className="font-medium">
+              </div>
+              <div className="font-medium">
                 {t('dashboard.subcription.current_plan')}: {subscription.plan}
-              </p>
-              <p>
+              </div>
+              <div>
                 {t('dashboard.subcription.access_until')}: {new Date(parseInt(subscription.currentPeriodEnd)).toLocaleDateString()}
-              </p>
-              <p className="text-sm text-gray-600">
+              </div>
+              <div className="text-sm text-gray-600">
                 {t('dashboard.subcription.cancel_confirmation_note')}
-              </p>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -85,9 +85,9 @@ export default function Product({id}:{id:string}) {
 
   useEffect(() => {
     if (data?.productById) {
-      setSelectedSize(data?.productById.size[0].value)
-      setSelectedColor(data?.productById.color[0])
-      setMainImage(data?.productById.pictures[0])
+      setSelectedSize(data?.productById.size[0]?.value || '')
+      setSelectedColor(data?.productById.color[0] || '')
+      setMainImage(data?.productById.pictures[0] || null)
     }
   }, [data])
   const {t} = useTranslation();

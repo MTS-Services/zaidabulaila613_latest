@@ -112,8 +112,8 @@ export default function FeaturedProducts() {
     if (data) {
       const defaultSelections = data?.products?.data.map((product: any) => ({
         productId: product.id,
-        color: product.color[0],
-        size: product.size[0].value,
+        color: product.color[0] || '',
+        size: product.size[0]?.value || '',
       }));
       setSelectedOptions(defaultSelections);
     }

@@ -567,7 +567,6 @@ export default function SignUp() {
       // ✅ Save EXACTLY like your app expects: key = "loginUser", value = JSON string with { access_token: "..." }
       const loginUser = {
         access_token: token,
-        // optional but useful:
         user: json?.data?.user ?? null,
         subscription: json?.data?.subscription ?? null,
         authMethod: 'google',
@@ -578,7 +577,6 @@ export default function SignUp() {
         // (optional) keep sessionStorage mirror if your code reads from there anywhere
         sessionStorage.setItem('loginUser', JSON.stringify(loginUser));
       } catch {
-        /* ignore storage errors */
       }
 
       // (optional) cookie for middleware/SSR
@@ -591,11 +589,11 @@ export default function SignUp() {
         variant: 'success',
       });
 
-      // Hard navigate so guards/providers re-evaluate using `loginUser`
+      
       window.location.replace('/dashboard');
       setTimeout(() => {
         try {
-          // @ts-ignore
+          
           router.replace('/dashboard');
         } catch {}
       }, 50);
@@ -633,7 +631,7 @@ export default function SignUp() {
         type: 'standard',
         shape: 'rectangular',
         text: 'signup_with',
-        width: 320, // number required (fixes GSI_LOGGER)
+        width: 320, 
       });
     }
   }, [googleClientId]);
@@ -655,7 +653,7 @@ export default function SignUp() {
           </h1>
         </div>
         <div className="container bg-white py-6">
-          {/* Google Sign-In Button */}
+          
           <GoogleSignInButton buttonText="Sign up with Google" />
           <div className="flex flex-col items-center justify-center mb-8">
             <Label className="font-semibold mb-3 text-gray-700">

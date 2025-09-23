@@ -313,7 +313,6 @@ export const SignIn = () => {
 
       if (!token) throw new Error('No access token found in response');
 
-      // ✅ Save exactly how your app expects it: key "loginUser", JSON with access_token
       const loginUser = {
         access_token: token,
         user: json?.data?.user ?? null,
@@ -369,7 +368,7 @@ export const SignIn = () => {
         type: 'standard',
         shape: 'rectangular',
         text: 'signin_with',
-        width: 320, // must be a number; avoids GSI_LOGGER width warning
+        width: 320, 
       });
     }
   }, [googleClientId]);

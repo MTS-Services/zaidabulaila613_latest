@@ -16,7 +16,6 @@ import {
   vendors,
 } from '@/constants/vendors/vendor-section';
 import { useTranslation } from '@/hooks/use-translation';
-import SplitText from '@/components/SplitText';
 
 export default function VendorSelection() {
   const { language } = useTranslation();

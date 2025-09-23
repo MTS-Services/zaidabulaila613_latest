@@ -174,7 +174,6 @@
 
 //====================================//
 
-// In: interfaces/auth/verifyOTP.tsx
 
 'use client';
 
@@ -341,7 +340,6 @@ export default function VerifyOTP() {
         </div>
 
         <div className='text-center'>
-          {/* --- This is the only line that changed --- */}
           <Button
             variant='link'
             onClick={handleResendOtp}

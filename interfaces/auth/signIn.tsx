@@ -418,7 +418,6 @@ export const SignIn = () => {
               className='mt-3 w-full flex justify-center min-h-[44px]'
             />
           </div>
-          {/* ▲▲ end Google block ▲▲ */}
         </div>
       </div>
 

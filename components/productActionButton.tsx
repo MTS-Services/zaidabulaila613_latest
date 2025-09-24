@@ -50,7 +50,7 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
       quantity: 1,
       images: [
         product.pictures[0]?.path
-          ? `${config.API_URL}${product.pictures[0].path}`
+          ? `${config.API_URL}${product.pictures[0]?.path}`
           : '/placeholder.svg',
       ],
       selectedSize: product.selectedSize,

@@ -254,7 +254,7 @@ export default function VendorOrders() {
                                                             <div className="flex-shrink-0">
                                                                 <img
                                                                     className="h-16 w-16 rounded-md object-cover"
-                                                                    src={config.API_URL + item.product?.pictures[0].path || '/placeholder-product.jpg'}
+                                                                    src={item.product?.pictures[0]?.path ? config.API_URL + item.product.pictures[0].path : '/placeholder-product.jpg'}
                                                                     alt="Product"
                                                                 />
                                                             </div>

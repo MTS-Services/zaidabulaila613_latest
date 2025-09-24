@@ -206,7 +206,7 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
-      {/* Action Button */}
+      
       <ProductActionButton
         user={user}
         product={{

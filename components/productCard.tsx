@@ -25,7 +25,7 @@ interface SizeOption {
 interface SelectedOption {
   productId: string;
   color: string;
-  size: string;
+  // size: string;
 }
 
 export default function ProductCard({ product }: { product: Product }) {
@@ -37,7 +37,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const [selectedOptions, setSelectedOptions] = useState<SelectedOption>({
     productId: product.id,
     color: product.color[0],
-    size: product.size[0].value,
+    // size: product.size[0].value,
   });
 
   const handleOptionChange = (key: 'color' | 'size', value: string) => {
@@ -97,7 +97,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className='aspect-[3/4] relative overflow-hidden rounded-lg'>
             <Image
               src={
-                (config.API_URL && product.pictures[0]?.path)
+                config.API_URL && product.pictures[0]?.path
                   ? `${config.API_URL}${product.pictures[0].path}`
                   : '/placeholder.svg'
               }

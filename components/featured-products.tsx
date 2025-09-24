@@ -43,7 +43,7 @@ interface Product {
 interface SelectedOption {
   productId: number;
   color: string;
-  size: string;
+  // size: string;
 }
 
 export default function FeaturedProducts() {
@@ -113,7 +113,7 @@ export default function FeaturedProducts() {
       const defaultSelections = data?.products?.data.map((product: any) => ({
         productId: product.id,
         color: product.color[0],
-        size: product.size[0].value,
+        // size: product.size[0].value,
       }));
       setSelectedOptions(defaultSelections);
     }

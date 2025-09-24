@@ -445,7 +445,9 @@ export default function HeroSection() {
       {/* Top announcement */}
       <div className="absolute top-0 left-0 right-0 z-30">
         <div className="bg-gold/90 text-white py-2 px-4 text-center text-sm font-medium">
-          <span className="font-bold">{heroContent.announcement.prefix}</span>{" "}
+          <span className="font-bold">
+            {heroContent.announcement.prefix} 123
+          </span>{" "}
           {heroContent.announcement.text}
         </div>
       </div>

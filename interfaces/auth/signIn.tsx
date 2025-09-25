@@ -405,7 +405,7 @@ export const SignIn = () => {
 
           {/* ▼▼ added Google block exactly at red area ▼▼ */}
           <div className='mt-6'>
-            <div className='w-full flex items-center justify-center gap-2 text-gray-500 text-sm'>
+            <div className='w-full flex items-center justify-center gap-2 text-gray-500 text-sm '>
               <hr className='flex-1 border-gray-300' />
               {t('common.or') ?? 'or'}
               <hr className='flex-1 border-gray-300' />

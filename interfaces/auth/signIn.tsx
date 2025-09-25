@@ -368,7 +368,7 @@ export const SignIn = () => {
         type: 'standard',
         shape: 'rectangular',
         text: 'signin_with',
-        width: 320, 
+        width: 320,
       });
     }
   }, [googleClientId]);
@@ -380,8 +380,6 @@ export const SignIn = () => {
     }
   }, [initGoogle]);
   /* ---------------- End Google Auth ---------------- */
-
-  // The 'return' with all the HTML/JSX must be inside the component function
   return (
     <div className='bg-slate-50'>
       <div className='container pt-[100px]'>
@@ -414,7 +412,7 @@ export const SignIn = () => {
             </div>
             <div
               id='google-login'
-              className='mt-3 w-full flex justify-center min-h-[44px]'
+              className='mt-4 w-full flex justify-center min-h-[44px]'
             />
           </div>
         </div>

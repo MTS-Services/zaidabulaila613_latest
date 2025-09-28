@@ -54,6 +54,10 @@ import { enqueueSnackbar } from "notistack";
 const isAbortError = (e: any) =>
   e?.name === "AbortError" || /aborted/i.test(e?.message || "");
 
+// NEW: safe number helper to avoid NaN in payload
+const safeNum = (v: any, fallback = 0) =>
+  Number.isFinite(Number(v)) ? Number(v) : fallback;
+
 // Helper: fetch with timeout that also respects an external signal and sets a reason
 const fetchWithTimeout = async (
   input: RequestInfo | URL,
@@ -238,6 +242,8 @@ export default function UpdateProduct({ id }: { id: string }) {
         if (!res.ok) throw new Error("Failed to load product");
         const product = await res.json();
 
+        console.log("Fetched product:", product);
+
         // Map product fields to form values
         const typeCanonical = String(product?.type || "").toLowerCase() as
           | "new"
@@ -287,7 +293,7 @@ export default function UpdateProduct({ id }: { id: string }) {
           ? product.pictures
           : [];
         const mappedMedia = pictures.map((p: any) => ({
-          id: p?._id || p?.id,
+          id: String(p?._id || p?.id || ""), // ensure string id
           path: p?.path,
         }));
 
@@ -332,11 +338,8 @@ export default function UpdateProduct({ id }: { id: string }) {
           underlay: Boolean(product?.underlay),
           qty: qtyTotal || Number(product?.qty || 1),
           ref: product?.ref || "",
-          state:
-            product?.state ||
-            product?.user?.account?.country || // fallback for City
-            "",
-          terms: true, // keep checked after hydration
+          state: product?.state || product?.user?.account?.country || "",
+          terms: true,
         });
         // ensure UI reflects new defaults
         setFormReady(true);
@@ -460,9 +463,15 @@ export default function UpdateProduct({ id }: { id: string }) {
   };
 
   const onSubmit = async (data: FormSchemaUpdateDress) => {
+    // DEBUG: log entire RHF data
+    console.group("[Update] Raw Form Values");
+    console.log("form data:", data);
+    console.groupEnd();
+
     const keptExisting = existingMedia.filter(
       (m) => !removedExistingIds.includes(m.id)
     );
+    const keptExistingIds = keptExisting.map((m) => m.id);
     const totalMediaAfter = keptExisting.length + files.length;
     if (totalMediaAfter < 2) {
       enqueueSnackbar({
@@ -492,30 +501,41 @@ export default function UpdateProduct({ id }: { id: string }) {
       name: data.name,
       description: data.description,
       category: data.category,
-      price: data.price,
-      oldPrice: data.oldPrice,
+      price: safeNum(data.price, 0),
+      oldPrice: safeNum(data.oldPrice, 0),
       type: (data.type || "").toLowerCase(),
       color: data.colors,
       sleeve: data.sleeve,
       underlay: data.underlay,
-      qty: data.qty,
+      qty: safeNum(data.qty, 0),
       ref: data.ref,
       material: data.material,
       careInstructions: data.careInstructions,
       availableColors: buildAvailableColors(),
-      length: data.length || 0,
-      height: data.high || 0,
-      high: data.high || 0,
-      shoulder: data.shoulder ?? 0,
-      hip: data.hip || 0,
-      waist: data.waist || 0,
-      chest: data.chest || 0,
+      length: safeNum(data.length, 0),
+      height: safeNum(data.high, 0),
+      high: safeNum(data.high, 0),
+      shoulder: safeNum(data.shoulder ?? 0, 0),
+      hip: safeNum(data.hip, 0),
+      waist: safeNum(data.waist, 0),
+      chest: safeNum(data.chest, 0),
       size: Array.from(new Set(watch("sizes") || [])).map((s) => ({
         value: s,
         label: s,
       })),
       state: data.state || "",
     };
+
+    // DEBUG: payload and media state
+    console.groupCollapsed("[Update] Payload Preview");
+    console.log("payload:", payload);
+    console.log("removedExistingIds:", removedExistingIds);
+    console.log("keptExistingIds:", keptExistingIds);
+    console.log(
+      "new files:",
+      files.map((f) => ({ name: f.name, type: f.type, size: f.size }))
+    );
+    console.groupEnd();
 
     const buildFormData = (fileFieldName: string) => {
       const fd = new FormData();
@@ -524,22 +544,22 @@ export default function UpdateProduct({ id }: { id: string }) {
       fd.append("name", String(payload.name));
       fd.append("description", String(payload.description));
       fd.append("category", String(payload.category));
-      fd.append("price", String(payload.price ?? ""));
-      fd.append("oldPrice", String(payload.oldPrice ?? ""));
+      fd.append("price", String(safeNum(payload.price, 0)));
+      fd.append("oldPrice", String(safeNum(payload.oldPrice, 0)));
       fd.append("type", String(payload.type));
       fd.append("sleeve", String(payload.sleeve));
       fd.append("underlay", String(payload.underlay));
-      fd.append("qty", String(payload.qty ?? 0));
+      fd.append("qty", String(safeNum(payload.qty, 0)));
       fd.append("ref", String(payload.ref || ""));
       fd.append("material", String(payload.material || ""));
       fd.append("careInstructions", String(payload.careInstructions || ""));
-      fd.append("length", String(payload.length ?? 0));
-      fd.append("height", String(payload.height ?? 0));
-      fd.append("high", String(payload.high ?? 0));
-      fd.append("shoulder", String(payload.shoulder ?? 0));
-      fd.append("hip", String(payload.hip ?? 0));
-      fd.append("waist", String(payload.waist ?? 0));
-      fd.append("chest", String(payload.chest ?? 0));
+      fd.append("length", String(safeNum(payload.length, 0)));
+      fd.append("height", String(safeNum(payload.height, 0)));
+      fd.append("high", String(safeNum(payload.high, 0)));
+      fd.append("shoulder", String(safeNum(payload.shoulder, 0)));
+      fd.append("hip", String(safeNum(payload.hip, 0)));
+      fd.append("waist", String(safeNum(payload.waist, 0)));
+      fd.append("chest", String(safeNum(payload.chest, 0)));
       fd.append("color", JSON.stringify(payload.color || []));
       fd.append("size", JSON.stringify(payload.size || []));
       fd.append(
@@ -547,9 +567,38 @@ export default function UpdateProduct({ id }: { id: string }) {
         JSON.stringify(payload.availableColors || [])
       );
       fd.append("state", String(payload.state || ""));
+
+      // Removed pictures (send in multiple shapes)
       if (removedExistingIds.length) {
+        const csv = removedExistingIds.join(",");
         fd.append("picturesToRemove", JSON.stringify(removedExistingIds));
+        fd.append("picturesToRemoveCsv", csv);
+        fd.append("picturesToDelete", JSON.stringify(removedExistingIds));
+        fd.append("picturesToDeleteCsv", csv);
+        removedExistingIds.forEach((id) => {
+          fd.append("picturesToRemove[]", id);
+          fd.append("removePictures[]", id);
+          fd.append("picturesToDelete[]", id);
+          fd.append("deletedPictures[]", id);
+          fd.append("deletedPictureIds[]", id);
+          fd.append("removedPictures[]", id);
+          fd.append("removedPictureIds[]", id);
+          fd.append("removedMediaIds[]", id);
+        });
       }
+
+      // Kept pictures (some servers prefer a whitelist)
+      if (keptExistingIds.length) {
+        const keepCsv = keptExistingIds.join(",");
+        fd.append("keepPictures", JSON.stringify(keptExistingIds));
+        fd.append("keepPicturesCsv", keepCsv);
+        keptExistingIds.forEach((id) => {
+          fd.append("keepPictures[]", id);
+          fd.append("existingPictures[]", id);
+          fd.append("keptPictureIds[]", id);
+        });
+      }
+
       files.forEach((file) => fd.append(fileFieldName, file));
       return fd;
     };
@@ -568,6 +617,21 @@ export default function UpdateProduct({ id }: { id: string }) {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`;
     const headers = { Authorization: `Bearer ${user?.access_token}` };
 
+    // Helper to log FormData
+    const logFormData = (fd: FormData, label: string) => {
+      console.groupCollapsed(label);
+      fd.forEach((value, key) => {
+        if (value instanceof File) {
+          console.log(
+            `${key}: [File] name=${value.name} type=${value.type} size=${value.size}`
+          );
+        } else {
+          console.log(`${key}:`, value);
+        }
+      });
+      console.groupEnd();
+    };
+
     let success = false;
     let lastErrMessage = "";
     try {
@@ -575,14 +639,42 @@ export default function UpdateProduct({ id }: { id: string }) {
         const fieldName = FILE_FIELD_CANDIDATES[i];
         const formData = buildFormData(fieldName);
 
+        // DEBUG: log the exact body being sent
+        logFormData(formData, `[Update] FormData with field "${fieldName}"`);
+
         const res = await fetchWithTimeout(
           url,
           { method: "PUT", headers, body: formData },
           60000
         );
 
+        // DEBUG: log response
+        console.groupCollapsed(`[Update] Response for "${fieldName}"`);
+        console.log(
+          "status:",
+          res.status,
+          "ok:",
+          res.ok,
+          "statusText:",
+          res.statusText
+        );
+        console.groupEnd();
+
         if (res.ok) {
           success = true;
+          try {
+            const body = await res.clone().json();
+            console.group("[Update] Server JSON");
+            console.log(body);
+            console.groupEnd();
+          } catch {
+            try {
+              const text = await res.clone().text();
+              console.group("[Update] Server Text");
+              console.log(text);
+              console.groupEnd();
+            } catch {}
+          }
           enqueueSnackbar({
             message:
               t("updateProduct.messages.success") ||
@@ -970,7 +1062,9 @@ export default function UpdateProduct({ id }: { id: string }) {
                         min="0"
                         step="0.01"
                         className="pl-3"
-                        {...register("price", { valueAsNumber: true })}
+                        {...register("price", {
+                          setValueAs: (v) => (v === "" ? 0 : Number(v)),
+                        })}
                       />
                       {errors.price && (
                         <p className="text-sm text-red-500">
@@ -1005,7 +1099,9 @@ export default function UpdateProduct({ id }: { id: string }) {
                         min="0"
                         step="0.01"
                         className="pl-3"
-                        {...register("oldPrice", { valueAsNumber: true })}
+                        {...register("oldPrice", {
+                          setValueAs: (v) => (v === "" ? 0 : Number(v)),
+                        })}
                       />
                     </div>
                   </div>

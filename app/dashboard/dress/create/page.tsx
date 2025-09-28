@@ -418,6 +418,7 @@ export default function UploadPage() {
           value: s,
           label: s,
         })),
+        state: data.state || "", // add state to payload
       };
 
       // DEBUG: log payload object
@@ -455,6 +456,7 @@ export default function UploadPage() {
           'availableColors',
           JSON.stringify(payload.availableColors || [])
         );
+        fd.append("state", String(payload.state || "")); // append state
         files.forEach((file) => fd.append(fileFieldName, file));
         return fd;
       };

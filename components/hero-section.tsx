@@ -32,9 +32,7 @@ export default function HeroSection() {
   useEffect(() => {
     async function fetchBanners() {
       try {
-        const res = await fetch(
-          "https://newbackend.mtscorporate.com/banners/active"
-        );
+        const res = await fetch("https://api.layls.com/banners/active");
         const json = await res.json();
         if (json.success && Array.isArray(json.data)) {
           setBanners(json.data.sort((a, b) => a.order - b.order));

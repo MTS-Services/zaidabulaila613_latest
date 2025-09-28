@@ -6,8 +6,7 @@ import { useEffect, useRef } from "react";
 const GOOGLE_CLIENT_ID =
   process.env.DATA_CLIENT_ID ||
   "546186166762-nso036ghrvjgjlcb9po201bi22pvkniv.apps.googleusercontent.com";
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://newbackend.mtscorporate.com";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.layls.com";
 
 interface GoogleSignInButtonProps {
   buttonText?: string;

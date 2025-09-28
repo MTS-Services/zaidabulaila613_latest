@@ -1,33 +1,35 @@
-import { ApolloClient, InMemoryCache, from } from '@apollo/client';
-import { onError } from '@apollo/client/link/error';
-import { setContext } from '@apollo/client/link/context';
-import createUploadLink from 'apollo-upload-client/createUploadLink.mjs';
+import { ApolloClient, InMemoryCache, from } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { onError } from "@apollo/client/link/error";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 
 // 🔐 Add token to request headers
 const authLink = setContext((_, { headers }) => {
   const token =
-    typeof window !== 'undefined' ? localStorage.getItem('loginUser') : null;
+    typeof window !== "undefined" ? localStorage.getItem("loginUser") : null;
   const parsed = token ? JSON.parse(token) : null;
 
   return {
     headers: {
       ...headers,
-      'apollo-require-preflight': 'true',
-      authorization: parsed?.access_token ? `Bearer ${parsed.access_token}` : '',
+      "apollo-require-preflight": "true",
+      authorization: parsed?.access_token
+        ? `Bearer ${parsed.access_token}`
+        : "",
     },
   };
 });
 
 // ❗ Safely handle auth errors on client
 const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     let shouldRedirect = false;
 
     if (graphQLErrors) {
       for (const err of graphQLErrors) {
         if (
-          err.extensions?.code === 'UNAUTHENTICATED' ||
-          err.message.toLowerCase().includes('unauthorized')
+          err.extensions?.code === "UNAUTHENTICATED" ||
+          err.message.toLowerCase().includes("unauthorized")
         ) {
           shouldRedirect = true;
         }
@@ -36,28 +38,28 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
     if (
       networkError &&
-      'statusCode' in networkError &&
+      "statusCode" in networkError &&
       networkError.statusCode === 401
     ) {
       shouldRedirect = true;
     }
 
     if (shouldRedirect) {
-      localStorage.removeItem('loginUser');
-        window.location.href = '/login'
+      localStorage.removeItem("loginUser");
+      window.location.href = "/login";
       // ⛔ Only import Router dynamically on client
-    //   import('next/router').then(({ default: Router }) => {
-    //     Router.push('/login');
-    //   });
+      //   import('next/router').then(({ default: Router }) => {
+      //     Router.push('/login');
+      //   });
     }
   }
 });
 
 // 🧠 Upload support
 const httpLink = createUploadLink({
-  uri: 'https://newbackend.mtscorporate.com/api',
+  uri: "https://api.layls.com/api",
   // uri: 'https://api.layls.com/api',
-  credentials: 'include',
+  credentials: "include",
 });
 
 // 🚀 Apollo Client

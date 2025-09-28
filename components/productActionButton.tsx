@@ -1,11 +1,10 @@
 'use client';
-import { config } from '@/constants/app';
 import { useTranslation } from '@/hooks/use-translation';
 import { useUserSubscription } from '@/hooks/useSubscription';
 import { ShoppingBag } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import TooltipBox from './tooltipBox';
-import { useRouter } from 'next/navigation';
 
 interface ProductActionButtonProps {
   user: any;
@@ -41,29 +40,10 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     addToCart({
-      id: product.id,
-      name: product.name,
-      price: Number.parseFloat(product.price),
-      originalPrice: product.oldPrice
-        ? Number.parseFloat(product.oldPrice)
-        : undefined,
-      quantity: 1,
-      images: [
-        product.pictures[0]?.path
-          ? `${config.API_URL}${product.pictures[0]?.path}`
-          : '/placeholder.svg',
-      ],
+      ...product,
       selectedSize: product.selectedSize,
       selectedColor: product.selectedColor,
-      type: product.type,
-      // vendor: {
-      //     name: product.vendorShopName,
-      //     slug: product.vendorShopName.toLowerCase().replace(/\s+/g, "-"),
-      // },
-      vendor: {
-        name: '',
-        slug: '',
-      },
+      quantity: product.quantity,
     });
   };
   const { t } = useTranslation();

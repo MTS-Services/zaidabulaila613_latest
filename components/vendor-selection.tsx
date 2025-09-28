@@ -1,21 +1,16 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import Image from 'next/image';
-import useEmblaCarousel from 'embla-carousel-react';
-import { AnimatedButton } from './animated-button';
-import NeumorphicButton from '@/components/neumorphic-button';
-import { useQuery } from '@apollo/client';
-import { GET_SHOPS } from '@/graphql/query';
-import { ShopItem, ShopsResponse } from '@/types/shop';
 import { config } from '@/constants/app';
-import Loader from './loader';
-import {
-  carouselSettings,
-  sectionContent,
-  vendors,
-} from '@/constants/vendors/vendor-section';
+import { carouselSettings } from '@/constants/vendors/vendor-section';
+import { GET_SHOPS } from '@/graphql/query';
 import { useTranslation } from '@/hooks/use-translation';
+import { ShopItem, ShopsResponse } from '@/types/shop';
+import { useQuery } from '@apollo/client';
+import useEmblaCarousel from 'embla-carousel-react';
+import Image from 'next/image';
+import { useCallback, useEffect, useState } from 'react';
+import { AnimatedButton } from './animated-button';
+import Loader from './loader';
 
 export default function VendorSelection() {
   const { language } = useTranslation();
@@ -194,7 +189,7 @@ export default function VendorSelection() {
     console.log('All letters have animated!');
   };
   return (
-    <section className='py-8 md:py-12 bg-white'>
+    <section className='py-12 md:py-8 bg-white'>
       <div className='container px-4 md:px-6'>
         <div className='flex flex-col items-center justify-center space-y-4 text-center mb-6'>
           {/* <div className='space-y-2'>
@@ -212,7 +207,10 @@ export default function VendorSelection() {
                text-black animate-bounce text-shadow-lg'
             >
               Vendors Coming
-              <span className='text-[#CC9765] text-4xl'> Soon...</span>
+              <span className='text-[#CC9765] text-xl lg:text-4xl'>
+                {' '}
+                Soon...
+              </span>
             </h1>
           </div>
         </div>
@@ -233,9 +231,9 @@ export default function VendorSelection() {
         </div> */}
 
         {/* Mobile View - Two Row Carousel (matching desktop layout) */}
-        <div className='lg:hidden mt-8'>
-          {/* First Mobile Row */}
-          <div className='overflow-hidden mb-4' ref={mobileViewportRef}>
+        {/* <div className='lg:hidden mt-8'> */}
+        {/* First Mobile Row */}
+        {/* <div className='overflow-hidden mb-4' ref={mobileViewportRef}>
             <div className='flex'>
               {vendors.map((vendor, index) => (
                 <div
@@ -246,12 +244,11 @@ export default function VendorSelection() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
-          {/* Second Mobile Row */}
-          <div className='overflow-hidden' ref={mobileRow2Ref}>
+        {/* Second Mobile Row */}
+        {/* <div className='overflow-hidden' ref={mobileRow2Ref}>
             <div className='flex'>
-              {/* Use a different starting point for the second row for visual variety */}
               {[...vendors.slice(4), ...vendors.slice(0, 4)].map(
                 (vendor, index) => (
                   <div
@@ -264,7 +261,7 @@ export default function VendorSelection() {
               )}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* <div className='flex justify-center mt-10'>
           <NeumorphicButton

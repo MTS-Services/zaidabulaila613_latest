@@ -33,13 +33,13 @@ export default function ProductCard({ product }: { product: Product }) {
   const { addToCart, cart } = useCart();
   const { selectedCurrency } = useCurrency();
   const { user } = useAuth();
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   const [selectedOptions, setSelectedOptions] = useState<SelectedOption>({
     productId: product.id,
 
     color: product.color[0],
     // size: product.size[0].value,
-
   });
 
   const handleOptionChange = (key: 'color' | 'size', value: string) => {
@@ -99,10 +99,8 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className='aspect-[3/4] relative overflow-hidden rounded-lg'>
             <Image
               src={
-
                 config.API_URL && product.pictures[0]?.path
                   ? `${config.API_URL}${product.pictures[0].path}`
-
                   : '/placeholder.svg'
               }
               alt={product.name}
@@ -206,11 +204,11 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
-      
       <ProductActionButton
         user={user}
         product={{
           ...product,
+          quantity: selectedQuantity,
           selectedSize: selectedOptions?.size,
           selectedColor: selectedOptions?.color,
         }}

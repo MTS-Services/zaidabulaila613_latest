@@ -88,9 +88,9 @@ export default function WishlistPage() {
                           {item.name}
                         </h3>
                       </Link>
-                      <p className='text-sm text-slate-500'>
+                      {/* <p className='text-sm text-slate-500'>
                         {item.vendor.name}
-                      </p>
+                      </p> */}
                       <div className='flex justify-between items-center mt-2'>
                         <p className='font-bold'>
                           {selectedCurrency.symbol}{' '}

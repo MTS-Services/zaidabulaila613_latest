@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useQuery } from "@apollo/client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Info, Upload, X } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useQuery } from '@apollo/client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Info, Upload, X } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -17,38 +17,38 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { toast } from "@/components/ui/use-toast";
-import { arColors, enColors } from "@/constants/colors";
-import { useAuth } from "@/contexts/auth-context";
-import { useCurrency } from "@/contexts/currency-context";
-import { GET_CATEGORIES } from "@/graphql/query";
-import { useTranslation } from "@/hooks/use-translation";
-import { useUserSubscription } from "@/hooks/useSubscription";
+} from '@/components/ui/tooltip';
+import { toast } from '@/components/ui/use-toast';
+import { arColors, enColors } from '@/constants/colors';
+import { useAuth } from '@/contexts/auth-context';
+import { useCurrency } from '@/contexts/currency-context';
+import { GET_CATEGORIES } from '@/graphql/query';
+import { useTranslation } from '@/hooks/use-translation';
+import { useUserSubscription } from '@/hooks/useSubscription';
 import {
   createDressformSchema,
   FormSchemaCreateDress,
-} from "@/lib/validators/auth";
-import { enqueueSnackbar } from "notistack";
+} from '@/lib/validators/auth';
+import { enqueueSnackbar } from 'notistack';
 
 // Zod schema for form validation
 
@@ -93,23 +93,23 @@ export default function UploadPage() {
   const { data } = useQuery(GET_CATEGORIES);
   const categoryOptions = (data?.categories || []).map((category: any) => ({
     value: category.id,
-    label: category.name?.[language.toLowerCase()] || "Unnamed",
+    label: category.name?.[language.toLowerCase()] || 'Unnamed',
   }));
 
   const form = useForm<FormSchemaCreateDress>({
     resolver: zodResolver(createDressformSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: '',
+      description: '',
       price: 0,
       oldPrice: 0,
-      type: "used", // canonical values: new | used | rental
-      category: "",
+      type: 'used', // canonical values: new | used | rental
+      category: '',
       colors: [],
-      selectedColor: "",
+      selectedColor: '',
       sizes: [],
-      material: "",
-      careInstructions: "",
+      material: '',
+      careInstructions: '',
       chest: 0,
       waist: 0,
       hip: 0,
@@ -119,8 +119,8 @@ export default function UploadPage() {
       sleeve: false,
       underlay: false,
       qty: 1,
-      ref: "",
-      state: "",
+      ref: '',
+      state: '',
       terms: false,
     },
   });
@@ -132,8 +132,8 @@ export default function UploadPage() {
     watch,
     setValue,
   } = form;
-  const dressType = watch("type");
-  const selectedColors = watch("colors") || [];
+  const dressType = watch('type');
+  const selectedColors = watch('colors') || [];
 
   // NEW: color details state (per selected color)
   type ColorDetails = Record<
@@ -147,7 +147,7 @@ export default function UploadPage() {
 
   // Helper: check AbortError
   const isAbortError = (e: any) =>
-    e?.name === "AbortError" || /aborted/i.test(e?.message || "");
+    e?.name === 'AbortError' || /aborted/i.test(e?.message || '');
 
   // Helper: fetch with timeout that also respects an external signal and sets a reason
   const fetchWithTimeout = async (
@@ -159,7 +159,7 @@ export default function UploadPage() {
     const timeoutId = setTimeout(() => {
       // Give a reason to avoid "aborted without reason"
       timeoutController.abort(
-        new DOMException("Timeout", "TimeoutError") as any
+        new DOMException('Timeout', 'TimeoutError') as any
       );
     }, timeoutMs);
 
@@ -167,7 +167,7 @@ export default function UploadPage() {
     const onExternalAbort = () => {
       timeoutController.abort(
         ((externalSignal as any)?.reason as any) ??
-          (new DOMException("Aborted", "AbortError") as any)
+          (new DOMException('Aborted', 'AbortError') as any)
       );
     };
 
@@ -176,7 +176,7 @@ export default function UploadPage() {
         if (externalSignal.aborted) {
           onExternalAbort();
         } else {
-          externalSignal.addEventListener("abort", onExternalAbort, {
+          externalSignal.addEventListener('abort', onExternalAbort, {
             once: true,
           });
         }
@@ -191,7 +191,7 @@ export default function UploadPage() {
     } finally {
       clearTimeout(timeoutId);
       if (externalSignal) {
-        externalSignal.removeEventListener("abort", onExternalAbort);
+        externalSignal.removeEventListener('abort', onExternalAbort);
       }
     }
   };
@@ -211,27 +211,27 @@ export default function UploadPage() {
           },
           20000
         );
-        if (!res.ok) throw new Error("Failed to fetch upload limits");
+        if (!res.ok) throw new Error('Failed to fetch upload limits');
         const json = await res.json();
 
-        console.groupCollapsed("[Upload Limits] Response");
-        console.log("subscriptionType:", json?.subscriptionType);
-        console.log("limits:", json?.limits);
-        console.log("currentUsage:", json?.currentUsage);
+        console.groupCollapsed('[Upload Limits] Response');
+        console.log('subscriptionType:', json?.subscriptionType);
+        console.log('limits:', json?.limits);
+        console.log('currentUsage:', json?.currentUsage);
         console.groupEnd();
 
         setUploadLimits(json);
-        setValue("type", json?.limits?.canAddNewDresses ? "new" : "used");
+        setValue('type', json?.limits?.canAddNewDresses ? 'new' : 'used');
       } catch (e: any) {
         if (isAbortError(e)) {
-          console.info("upload-limits request aborted:", e?.message);
+          console.info('upload-limits request aborted:', e?.message);
         } else {
-          console.error("upload-limits fetch error:", e);
+          console.error('upload-limits fetch error:', e);
         }
       }
     })();
     return () =>
-      controller.abort(new DOMException("Unmounted", "AbortError") as any);
+      controller.abort(new DOMException('Unmounted', 'AbortError') as any);
   }, [user?.access_token, setValue]);
 
   // Keep colorDetails in sync with selected colors
@@ -240,7 +240,7 @@ export default function UploadPage() {
       const next: ColorDetails = {};
       // keep existing for still-selected colors
       selectedColors.forEach((c: string) => {
-        next[c] = prev[c] || { description: "", quantities: {} };
+        next[c] = prev[c] || { description: '', quantities: {} };
       });
       return next;
     });
@@ -250,7 +250,7 @@ export default function UploadPage() {
       const q = colorDetails[c]?.quantities || {};
       Object.keys(q).forEach((size) => sizesSet.add(size));
     });
-    setValue("sizes", Array.from(sizesSet)); // maintain global sizes
+    setValue('sizes', Array.from(sizesSet)); // maintain global sizes
   }, [selectedColors]); // eslint-disable-line
 
   // Auto-calc total qty
@@ -261,7 +261,7 @@ export default function UploadPage() {
         Object.values(cd.quantities).reduce((s, q) => s + (Number(q) || 0), 0)
       );
     }, 0);
-    setValue("qty", total);
+    setValue('qty', total);
   }, [colorDetails, setValue]);
 
   if (!user) {
@@ -270,17 +270,17 @@ export default function UploadPage() {
 
   if (user.productsCount === maxDresses) {
     return (
-      <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-lg max-w-xl mx-auto">
-        <p className="font-semibold text-lg">
+      <div className='bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-lg max-w-xl mx-auto'>
+        <p className='font-semibold text-lg'>
           Upgrade your subscription to add more dresses.
         </p>
-        <p className="text-sm mt-1">
+        <p className='text-sm mt-1'>
           Unlock the ability to upload more items, showcase videos, and increase
           your store’s visibility.
         </p>
         <a
-          href="/dashboard/subscription"
-          className="inline-block mt-3 text-sm font-medium text-yellow-700 bg-yellow-300 hover:bg-yellow-400 transition px-4 py-2 rounded-md shadow"
+          href='/dashboard/subscription'
+          className='inline-block mt-3 text-sm font-medium text-yellow-700 bg-yellow-300 hover:bg-yellow-400 transition px-4 py-2 rounded-md shadow'
         >
           Upgrade Now →
         </a>
@@ -297,8 +297,8 @@ export default function UploadPage() {
       enqueueSnackbar(
         `Maximum ${maxImagesLimit} media allowed, upgrade your subscription to add more.`,
         {
-          variant: "error",
-          anchorOrigin: { horizontal: "center", vertical: "bottom" },
+          variant: 'error',
+          anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
         }
       );
       return;
@@ -326,15 +326,15 @@ export default function UploadPage() {
   const buildAvailableColors = () => {
     return selectedColors.map((color: string) => {
       const details = colorDetails[color] || {
-        description: "",
+        description: '',
         quantities: {},
       };
-      const desc = (details.description || "").trim();
+      const desc = (details.description || '').trim();
       const sizes = Object.entries(details.quantities)
         .filter(([, qty]) => (Number(qty) || 0) > 0)
         .map(([size, qty]) => ({
           size,
-          sizeSpecific: /^\d+$/.test(size) ? size : "",
+          sizeSpecific: /^\d+$/.test(size) ? size : '',
           quantity: Number(qty),
           // Send multilingual color description to match backend shape
           colorDisction: {
@@ -352,13 +352,13 @@ export default function UploadPage() {
   // Handle form submission via REST
   const onSubmit = async (data: FormSchemaCreateDress) => {
     // DEBUG: log raw form values before validations
-    console.group("[Submit] Raw Form Values");
-    console.log("form data:", data);
-    console.log("selected colors:", selectedColors);
-    console.log("colorDetails:", colorDetails);
-    console.log("derived sizes:", watch("sizes"));
+    console.group('[Submit] Raw Form Values');
+    console.log('form data:', data);
+    console.log('selected colors:', selectedColors);
+    console.log('colorDetails:', colorDetails);
+    console.log('derived sizes:', watch('sizes'));
     console.log(
-      "files count:",
+      'files count:',
       files.length,
       files.map((f) => ({ name: f.name, type: f.type, size: f.size }))
     );
@@ -366,21 +366,21 @@ export default function UploadPage() {
 
     if (files.length < 2) {
       enqueueSnackbar({
-        message: t("createProduct.messages.minImages"),
-        variant: "warning",
-        anchorOrigin: { horizontal: "center", vertical: "bottom" },
+        message: t('createProduct.messages.minImages'),
+        variant: 'warning',
+        anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
       });
       return;
     }
     if (files.length > maxImagesLimit) {
       enqueueSnackbar(
-        t("createProduct.messages.maxImages").replace(
-          "5",
+        t('createProduct.messages.maxImages').replace(
+          '5',
           String(maxImagesLimit)
         ),
         {
-          variant: "error",
-          anchorOrigin: { horizontal: "center", vertical: "bottom" },
+          variant: 'error',
+          anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
         }
       );
       return;
@@ -390,14 +390,14 @@ export default function UploadPage() {
     try {
       const payload = {
         // ...existing fields...
-        language: language || "EN",
-        currency: selectedCurrency?.code || "USD",
+        language: language || 'EN',
+        currency: selectedCurrency?.code || 'USD',
         name: data.name,
         description: data.description,
         category: data.category,
         price: data.price,
         oldPrice: data.oldPrice,
-        type: (data.type || "").toLowerCase(),
+        type: (data.type || '').toLowerCase(),
         color: data.colors,
         sleeve: data.sleeve,
         underlay: data.underlay,
@@ -414,45 +414,45 @@ export default function UploadPage() {
         waist: data.waist || 0,
         chest: data.chest || 0,
         // send size as objects to match backend response
-        size: Array.from(new Set(watch("sizes") || [])).map((s) => ({
+        size: Array.from(new Set(watch('sizes') || [])).map((s) => ({
           value: s,
           label: s,
         })),
       };
 
       // DEBUG: log payload object
-      console.groupCollapsed("[Submit] Payload Preview");
-      console.log("payload:", payload);
+      console.groupCollapsed('[Submit] Payload Preview');
+      console.log('payload:', payload);
       console.groupEnd();
 
       // Helper: build flat multipart form-data with a dynamic files field name
       const buildFormData = (fileFieldName: string) => {
         const fd = new FormData();
-        fd.append("language", String(payload.language));
-        fd.append("currency", String(payload.currency));
-        fd.append("name", String(payload.name));
-        fd.append("description", String(payload.description));
-        fd.append("category", String(payload.category));
-        fd.append("price", String(payload.price ?? ""));
-        fd.append("oldPrice", String(payload.oldPrice ?? ""));
-        fd.append("type", String(payload.type));
-        fd.append("sleeve", String(payload.sleeve));
-        fd.append("underlay", String(payload.underlay));
-        fd.append("qty", String(payload.qty ?? 0));
-        fd.append("ref", String(payload.ref || ""));
-        fd.append("material", String(payload.material || ""));
-        fd.append("careInstructions", String(payload.careInstructions || ""));
-        fd.append("length", String(payload.length ?? 0));
-        fd.append("height", String(payload.height ?? 0));
-        fd.append("high", String(payload.high ?? 0));
-        fd.append("shoulder", String(payload.shoulder ?? 0));
-        fd.append("hip", String(payload.hip ?? 0));
-        fd.append("waist", String(payload.waist ?? 0));
-        fd.append("chest", String(payload.chest ?? 0));
-        fd.append("color", JSON.stringify(payload.color || []));
-        fd.append("size", JSON.stringify(payload.size || []));
+        fd.append('language', String(payload.language));
+        fd.append('currency', String(payload.currency));
+        fd.append('name', String(payload.name));
+        fd.append('description', String(payload.description));
+        fd.append('category', String(payload.category));
+        fd.append('price', String(payload.price ?? ''));
+        fd.append('oldPrice', String(payload.oldPrice ?? ''));
+        fd.append('type', String(payload.type));
+        fd.append('sleeve', String(payload.sleeve));
+        fd.append('underlay', String(payload.underlay));
+        fd.append('qty', String(payload.qty ?? 0));
+        fd.append('ref', String(payload.ref || ''));
+        fd.append('material', String(payload.material || ''));
+        fd.append('careInstructions', String(payload.careInstructions || ''));
+        fd.append('length', String(payload.length ?? 0));
+        fd.append('height', String(payload.height ?? 0));
+        fd.append('high', String(payload.high ?? 0));
+        fd.append('shoulder', String(payload.shoulder ?? 0));
+        fd.append('hip', String(payload.hip ?? 0));
+        fd.append('waist', String(payload.waist ?? 0));
+        fd.append('chest', String(payload.chest ?? 0));
+        fd.append('color', JSON.stringify(payload.color || []));
+        fd.append('size', JSON.stringify(payload.size || []));
         fd.append(
-          "availableColors",
+          'availableColors',
           JSON.stringify(payload.availableColors || [])
         );
         files.forEach((file) => fd.append(fileFieldName, file));
@@ -461,29 +461,29 @@ export default function UploadPage() {
 
       // Try a set of common file field names until one succeeds
       const FILE_FIELD_CANDIDATES = [
-        "images",
-        "image",
-        "files",
-        "file",
-        "photos",
-        "photo",
-        "pictures",
-        "pictures[]",
-        "images[]",
+        'images',
+        'image',
+        'files',
+        'file',
+        'photos',
+        'photo',
+        'pictures',
+        'pictures[]',
+        'images[]',
       ];
 
       const url = `${process.env.NEXT_PUBLIC_API_URL}/products`;
       const headers = { Authorization: `Bearer ${user.access_token}` };
 
       // DEBUG: request info
-      console.groupCollapsed("[Submit] Request");
-      console.log("URL:", url);
-      console.log("Method:", "POST");
-      console.log("Headers:", headers);
+      console.groupCollapsed('[Submit] Request');
+      console.log('URL:', url);
+      console.log('Method:', 'POST');
+      console.log('Headers:', headers);
       console.groupEnd();
 
       let success = false;
-      let lastErrMessage = "";
+      let lastErrMessage = '';
       for (let i = 0; i < FILE_FIELD_CANDIDATES.length; i++) {
         const fieldName = FILE_FIELD_CANDIDATES[i];
         const formData = buildFormData(fieldName);
@@ -508,7 +508,7 @@ export default function UploadPage() {
         const res = await fetchWithTimeout(
           url,
           {
-            method: "POST",
+            method: 'POST',
             headers,
             body: formData,
           },
@@ -518,11 +518,11 @@ export default function UploadPage() {
         // DEBUG: response status
         console.groupCollapsed(`[Submit] Response for field "${fieldName}"`);
         console.log(
-          "status:",
+          'status:',
           res.status,
-          "ok:",
+          'ok:',
           res.ok,
-          "statusText:",
+          'statusText:',
           res.statusText
         );
         console.groupEnd();
@@ -530,15 +530,15 @@ export default function UploadPage() {
         if (res.ok) {
           success = true;
           enqueueSnackbar({
-            message: t("createProduct.messages.success"),
-            variant: "success",
-            anchorOrigin: { horizontal: "center", vertical: "bottom" },
+            message: t('createProduct.messages.success'),
+            variant: 'success',
+            anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
           });
-          router.push("/dashboard/dress");
+          router.push('/dashboard/dress');
           break;
         } else {
           // Try parse json, then text, then generic error
-          let serverMessage = "Failed to create product";
+          let serverMessage = 'Failed to create product';
           let rawBody: any = null;
           try {
             rawBody = await res.json();
@@ -551,11 +551,11 @@ export default function UploadPage() {
           }
 
           // DEBUG: log error body
-          console.group("[Submit] Error Body");
+          console.group('[Submit] Error Body');
           console.log(rawBody);
           console.groupEnd();
 
-          lastErrMessage = serverMessage || "Unknown error";
+          lastErrMessage = serverMessage || 'Unknown error';
           // If error is NOT about unexpected field, no point retrying different names
           if (!/Unexpected field/i.test(lastErrMessage)) {
             throw new Error(lastErrMessage);
@@ -569,7 +569,7 @@ export default function UploadPage() {
 
       if (!success) {
         // All candidates failed with "Unexpected field"
-        const tried = FILE_FIELD_CANDIDATES.join(", ");
+        const tried = FILE_FIELD_CANDIDATES.join(', ');
         throw new Error(
           `Unexpected field for uploaded files. Tried: ${tried}. Please confirm the expected field name on the server.`
         );
@@ -577,7 +577,7 @@ export default function UploadPage() {
     } catch (e: any) {
       const message =
         e?.message ||
-        "There was an error submitting your dress. Please try again.";
+        'There was an error submitting your dress. Please try again.';
 
       if (/Unexpected field/i.test(message)) {
         console.warn(
@@ -586,49 +586,49 @@ export default function UploadPage() {
       }
 
       // DEBUG: log final error
-      console.group("[Submit] Final Error");
+      console.group('[Submit] Final Error');
       console.error(message, e);
       console.groupEnd();
 
       toast({
-        title: "Error uploading dress",
+        title: 'Error uploading dress',
         description: message,
-        variant: "destructive",
+        variant: 'destructive',
       });
       enqueueSnackbar(message, {
-        variant: "error",
-        anchorOrigin: { horizontal: "center", vertical: "bottom" },
+        variant: 'error',
+        anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
       });
     } finally {
       // DEBUG: re-enable submit button
-      console.log("[Submit] Done. Re-enabling submit button.");
+      console.log('[Submit] Done. Re-enabling submit button.');
       setIsSubmitting(false);
     }
   };
 
   // Size options + extra numeric sizes
-  const baseSizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
-  const numericSizes = ["36", "38", "40", "42", "44", "46", "48", "50", "52"];
+  const baseSizeOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const numericSizes = ['36', '38', '40', '42', '44', '46', '48', '50', '52'];
   const sizeOptions = useMemo(() => [...baseSizeOptions, ...numericSizes], []);
 
-  const colorOptions = language === "AR" ? arColors : enColors;
+  const colorOptions = language === 'AR' ? arColors : enColors;
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 md:py-12">
-      <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center mb-8">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-playfair">
-              {t("createProduct.title")}
+    <div className='min-h-screen bg-slate-50 py-8 md:py-12'>
+      <div className='container px-4 md:px-6'>
+        <div className='flex flex-col items-center justify-center space-y-4 text-center mb-8'>
+          <div className='space-y-2'>
+            <h1 className='text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-playfair'>
+              {t('createProduct.title')}
             </h1>
-            <p className="max-w-[700px] text-slate-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              {t("createProduct.description")}
+            <p className='max-w-[700px] text-slate-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed'>
+              {t('createProduct.description')}
             </p>
             {/* NEW: subscription type display */}
             {uploadLimits?.subscriptionType && (
-              <p className="text-sm text-slate-600">
-                Subscription:{" "}
-                <span className="font-medium">
+              <p className='text-sm text-slate-600'>
+                Subscription:{' '}
+                <span className='font-medium'>
                   {uploadLimits.subscriptionType}
                 </span>
               </p>
@@ -636,41 +636,41 @@ export default function UploadPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <form onSubmit={handleSubmit(onSubmit)} className='max-w-4xl mx-auto'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
             {/* Left Column - Images */}
-            <div className="md:col-span-1">
+            <div className='md:col-span-1'>
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("createProduct.images.title")}</CardTitle>
+                  <CardTitle>{t('createProduct.images.title')}</CardTitle>
                   <CardDescription>
-                    {t("createProduct.images.description")}
+                    {t('createProduct.images.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
+                  <div className='space-y-4'>
                     {/* Image upload area */}
-                    <div className="border-2 border-dashed border-slate-200 rounded-lg p-4 text-center">
+                    <div className='border-2 border-dashed border-slate-200 rounded-lg p-4 text-center'>
                       <input
-                        type="file"
-                        id="images"
+                        type='file'
+                        id='images'
                         multiple
                         accept={canUploadVideos ? `image/*,video/*` : `image/*`}
-                        className="hidden"
+                        className='hidden'
                         onChange={handleImageUpload}
                       />
                       <label
-                        htmlFor="images"
-                        className="flex flex-col items-center justify-center gap-2 cursor-pointer py-4"
+                        htmlFor='images'
+                        className='flex flex-col items-center justify-center gap-2 cursor-pointer py-4'
                       >
-                        <Upload className="h-8 w-8 text-slate-400" />
-                        <span className="text-sm font-medium text-slate-9 00">
-                          {t("createProduct.images.uploadText")}
+                        <Upload className='h-8 w-8 text-slate-400' />
+                        <span className='text-sm font-medium text-slate-9 00'>
+                          {t('createProduct.images.uploadText')}
                         </span>
-                        <span className="text-xs text-slate-500">
-                          {t("createProduct.images.uploadHint")}
+                        <span className='text-xs text-slate-500'>
+                          {t('createProduct.images.uploadHint')}
                         </span>
-                        <span className="text-xs text-slate-500">
+                        <span className='text-xs text-slate-500'>
                           Limit: {maxImagesLimit} media
                         </span>
                       </label>
@@ -678,47 +678,47 @@ export default function UploadPage() {
 
                     {/* Image/Video previews */}
                     {files.length > 0 && (
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium">
-                          {t("createProduct.images.uploadedImages")} (
+                      <div className='space-y-2'>
+                        <p className='text-sm font-medium'>
+                          {t('createProduct.images.uploadedImages')} (
                           {files.length}/{maxImagesLimit})
                         </p>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className='grid grid-cols-2 gap-2'>
                           {files.map((fileOrUrl, index) => {
                             const src =
-                              typeof fileOrUrl === "string"
+                              typeof fileOrUrl === 'string'
                                 ? fileOrUrl
                                 : URL.createObjectURL(fileOrUrl);
 
                             const isVideo =
-                              typeof fileOrUrl === "string"
+                              typeof fileOrUrl === 'string'
                                 ? /\.(mp4|webm|ogg)$/i.test(fileOrUrl)
-                                : fileOrUrl.type.startsWith("video");
+                                : fileOrUrl.type.startsWith('video');
 
                             return (
-                              <div key={index} className="relative group">
-                                <div className="aspect-square relative rounded-md overflow-hidden bg-gray-100">
+                              <div key={index} className='relative group'>
+                                <div className='aspect-square relative rounded-md overflow-hidden bg-gray-100'>
                                   {isVideo ? (
                                     <video
                                       src={src}
                                       controls
-                                      className="w-full h-full object-cover"
+                                      className='w-full h-full object-cover'
                                     />
                                   ) : (
                                     <Image
-                                      src={src || "/placeholder.svg"}
+                                      src={src || '/placeholder.svg'}
                                       alt={`Media ${index + 1}`}
                                       fill
-                                      className="object-cover"
+                                      className='object-cover'
                                     />
                                   )}
                                 </div>
                                 <button
-                                  type="button"
+                                  type='button'
                                   onClick={() => removeImage(index)}
-                                  className="absolute top-1 right-1 bg-white/80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  className='absolute top-1 right-1 bg-white/80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity'
                                 >
-                                  <X className="h-4 w-4 text-red-500" />
+                                  <X className='h-4 w-4 text-red-500' />
                                 </button>
                               </div>
                             );
@@ -730,52 +730,52 @@ export default function UploadPage() {
                 </CardContent>
               </Card>
 
-              <Card className="mt-6">
+              <Card className='mt-6'>
                 <CardHeader>
-                  <CardTitle>{t("createProduct.dressType.title")}</CardTitle>
+                  <CardTitle>{t('createProduct.dressType.title')}</CardTitle>
                   <CardDescription>
-                    {t("createProduct.dressType.description")}
+                    {t('createProduct.dressType.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <RadioGroup
                     value={dressType}
-                    onValueChange={(value) => setValue("type", value)}
-                    className="space-y-3"
+                    onValueChange={(value) => setValue('type', value)}
+                    className='space-y-3'
                   >
                     {/* NEW: Respect canAddNewDresses */}
-                    <div className="flex items-center space-x-2">
+                    <div className='flex items-center space-x-2'>
                       <RadioGroupItem
-                        value="new"
-                        id="type-new"
+                        value='new'
+                        id='type-new'
                         disabled={!canAddNewDresses}
                       />
-                      <Label htmlFor="type-new" className="flex items-center">
-                        <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
-                          {t("createProduct.dressType.new.label")}
+                      <Label htmlFor='type-new' className='flex items-center'>
+                        <span className='bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2'>
+                          {t('createProduct.dressType.new.label')}
                         </span>
-                        {t("createProduct.dressType.new.description")}
+                        {t('createProduct.dressType.new.description')}
                       </Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="used" id="type-used" />
-                      <Label htmlFor="type-used" className="flex items-center">
-                        <span className="bg-amber-100 text-amber-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
-                          {t("createProduct.dressType.used.label")}
+                    <div className='flex items-center space-x-2'>
+                      <RadioGroupItem value='used' id='type-used' />
+                      <Label htmlFor='type-used' className='flex items-center'>
+                        <span className='bg-amber-100 text-amber-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2'>
+                          {t('createProduct.dressType.used.label')}
                         </span>
-                        {t("createProduct.dressType.used.description")}
+                        {t('createProduct.dressType.used.description')}
                       </Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="rental" id="type-rental" />
+                    <div className='flex items-center space-x-2'>
+                      <RadioGroupItem value='rental' id='type-rental' />
                       <Label
-                        htmlFor="type-rental"
-                        className="flex items-center"
+                        htmlFor='type-rental'
+                        className='flex items-center'
                       >
-                        <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
-                          {t("createProduct.dressType.rental.label")}
+                        <span className='bg-purple-100 text-purple-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2'>
+                          {t('createProduct.dressType.rental.label')}
                         </span>
-                        {t("createProduct.dressType.rental.description")}
+                        {t('createProduct.dressType.rental.description')}
                       </Label>
                     </div>
                   </RadioGroup>
@@ -784,70 +784,70 @@ export default function UploadPage() {
             </div>
 
             {/* Right Column - Details */}
-            <div className="md:col-span-2 space-y-6">
+            <div className='md:col-span-2 space-y-6'>
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("createProduct.basicInfo.title")}</CardTitle>
+                  <CardTitle>{t('createProduct.basicInfo.title')}</CardTitle>
                   <CardDescription>
-                    {t("createProduct.basicInfo.subtitle")}
+                    {t('createProduct.basicInfo.subtitle')}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className='space-y-4'>
                   {/* Dress Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="name">
-                      {t("createProduct.basicInfo.name.label")}{" "}
-                      <span className="text-red-500">*</span>
+                  <div className='space-y-2'>
+                    <Label htmlFor='name'>
+                      {t('createProduct.basicInfo.name.label')}{' '}
+                      <span className='text-red-500'>*</span>
                     </Label>
                     <Input
-                      id="name"
-                      {...register("name")}
+                      id='name'
+                      {...register('name')}
                       placeholder={t(
-                        "createProduct.basicInfo.name.placeholder"
+                        'createProduct.basicInfo.name.placeholder'
                       )}
                     />
                     {errors.name && (
-                      <p className="text-sm text-red-500">
+                      <p className='text-sm text-red-500'>
                         {t(errors.name.message as string)}
                       </p>
                     )}
                   </div>
 
                   {/* Description */}
-                  <div className="space-y-2">
-                    <Label htmlFor="description">
-                      {t("createProduct.basicInfo.description.label")}{" "}
-                      <span className="text-red-500">*</span>
+                  <div className='space-y-2'>
+                    <Label htmlFor='description'>
+                      {t('createProduct.basicInfo.description.label')}{' '}
+                      <span className='text-red-500'>*</span>
                     </Label>
                     <Textarea
-                      id="description"
-                      {...register("description")}
+                      id='description'
+                      {...register('description')}
                       placeholder={t(
-                        "createProduct.basicInfo.description.placeholder"
+                        'createProduct.basicInfo.description.placeholder'
                       )}
                       rows={4}
                     />
                     {errors.description && (
-                      <p className="text-sm text-red-500">
+                      <p className='text-sm text-red-500'>
                         {t(errors.description.message as string)}
                       </p>
                     )}
                   </div>
 
                   {/* Category */}
-                  <div className="space-y-2">
-                    <Label htmlFor="category">
-                      {t("createProduct.basicInfo.category.label")}{" "}
-                      <span className="text-red-500">*</span>
+                  <div className='space-y-2'>
+                    <Label htmlFor='category'>
+                      {t('createProduct.basicInfo.category.label')}{' '}
+                      <span className='text-red-500'>*</span>
                     </Label>
                     <Select
-                      value={watch("category")}
-                      onValueChange={(value) => setValue("category", value)}
+                      value={watch('category')}
+                      onValueChange={(value) => setValue('category', value)}
                     >
                       <SelectTrigger>
                         <SelectValue
                           placeholder={t(
-                            "createProduct.basicInfo.category.placeholder"
+                            'createProduct.basicInfo.category.placeholder'
                           )}
                         />
                       </SelectTrigger>
@@ -863,14 +863,14 @@ export default function UploadPage() {
                       </SelectContent>
                     </Select>
                     {errors.category && (
-                      <p className="text-sm text-red-500">
+                      <p className='text-sm text-red-500'>
                         {t(errors.category.message as string)}
                       </p>
                     )}
                   </div>
 
                   {/* Price Information */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     {/* <div className="flex items-center space-x-2 mt-3 mb-3">
                                             <Checkbox
                                                 id="rent"
@@ -900,69 +900,69 @@ export default function UploadPage() {
                                             />
                                             <Label htmlFor="sell">Available for Sale</Label>
                                         </div> */}
-                    <div className="space-y-2">
-                      <Label htmlFor="price">
-                        {t("createProduct.basicInfo.price.label")} (
+                    <div className='space-y-2'>
+                      <Label htmlFor='price'>
+                        {t('createProduct.basicInfo.price.label')} (
                         {selectedCurrency.code})
-                        {dressType === "rental" &&
-                          ` / ${t("createProduct.perDay")}`}{" "}
-                        <span className="text-red-500">*</span>
+                        {dressType === 'rental' &&
+                          ` / ${t('createProduct.perDay')}`}{' '}
+                        <span className='text-red-500'>*</span>
                       </Label>
-                      <div className="relative">
+                      <div className='relative'>
                         {/* <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" /> */}
                         <Input
-                          id="price"
-                          type="number"
-                          min="0"
-                          step="0.01"
+                          id='price'
+                          type='number'
+                          min='0'
+                          step='0.01'
                           placeholder={t(
-                            "createProduct.basicInfo.price.placeholder"
+                            'createProduct.basicInfo.price.placeholder'
                           )}
-                          className="pl-9"
+                          className='pl-9'
                           // {...register("price", { valueAsNumber: true })}
-                          {...register("price", {
-                            required: "Price is required",
+                          {...register('price', {
+                            required: 'Price is required',
                             valueAsNumber: true,
                           })}
                         />
                       </div>
                       {errors.price && (
-                        <p className="text-sm text-red-500">
+                        <p className='text-sm text-red-500'>
                           {t(errors.price.message as string)}
                         </p>
                       )}
                     </div>
 
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="oldPrice">
-                          {t("createProduct.basicInfo.oldPrice.label")} (
+                    <div className='space-y-2'>
+                      <div className='flex items-center justify-between'>
+                        <Label htmlFor='oldPrice'>
+                          {t('createProduct.basicInfo.oldPrice.label')} (
                           {selectedCurrency.code})
-                          {dressType === "rental" &&
-                            ` / ${t("createProduct.perDay")}`}
+                          {dressType === 'rental' &&
+                            ` / ${t('createProduct.perDay')}`}
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Info className="h-4 w-4 text-slate-400" />
+                              <Info className='h-4 w-4 text-slate-400' />
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p className="w-[200px] text-xs">
-                                {t("createProduct.basicInfo.oldPrice.tooltip")}
+                              <p className='w-[200px] text-xs'>
+                                {t('createProduct.basicInfo.oldPrice.tooltip')}
                               </p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
                       </div>
-                      <div className="relative">
+                      <div className='relative'>
                         <Input
-                          id="oldPrice"
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          placeholder="0.00"
-                          className="pl-9"
-                          {...register("oldPrice", { valueAsNumber: true })}
+                          id='oldPrice'
+                          type='number'
+                          min='0'
+                          step='0.01'
+                          placeholder='0.00'
+                          className='pl-9'
+                          {...register('oldPrice', { valueAsNumber: true })}
                         />
                       </div>
                     </div>
@@ -973,64 +973,64 @@ export default function UploadPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    {t("createProduct.specifications.title")}
+                    {t('createProduct.specifications.title')}
                   </CardTitle>
                   <CardDescription>
-                    {t("createProduct.specifications.description")}
+                    {t('createProduct.specifications.description')}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className='space-y-6'>
                   {/* Sizes - now shown per selected color; hidden until a color is selected */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
+                  <div className='space-y-3'>
+                    <div className='flex items-center justify-between'>
                       <Label>
-                        {t("createProduct.specifications.sizes.label")}{" "}
-                        <span className="text-red-500">*</span>
+                        {t('createProduct.specifications.sizes.label')}{' '}
+                        <span className='text-red-500'>*</span>
                       </Label>
                       <Button
-                        type="button"
-                        variant="link"
-                        className="text-gold p-0 h-auto"
+                        type='button'
+                        variant='link'
+                        className='text-gold p-0 h-auto'
                         onClick={() => setShowSizeGuide(!showSizeGuide)}
                       >
-                        {t("createProduct.specifications.sizes.guide")}
+                        {t('createProduct.specifications.sizes.guide')}
                       </Button>
                     </div>
 
                     {showSizeGuide && (
-                      <div className="bg-slate-50 p-3 rounded-md text-sm mb-2">
-                        <h4 className="font-medium mb-1">
-                          {t("createProduct.specifications.sizes.guide")}
+                      <div className='bg-slate-50 p-3 rounded-md text-sm mb-2'>
+                        <h4 className='font-medium mb-1'>
+                          {t('createProduct.specifications.sizes.guide')}
                         </h4>
-                        <div className="grid grid-cols-4 gap-2 text-xs">
+                        <div className='grid grid-cols-4 gap-2 text-xs'>
                           <div>
                             {t(
-                              "createProduct.specifications.sizes.guideContent.xs"
+                              'createProduct.specifications.sizes.guideContent.xs'
                             )}
                           </div>
                           <div>
                             {t(
-                              "createProduct.specifications.sizes.guideContent.s"
+                              'createProduct.specifications.sizes.guideContent.s'
                             )}
                           </div>
                           <div>
                             {t(
-                              "createProduct.specifications.sizes.guideContent.m"
+                              'createProduct.specifications.sizes.guideContent.m'
                             )}
                           </div>
                           <div>
                             {t(
-                              "createProduct.specifications.sizes.guideContent.l"
+                              'createProduct.specifications.sizes.guideContent.l'
                             )}
                           </div>
                           <div>
                             {t(
-                              "createProduct.specifications.sizes.guideContent.xl"
+                              'createProduct.specifications.sizes.guideContent.xl'
                             )}
                           </div>
                           <div>
                             {t(
-                              "createProduct.specifications.sizes.guideContent.xxl"
+                              'createProduct.specifications.sizes.guideContent.xxl'
                             )}
                           </div>
                         </div>
@@ -1038,54 +1038,54 @@ export default function UploadPage() {
                     )}
 
                     {selectedColors.length === 0 ? (
-                      <p className="text-sm text-slate-500">
-                        {t("createProduct.specifications.colors.label")} —
+                      <p className='text-sm text-slate-500'>
+                        {t('createProduct.specifications.colors.label')} —
                         please select at least one color to choose sizes.
                       </p>
                     ) : (
-                      <div className="space-y-6">
+                      <div className='space-y-6'>
                         {selectedColors.map((color: string) => (
-                          <div key={color} className="border rounded-md p-3">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-2">
+                          <div key={color} className='border rounded-md p-3'>
+                            <div className='flex items-center justify-between mb-3'>
+                              <div className='flex items-center gap-2'>
                                 <span
-                                  className="h-4 w-4 rounded-full border"
+                                  className='h-4 w-4 rounded-full border'
                                   style={{
                                     backgroundColor:
                                       colorOptions.find(
                                         (c) => c.value === color
-                                      )?.hex || "#ddd",
+                                      )?.hex || '#ddd',
                                   }}
                                 />
-                                <span className="font-medium">{color}</span>
+                                <span className='font-medium'>{color}</span>
                               </div>
                             </div>
 
                             {/* Color description */}
-                            <div className="mb-3">
-                              <Label className="text-xs">
+                            <div className='mb-3'>
+                              <Label className='text-xs'>
                                 Color Description
                               </Label>
                               <Input
-                                value={colorDetails[color]?.description || ""}
+                                value={colorDetails[color]?.description || ''}
                                 onChange={(e) =>
                                   setColorDetails((prev) => ({
                                     ...prev,
                                     [color]: {
                                       ...(prev[color] || {
-                                        description: "",
+                                        description: '',
                                         quantities: {},
                                       }),
                                       description: e.target.value,
                                     },
                                   }))
                                 }
-                                placeholder="e.g., Dark red"
+                                placeholder='e.g., Dark red'
                               />
                             </div>
 
                             {/* Sizes for this color */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
                               {sizeOptions.map((size) => {
                                 const checked =
                                   !!colorDetails[color]?.quantities?.[size] ||
@@ -1095,7 +1095,7 @@ export default function UploadPage() {
                                 return (
                                   <div
                                     key={`${color}-${size}`}
-                                    className="flex items-center gap-2"
+                                    className='flex items-center gap-2'
                                   >
                                     <Checkbox
                                       id={`size-${color}-${size}`}
@@ -1103,7 +1103,7 @@ export default function UploadPage() {
                                       onCheckedChange={(c) => {
                                         setColorDetails((prev) => {
                                           const current = prev[color] || {
-                                            description: "",
+                                            description: '',
                                             quantities: {},
                                           };
                                           const nextQuantities = {
@@ -1130,7 +1130,7 @@ export default function UploadPage() {
                                               .flat()
                                           );
                                           setValue(
-                                            "sizes",
+                                            'sizes',
                                             Array.from(sizesSet)
                                           );
                                           return {
@@ -1145,15 +1145,15 @@ export default function UploadPage() {
                                     />
                                     <Label
                                       htmlFor={`size-${color}-${size}`}
-                                      className="mr-2"
+                                      className='mr-2'
                                     >
                                       {size}
                                     </Label>
                                     {checked && (
                                       <Input
-                                        type="number"
+                                        type='number'
                                         min={0}
-                                        className="h-8 w-24"
+                                        className='h-8 w-24'
                                         value={qty}
                                         onChange={(e) => {
                                           const val = Number(
@@ -1161,7 +1161,7 @@ export default function UploadPage() {
                                           );
                                           setColorDetails((prev) => {
                                             const current = prev[color] || {
-                                              description: "",
+                                              description: '',
                                               quantities: {},
                                             };
                                             const nextQuantities = {
@@ -1183,7 +1183,7 @@ export default function UploadPage() {
                                                 .flat()
                                             );
                                             setValue(
-                                              "sizes",
+                                              'sizes',
                                               Array.from(sizesSet)
                                             );
                                             return {
@@ -1195,7 +1195,7 @@ export default function UploadPage() {
                                             };
                                           });
                                         }}
-                                        placeholder="Qty"
+                                        placeholder='Qty'
                                       />
                                     )}
                                   </div>
@@ -1207,7 +1207,7 @@ export default function UploadPage() {
                       </div>
                     )}
                     {errors.sizes && (
-                      <p className="text-sm text-red-500">
+                      <p className='text-sm text-red-500'>
                         {t(errors.sizes.message as string)}
                       </p>
                     )}
@@ -1216,34 +1216,34 @@ export default function UploadPage() {
                   <Separator />
 
                   {/* Colors */}
-                  <div className="space-y-3">
+                  <div className='space-y-3'>
                     <Label>
-                      {t("createProduct.specifications.colors.label")}{" "}
-                      <span className="text-red-500">*</span>
+                      {t('createProduct.specifications.colors.label')}{' '}
+                      <span className='text-red-500'>*</span>
                     </Label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                    <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2'>
                       {colorOptions.map((color) => (
                         <div
                           key={color.name}
-                          className="flex items-center space-x-2"
+                          className='flex items-center space-x-2'
                         >
                           <Checkbox
                             id={`color-${color.name}`}
-                            checked={watch("colors").includes(color.value)}
+                            checked={watch('colors').includes(color.value)}
                             onCheckedChange={(checked) => {
-                              const colors = watch("colors");
+                              const colors = watch('colors');
                               if (checked) {
-                                setValue("colors", [...colors, color.value]);
+                                setValue('colors', [...colors, color.value]);
                                 setColorDetails((prev) => ({
                                   ...prev,
                                   [color.value]: prev[color.value] || {
-                                    description: "",
+                                    description: '',
                                     quantities: {},
                                   },
                                 }));
                               } else {
                                 setValue(
-                                  "colors",
+                                  'colors',
                                   colors.filter((c) => c !== color.value)
                                 );
                                 setColorDetails((prev) => {
@@ -1256,10 +1256,10 @@ export default function UploadPage() {
                           />
                           <Label
                             htmlFor={`color-${color.name}`}
-                            className="flex items-center gap-2"
+                            className='flex items-center gap-2'
                           >
                             <span
-                              className="h-4 w-4 rounded-full border"
+                              className='h-4 w-4 rounded-full border'
                               style={{ backgroundColor: color.hex }}
                             />
                             {color.name}
@@ -1268,7 +1268,7 @@ export default function UploadPage() {
                       ))}
                     </div>
                     {errors.colors && (
-                      <p className="text-sm text-red-500">
+                      <p className='text-sm text-red-500'>
                         {t(errors.colors.message as string)}
                       </p>
                     )}
@@ -1277,39 +1277,39 @@ export default function UploadPage() {
                   <Separator />
 
                   {/* Material and Care */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="material">
-                        {t("createProduct.specifications.material.label")}{" "}
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <div className='space-y-2'>
+                      <Label htmlFor='material'>
+                        {t('createProduct.specifications.material.label')}{' '}
                       </Label>
                       <Input
-                        id="material"
-                        {...register("material")}
+                        id='material'
+                        {...register('material')}
                         placeholder={t(
-                          "createProduct.specifications.material.placeholder"
+                          'createProduct.specifications.material.placeholder'
                         )}
                       />
                       {errors.material && (
-                        <p className="text-sm text-red-500">
+                        <p className='text-sm text-red-500'>
                           {t(errors.material.message as string)}
                         </p>
                       )}
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="careInstructions">
+                    <div className='space-y-2'>
+                      <Label htmlFor='careInstructions'>
                         {t(
-                          "createProduct.specifications.careInstructions.label"
+                          'createProduct.specifications.careInstructions.label'
                         )}
                       </Label>
                       <Input
-                        id="careInstructions"
-                        {...register("careInstructions")}
+                        id='careInstructions'
+                        {...register('careInstructions')}
                         placeholder={t(
-                          "createProduct.specifications.careInstructions.placeholder"
+                          'createProduct.specifications.careInstructions.placeholder'
                         )}
                       />
                       {errors.careInstructions && (
-                        <p className="text-sm text-red-500">
+                        <p className='text-sm text-red-500'>
                           {t(errors.careInstructions.message as string)}
                         </p>
                       )}
@@ -1317,161 +1317,161 @@ export default function UploadPage() {
                   </div>
 
                   {/* Measurements */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="chest">
-                        {t("createProduct.specifications.measurements.chest")}
+                  <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+                    <div className='space-y-2'>
+                      <Label htmlFor='chest'>
+                        {t('createProduct.specifications.measurements.chest')}
                       </Label>
                       <Input
-                        id="chest"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("chest", { valueAsNumber: true })}
+                        id='chest'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('chest', { valueAsNumber: true })}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="waist">
-                        {t("createProduct.specifications.measurements.waist")}
+                    <div className='space-y-2'>
+                      <Label htmlFor='waist'>
+                        {t('createProduct.specifications.measurements.waist')}
                       </Label>
                       <Input
-                        id="waist"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("waist", { valueAsNumber: true })}
+                        id='waist'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('waist', { valueAsNumber: true })}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="hip">
-                        {t("createProduct.specifications.measurements.hip")}
+                    <div className='space-y-2'>
+                      <Label htmlFor='hip'>
+                        {t('createProduct.specifications.measurements.hip')}
                       </Label>
                       <Input
-                        id="hip"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("hip", { valueAsNumber: true })}
+                        id='hip'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('hip', { valueAsNumber: true })}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="shoulder">
+                    <div className='space-y-2'>
+                      <Label htmlFor='shoulder'>
                         {t(
-                          "createProduct.specifications.measurements.shoulder"
+                          'createProduct.specifications.measurements.shoulder'
                         )}
                       </Label>
                       <Input
-                        id="shoulder"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("shoulder", {
+                        id='shoulder'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('shoulder', {
                           valueAsNumber: true,
-                          setValueAs: (v) => (v === "" ? null : v),
+                          setValueAs: (v) => (v === '' ? null : v),
                         })}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="high">
-                        {t("createProduct.specifications.measurements.height")}
+                    <div className='space-y-2'>
+                      <Label htmlFor='high'>
+                        {t('createProduct.specifications.measurements.height')}
                       </Label>
                       <Input
-                        id="high"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("high", { valueAsNumber: true })}
+                        id='high'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('high', { valueAsNumber: true })}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="length">
-                        {t("createProduct.specifications.measurements.length")}
+                    <div className='space-y-2'>
+                      <Label htmlFor='length'>
+                        {t('createProduct.specifications.measurements.length')}
                       </Label>
                       <Input
-                        id="length"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("length", { valueAsNumber: true })}
+                        id='length'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('length', { valueAsNumber: true })}
                       />
                     </div>
                   </div>
 
                   {/* Additional Options */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="flex items-center space-x-2">
+                  <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+                    <div className='flex items-center space-x-2'>
                       <Checkbox
-                        id="sleeve"
-                        {...register("sleeve")}
+                        id='sleeve'
+                        {...register('sleeve')}
                         onCheckedChange={(checked) => {
-                          const check = watch("sleeve");
+                          const check = watch('sleeve');
                           if (checked) {
-                            setValue("sleeve", true);
+                            setValue('sleeve', true);
                           } else {
-                            setValue("sleeve", false);
+                            setValue('sleeve', false);
                           }
                         }}
                       />
-                      <Label htmlFor="sleeve">
-                        {t("createProduct.specifications.options.sleeve")}
+                      <Label htmlFor='sleeve'>
+                        {t('createProduct.specifications.options.sleeve')}
                       </Label>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className='flex items-center space-x-2'>
                       <Checkbox
-                        id="underlay"
-                        {...register("underlay")}
+                        id='underlay'
+                        {...register('underlay')}
                         onCheckedChange={(checked) => {
-                          const check = watch("underlay");
+                          const check = watch('underlay');
                           if (checked) {
-                            setValue("underlay", true);
+                            setValue('underlay', true);
                           } else {
-                            setValue("underlay", false);
+                            setValue('underlay', false);
                           }
                         }}
                       />
-                      <Label htmlFor="underlay">
-                        {t("createProduct.specifications.options.underlay")}
+                      <Label htmlFor='underlay'>
+                        {t('createProduct.specifications.options.underlay')}
                       </Label>
                     </div>
                   </div>
 
                   {/* Rental Information */}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'></div>
 
                   {/* Quantity and Reference */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="qty">
-                        {t("createProduct.specifications.quantity.label")}{" "}
-                        <span className="text-red-500">*</span>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <div className='space-y-2'>
+                      <Label htmlFor='qty'>
+                        {t('createProduct.specifications.quantity.label')}{' '}
+                        <span className='text-red-500'>*</span>
                       </Label>
                       <Input
-                        id="qty"
-                        type="number"
-                        min="1"
-                        {...register("qty", { valueAsNumber: true })}
+                        id='qty'
+                        type='number'
+                        min='1'
+                        {...register('qty', { valueAsNumber: true })}
                         readOnly
                       />
                       {errors.qty && (
-                        <p className="text-sm text-red-500">
+                        <p className='text-sm text-red-500'>
                           {t(errors.qty.message as string)}
                         </p>
                       )}
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="ref">
-                        {t("createProduct.specifications.reference.label")}{" "}
+                    <div className='space-y-2'>
+                      <Label htmlFor='ref'>
+                        {t('createProduct.specifications.reference.label')}{' '}
                       </Label>
                       <Input
-                        id="ref"
-                        {...register("ref")}
+                        id='ref'
+                        {...register('ref')}
                         placeholder={t(
-                          "createProduct.specifications.reference.placeholder"
+                          'createProduct.specifications.reference.placeholder'
                         )}
                       />
                       {errors.ref && (
-                        <p className="text-sm text-red-500">
+                        <p className='text-sm text-red-500'>
                           {t(errors.ref.message as string)}
                         </p>
                       )}
@@ -1479,20 +1479,20 @@ export default function UploadPage() {
                   </div>
 
                   {/* State */}
-                  <div className="space-y-2">
-                    <Label htmlFor="state">
-                      {t("createProduct.specifications.city.label")}{" "}
-                      <span className="text-red-500">*</span>
+                  <div className='space-y-2'>
+                    <Label htmlFor='state'>
+                      {t('createProduct.specifications.city.label')}{' '}
+                      <span className='text-red-500'>*</span>
                     </Label>
                     <Input
-                      id="state"
-                      {...register("state")}
+                      id='state'
+                      {...register('state')}
                       placeholder={t(
-                        "createProduct.specifications.city.placeholder"
+                        'createProduct.specifications.city.placeholder'
                       )}
                     />
                     {errors.state && (
-                      <p className="text-sm text-red-500">
+                      <p className='text-sm text-red-500'>
                         {t(errors.state.message as string)}
                       </p>
                     )}
@@ -1501,52 +1501,52 @@ export default function UploadPage() {
               </Card>
 
               <Card>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center space-x-2 pt-2">
+                <CardContent className='space-y-4'>
+                  <div className='flex items-center space-x-2 pt-2'>
                     <Checkbox
-                      id="terms"
-                      {...register("terms")}
+                      id='terms'
+                      {...register('terms')}
                       onCheckedChange={(checked) => {
                         if (checked) {
-                          setValue("terms", true);
+                          setValue('terms', true);
                         } else {
-                          setValue("terms", false);
+                          setValue('terms', false);
                         }
                       }}
                     />
-                    <Label htmlFor="terms" className="text-sm">
-                      {t("createProduct.terms.agree")}{" "}
-                      <Link href="#" className="text-gold hover:underline">
-                        {t("createProduct.terms.terms")}
-                      </Link>{" "}
-                      <Link href="#" className="text-gold hover:underline">
-                        {t("createProduct.terms.privacy")}
+                    <Label htmlFor='terms' className='text-sm'>
+                      {t('createProduct.terms.agree')}{' '}
+                      <Link href='#' className='text-gold hover:underline'>
+                        {t('createProduct.terms.terms')}
+                      </Link>{' '}
+                      <Link href='#' className='text-gold hover:underline'>
+                        {t('createProduct.terms.privacy')}
                       </Link>
                     </Label>
                   </div>
                   {errors.terms && (
-                    <p className="text-sm text-red-500">
+                    <p className='text-sm text-red-500'>
                       {t(errors.terms.message as string)}
                     </p>
                   )}
                 </CardContent>
-                <CardFooter className="flex justify-between">
+                <CardFooter className='flex justify-between'>
                   <Button
-                    variant="outline"
-                    type="button"
+                    variant='outline'
+                    type='button'
                     onClick={() => router.back()}
                   >
-                    {t("createProduct.actions.cancel")}
+                    {t('createProduct.actions.cancel')}
                   </Button>
                   <Button
-                    type="submit"
-                    className="bg-black hover:bg-black/90 text-white"
+                    type='submit'
+                    className='bg-black hover:bg-black/90 text-white'
                     disabled={isSubmitting}
                   >
-                    <Upload className="h-4 w-4 mr-2" />
+                    <Upload className='h-4 w-4 mr-2' />
                     {isSubmitting
-                      ? "Uploading..."
-                      : t("createProduct.actions.publish")}
+                      ? 'Uploading...'
+                      : t('createProduct.actions.publish')}
                   </Button>
                 </CardFooter>
               </Card>

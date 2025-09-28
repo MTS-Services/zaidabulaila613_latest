@@ -812,49 +812,117 @@ export default function Product({ id }: { id: string }) {
 
 const ProductSkeleton = () => {
   return (
-    <div className='animate-pulse flex flex-col md:flex-row gap-8 p-6'>
-      {/* Left Side */}
-      <div className='flex-1 space-y-4'>
-        <div className='h-8 w-1/2 bg-gray-300 rounded' />
-        <div className='flex items-center space-x-2'>
-          <div className='h-4 w-16 bg-gray-200 rounded' />
-          <div className='h-4 w-20 bg-gray-300 rounded' />
-        </div>
-        <div className='h-4 w-32 bg-gray-200 rounded' />
-        {/* Color Circles */}
-        <div className='flex items-center gap-2'>
-          <div className='w-8 h-8 rounded-full bg-gray-300' />
-          <div className='w-8 h-8 rounded-full bg-gray-300' />
-          <div className='w-8 h-8 rounded-full bg-gray-300' />
-          <div className='w-8 h-8 rounded-full bg-gray-300' />
-        </div>
-        {/* Sizes */}
-        <div className='flex items-center gap-2'>
-          <div className='px-4 py-2 bg-gray-300 rounded-md w-12 h-10' />
-          <div className='px-4 py-2 bg-gray-300 rounded-md w-12 h-10' />
-        </div>
-        {/* Add to Cart */}
-        <div className='flex items-center gap-4 mt-6'>
-          <div className='h-12 w-40 bg-gray-300 rounded' />
-          <div className='flex items-center gap-2'>
-            <div className='w-8 h-8 bg-gray-300 rounded' />
-            <div className='w-8 h-8 bg-gray-300 rounded' />
+    <section className='lg:py-20 lg:px-20'>
+      <div className='animate-pulse flex flex-col md:flex-row gap-6 container mx-auto px-4'>
+        {/* Left Side - Thumbnail Gallery */}
+        <div className='flex flex-col gap-2 w-full md:w-[120px]'>
+          {/* Thumbnail 1 */}
+          <div className='w-full h-[100px] bg-gray-200 rounded-md border border-gray-300' />
+          {/* Thumbnail 2 */}
+          <div className='w-full h-[100px] bg-gray-200 rounded-md border border-gray-300' />
+          {/* Thumbnail 3 (with label) */}
+          <div className='w-full h-[100px] bg-gray-200 rounded-md border border-gray-300 relative'>
+            <div className='absolute top-1 left-1 text-xs bg-orange-400 text-white px-2 py-1 rounded'>
+              Used
+            </div>
           </div>
         </div>
-        {/* Ref + Category */}
-        <div className='h-4 w-32 bg-gray-200 mt-4 rounded' />
-        <div className='h-4 w-40 bg-gray-200 rounded' />
-        {/* Social icons */}
-        <div className='flex gap-3 mt-4'>
-          <div className='w-6 h-6 rounded-full bg-gray-300' />
-          <div className='w-6 h-6 rounded-full bg-gray-300' />
-          <div className='w-6 h-6 rounded-full bg-gray-300' />
-          <div className='w-6 h-6 rounded-full bg-gray-300' />
+
+        {/* Main Product Image */}
+        <div className='w-full md:w-[500px] h-[600px] bg-gray-200 rounded-lg' />
+
+        {/* Right Side - Product Details */}
+        <div className='flex-1 space-y-4'>
+          {/* Title */}
+          <div className='h-8 w-3/4 bg-gray-300 rounded' />
+          {/* Code / SKU */}
+          <div className='h-6 w-1/3 bg-gray-200 rounded' />
+          {/* Description */}
+          <div className='h-4 w-1/2 bg-gray-200 rounded' />
+          {/* Color Label + Circle */}
+          <div className='space-y-2'>
+            <div className='h-4 w-20 bg-gray-200 rounded' />
+            <div className='w-8 h-8 rounded-full bg-gray-300' />
+          </div>
+          {/* Size Label + Button */}
+          <div className='space-y-2'>
+            <div className='h-4 w-16 bg-gray-200 rounded' />
+            <div className='w-12 h-10 bg-gray-300 rounded-md flex items-center justify-center'>
+              <div className='h-4 w-6 bg-gray-400 rounded' />
+            </div>
+            <div className='text-xs text-gray-400 h-4 w-20 bg-gray-200 rounded' />
+          </div>
+          {/* Quantity + Contact Seller */}
+          <div className='flex items-center gap-4 mt-4'>
+            <div className='flex items-center gap-2 bg-gray-200 rounded-md px-2 py-1'>
+              <div className='w-6 h-6 bg-gray-300 rounded' />
+              <div className='w-8 h-4 bg-gray-300 rounded' />
+              <div className='w-6 h-6 bg-gray-300 rounded' />
+            </div>
+            <div className='h-12 w-full bg-gray-300 rounded' />
+            <div className='w-8 h-8 bg-gray-300 rounded-full' />
+          </div>
+          {/* REF & Categories */}
+          <div className='space-y-2 mt-6'>
+            <div className='h-4 w-16 bg-gray-200 rounded' />
+            <div className='h-4 w-24 bg-gray-200 rounded' />
+          </div>
+          {/* Share Icons */}
+          <div className='flex items-center gap-3 mt-6 pt-4 border-t border-gray-200'>
+            <div className='h-6 w-6 bg-gray-300 rounded-full' />
+            <div className='h-6 w-6 bg-gray-300 rounded-full' />
+            <div className='h-6 w-6 bg-gray-300 rounded-full' />
+            <div className='h-6 w-6 bg-gray-300 rounded-full' />
+          </div>
         </div>
       </div>
-
-      {/* Right Side - Product Image */}
-      <div className='w-full md:w-[500px] h-[500px] bg-gray-200 rounded-lg' />
-    </div>
+    </section>
   );
 };
+//   return (
+//     <div className='animate-pulse flex flex-col md:flex-row gap-8 p-6'>
+//       {/* Left Side */}
+//       <div className='flex-1 space-y-4'>
+//         <div className='h-8 w-1/2 bg-gray-300 rounded' />
+//         <div className='flex items-center space-x-2'>
+//           <div className='h-4 w-16 bg-gray-200 rounded' />
+//           <div className='h-4 w-20 bg-gray-300 rounded' />
+//         </div>
+//         <div className='h-4 w-32 bg-gray-200 rounded' />
+//         {/* Color Circles */}
+//         <div className='flex items-center gap-2'>
+//           <div className='w-8 h-8 rounded-full bg-gray-300' />
+//           <div className='w-8 h-8 rounded-full bg-gray-300' />
+//           <div className='w-8 h-8 rounded-full bg-gray-300' />
+//           <div className='w-8 h-8 rounded-full bg-gray-300' />
+//         </div>
+//         {/* Sizes */}
+//         <div className='flex items-center gap-2'>
+//           <div className='px-4 py-2 bg-gray-300 rounded-md w-12 h-10' />
+//           <div className='px-4 py-2 bg-gray-300 rounded-md w-12 h-10' />
+//         </div>
+//         {/* Add to Cart */}
+//         <div className='flex items-center gap-4 mt-6'>
+//           <div className='h-12 w-40 bg-gray-300 rounded' />
+//           <div className='flex items-center gap-2'>
+//             <div className='w-8 h-8 bg-gray-300 rounded' />
+//             <div className='w-8 h-8 bg-gray-300 rounded' />
+//           </div>
+//         </div>
+//         {/* Ref + Category */}
+//         <div className='h-4 w-32 bg-gray-200 mt-4 rounded' />
+//         <div className='h-4 w-40 bg-gray-200 rounded' />
+//         {/* Social icons */}
+//         <div className='flex gap-3 mt-4'>
+//           <div className='w-6 h-6 rounded-full bg-gray-300' />
+//           <div className='w-6 h-6 rounded-full bg-gray-300' />
+//           <div className='w-6 h-6 rounded-full bg-gray-300' />
+//           <div className='w-6 h-6 rounded-full bg-gray-300' />
+//         </div>
+//       </div>
+
+//       {/* Right Side - Product Image */}
+//       <div className='w-full md:w-[500px] h-[500px] bg-gray-200 rounded-lg' />
+//     </div>
+//   );
+// };

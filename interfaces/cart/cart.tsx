@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator"
 import { useCart } from "@/hooks/use-cart"
 import { useWishlist } from "@/hooks/use-wishlist"
 import { useRouter } from "next/navigation"
+import { config } from "@/constants/app"
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart()
@@ -59,7 +60,13 @@ export default function CartPage() {
                   <div className="flex gap-4">
                     <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md">
                       <Image
-                        src={item.images?.[0] || "/placeholder.svg?height=96&width=96"}
+                        src={
+                          (item.images?.[0] && item.images[0].startsWith('http') 
+                            ? item.images[0]
+                            : item.images?.[0] 
+                            ? `${config.API_URL}${item.images[0]}`
+                            : "/placeholder.svg?height=96&width=96")
+                        }
                         alt={item.name}
                         fill
                         className="object-cover"

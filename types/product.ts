@@ -9,6 +9,23 @@ export interface ProductSize {
   label: string;
 }
 
+export interface LanguageField {
+  ar: string;
+  en: string;
+}
+
+export interface AvailableColorSize {
+  size: string;
+  sizeSpecific: string;
+  quantity: number;
+  colorDisction?: LanguageField;
+}
+
+export interface AvailableColor {
+  color: LanguageField;
+  sizes: AvailableColorSize[];
+}
+
 export interface ProductCategory {
   id: string;
   name: string;
@@ -25,23 +42,24 @@ export interface ProductUser {
 
 export interface Product {
   id: string;
-  name: string;
-  type: string;
-  selectedColor: string;
-  origin: string;
+  name: string | LanguageField;
+  type: string | LanguageField;
+  selectedColor: string | LanguageField;
+  origin: string | LanguageField;
   qty: number;
   approve: boolean;
   size: ProductSize[];
-  color: string[];
+  color: string[] | LanguageField[];
+  availableColors?: AvailableColor[];
   category: ProductCategory | null;
   pictures: ProductPicture[];
   user: ProductUser | null;
-  description?: string;
+  description?: string | LanguageField;
   price?: number;
   oldPrice?: number;
-  state?: string;
-  material?: string;
-  careInstructions?: string;
+  state?: string | LanguageField;
+  material?: string | LanguageField;
+  careInstructions?: string | LanguageField;
   sleeve?: boolean;
   underlay?: boolean;
   ref?: string;
@@ -51,6 +69,8 @@ export interface Product {
   hip?: string;
   high?: string;
   waist?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface UserProductsResponse {

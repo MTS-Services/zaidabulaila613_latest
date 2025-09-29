@@ -10,11 +10,13 @@ import { useWishlist } from '@/hooks/use-wishlist';
 import { useCart } from '@/hooks/use-cart';
 import { useTranslation } from '@/hooks/use-translation';
 import { useCurrency } from '@/contexts/currency-context';
+import { useAuth } from '@/contexts/auth-context';
 import { config } from '@/constants/app';
 
 export default function WishlistPage() {
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
+  const { user } = useAuth();
 
   // Handle move to cart
   const handleMoveToCart = (item: any) => {
@@ -60,8 +62,11 @@ export default function WishlistPage() {
                         <div className='aspect-[3/4] relative overflow-hidden'>
                           <Image
                             src={
-                              item.images?.[0] ||
-                              '/placeholder.svg?height=96&width=96'
+                              (item.images?.[0] && item.images[0].startsWith('http') 
+                                ? item.images[0]
+                                : item.images?.[0] 
+                                ? `${config.API_URL}${item.images[0]}`
+                                : '/placeholder.svg?height=96&width=96')
                             }
                             alt={item.name}
                             fill

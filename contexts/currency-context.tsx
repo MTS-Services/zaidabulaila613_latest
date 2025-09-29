@@ -26,12 +26,12 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
     const { language } = useTranslation(); // "en" or "ar"
 
     const currentCurrencyList = language === "AR" ? arCurrencies : enCurrencies;
-    const defaultCurrency = currentCurrencyList.find((c) => c.code === "USD")!;
+    const defaultCurrency = currentCurrencyList.find((c) => c.code === "JOD") || currentCurrencyList.find((c) => c.code === "USD")!;
     const [selectedCurrency, setSelectedCurrencyState] = useState<Currency>(defaultCurrency);
 
  useEffect(() => {
     const currentCurrencyList = language === "AR" ? arCurrencies : enCurrencies;
-    const defaultCurrency = currentCurrencyList.find((c) => c.code === "USD")!;
+    const defaultCurrency = currentCurrencyList.find((c) => c.code === "JOD") || currentCurrencyList.find((c) => c.code === "USD")!;
     const saved = localStorage.getItem("selectedCurrency");
     const userCurrencyCode = user?.user?.account?.currency?.value;
 

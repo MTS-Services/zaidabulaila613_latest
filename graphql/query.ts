@@ -171,6 +171,9 @@ export const GET_USER_PRODUCT_BY_ID = gql`
     description
       price
       oldPrice
+      originalPrice
+      originalCurrency
+      currentCurrency
       type
       selectedColor
       origin

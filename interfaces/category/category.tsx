@@ -114,7 +114,7 @@ export default function CategoryPage() {
       price: Number.parseFloat(product.price),
       originalPrice: product.originalPrice ? Number.parseFloat(product.originalPrice) : undefined,
       quantity: 1,
-      images: [product.image],
+      images: product.pictures?.map((pic: any) => pic.path || pic) || [product.image] || [],
       selectedSize: "m", // Default size
       selectedColor: "black", // Default color
       type: product.type,
@@ -132,7 +132,7 @@ export default function CategoryPage() {
         name: product.name,
         price: product.price,
         originalPrice: product.originalPrice,
-        images: [product.image],
+        images: product.pictures?.map((pic: any) => pic.path || pic) || (product.image ? [product.image] : []),
         type: product.type,
         vendor: product.vendor,
       })

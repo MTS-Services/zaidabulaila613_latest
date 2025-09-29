@@ -10,17 +10,17 @@
 
 //===================================// 9-17-2025
 
-'use client';
+"use client";
 
-import { useState, useCallback, useEffect } from 'react';
-import Form, { Field } from '@/components/form';
-import { signInValidator } from '@/lib/validators/auth';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { enqueueSnackbar } from 'notistack';
-import { useAuth } from '@/contexts/auth-context';
-import { useTranslation } from '@/hooks/use-translation';
-import Script from 'next/script';
+import Form, { Field } from "@/components/form";
+import { useAuth } from "@/contexts/auth-context";
+import { useTranslation } from "@/hooks/use-translation";
+import { signInValidator } from "@/lib/validators/auth";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import Script from "next/script";
+import { enqueueSnackbar } from "notistack";
+import { useCallback, useEffect, useState } from "react";
 
 declare global {
   interface Window {
@@ -33,21 +33,21 @@ export default function SignIn() {
   const router = useRouter();
   const { login } = useAuth();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirectTo');
+  const redirect = searchParams.get("redirectTo");
   const [isLoading, setIsLoading] = useState(false);
 
   const formFields: Field[] = [
     {
-      type: 'Input',
-      name: 'username',
-      label: t('login.phonelabel'),
-      inputType: 'text',
+      type: "Input",
+      name: "username",
+      label: t("login.phonelabel"),
+      inputType: "text",
     },
     {
-      type: 'Input',
-      name: 'password',
-      label: t('login.password'),
-      inputType: 'password',
+      type: "Input",
+      name: "password",
+      label: t("login.password"),
+      inputType: "password",
     },
   ];
 
@@ -61,22 +61,22 @@ export default function SignIn() {
 
     try {
       const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       const result = await response.json();
       if (!response.ok) {
-        throw new Error(result.message || 'Login failed.');
+        throw new Error(result.message || "Login failed.");
       }
 
       login(result.data);
-      enqueueSnackbar('Login successful', { variant: 'success' });
-      router.push(redirect || '/dashboard');
+      enqueueSnackbar("Login successful", { variant: "success" });
+      router.push(redirect || "/dashboard");
     } catch (e: any) {
-      enqueueSnackbar(e.message || 'Something went wrong', {
-        variant: 'error',
+      enqueueSnackbar(e.message || "Something went wrong", {
+        variant: "error",
       });
     } finally {
       setIsLoading(false);
@@ -89,19 +89,19 @@ export default function SignIn() {
   const handleGoogleResponse = async (response: any) => {
     try {
       const idToken = response?.credential;
-      if (!idToken) throw new Error('No Google credential received.');
+      if (!idToken) throw new Error("No Google credential received.");
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/user/google-signin`,
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ idToken }),
         }
       );
 
       const json = await res.json();
-      if (!res.ok) throw new Error(json?.message || 'Google sign-in failed');
+      if (!res.ok) throw new Error(json?.message || "Google sign-in failed");
 
       // extract token
       const token =
@@ -110,43 +110,43 @@ export default function SignIn() {
         json?.token ||
         json?.data?.token;
 
-      if (!token) throw new Error('No access token found in response');
+      if (!token) throw new Error("No access token found in response");
 
       // save exactly as your app expects
       const loginUser = {
         access_token: token,
         user: json?.data?.user ?? null,
         subscription: json?.data?.subscription ?? null,
-        authMethod: 'google',
+        authMethod: "google",
       };
       try {
-        localStorage.setItem('loginUser', JSON.stringify(loginUser));
-        sessionStorage.setItem('loginUser', JSON.stringify(loginUser));
+        localStorage.setItem("loginUser", JSON.stringify(loginUser));
+        sessionStorage.setItem("loginUser", JSON.stringify(loginUser));
       } catch {}
 
       // optional cookie (middleware/SSR)
-      const isSecure = window.location.protocol === 'https:';
+      const isSecure = window.location.protocol === "https:";
       document.cookie = `access_token=${token}; Path=/; Max-Age=${
         60 * 60 * 24 * 30
-      }; SameSite=Lax${isSecure ? '; Secure' : ''}`;
+      }; SameSite=Lax${isSecure ? "; Secure" : ""}`;
 
-      enqueueSnackbar(json?.message || 'Signed in with Google', {
-        variant: 'success',
+      enqueueSnackbar(json?.message || "Signed in with Google", {
+        variant: "success",
       });
 
-      const dest = redirect || '/dashboard';
+      const dest = redirect || "/dashboard";
       window.location.replace(dest);
     } catch (err: any) {
       enqueueSnackbar(
-        err?.message || 'Something went wrong during Google sign-in',
-        { variant: 'error' }
+        err?.message || "Something went wrong during Google sign-in",
+        { variant: "error" }
       );
     }
   };
 
   const initGoogle = useCallback(() => {
     if (!googleClientId) {
-      console.error('Missing NEXT_PUBLIC_GOOGLE_CLIENT_ID');
+      console.error("Missing NEXT_PUBLIC_GOOGLE_CLIENT_ID");
       return;
     }
     if (!window.google || !window.google.accounts) return;
@@ -158,64 +158,67 @@ export default function SignIn() {
       cancel_on_tap_outside: false,
     });
 
-    const container = document.getElementById('google-login');
+    const container = document.getElementById("google-login");
     if (container) {
-      container.innerHTML = '';
+      container.innerHTML = "";
       window.google.accounts.id.renderButton(container, {
-        theme: 'outline',
-        size: 'large',
-        type: 'standard',
-        shape: 'rectangular',
-        text: 'signin_with',
-        width: 320, // number (not '100%')
+        theme: "outline",
+        size: "large",
+        type: "standard",
+        shape: "rectangular",
+        text: "signin_with",
+        width: 320, // number
       });
     }
   }, [googleClientId]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.google?.accounts?.id) {
+    if (typeof window !== "undefined" && window.google?.accounts?.id) {
       initGoogle();
     }
   }, [initGoogle]);
   /* ---------------- End Google Auth ---------------- */
 
   return (
-    <div className='bg-slate-50'>
-      <div className='container pt-[100px]'>
-        <div className='flex items-center justify-center mb-5'>
-          <h1 className='text-2xl md:text-3xl font-bold'>{t('login.title')}</h1>
+    <div className="bg-slate-50">
+      <div className="container pt-[100px]">
+        <div className="flex items-center justify-center mb-5">
+          <h1 className="text-2xl md:text-3xl font-bold">{t("login.title")}</h1>
         </div>
-        <div className='container bg-white py-6 max-w-[500px]'>
+        <div className="container bg-white py-6 max-w-[500px]">
           <Form
             schema={signInValidator}
             formFields={formFields}
             onSubmit={handleSubmit}
             isPending={isLoading}
-            defaultValues={{ username: '', password: '' }}
-            fieldDir='column'
-            buttonTitle={t('login.button')}
+            defaultValues={{ username: "", password: "" }}
+            fieldDir="column"
+            buttonTitle={t("login.button")}
           />
-          <div className='mt-4 flex justify-center gap-5'>
-            <Link href={'/signup'}>{t('login.signup')}</Link>
-            <Link href={'/forgot-password'}>{t('login.forgot')}</Link>
+          <div className="mt-4 flex justify-center gap-5">
+            <Link href={"/signup"}>{t("login.signup")}</Link>
+            <Link href={"/forgot-password"}>{t("login.forgot")}</Link>
           </div>
 
           {/* Google button area (underlined in your screenshot) */}
-          <div className='mt-6'>
-            <div className='w-full flex items-center justify-center gap-2 text-gray-500 text-sm'>
-              <hr className='flex-1 border-gray-300' />
-              {t('common.or') ?? 'or'}
-              <hr className='flex-1 border-gray-300' />
+          <div className="mt-6">
+            <div className="w-full flex items-center justify-center gap-2 text-gray-500 text-sm">
+              <hr className="flex-1 border-gray-300" />
+              {t("common.or") ?? "or"}
+              <hr className="flex-1 border-gray-300" />
             </div>
-            <div id='google-login' className='mt-3 w-full flex justify-center min-h-[44px]' />
+            <div
+              id="google-login"
+              className="mt-3 w-full flex justify-center min-h-[44px]"
+            />
           </div>
         </div>
       </div>
 
       {/* Load Google SDK & init immediately */}
       <Script
-        src='https://accounts.google.com/gsi/client'
-        strategy='afterInteractive'
+        src="https://accounts.google.com/gsi/client"
+        strategy="afterInteractive"
         onLoad={initGoogle}
       />
     </div>

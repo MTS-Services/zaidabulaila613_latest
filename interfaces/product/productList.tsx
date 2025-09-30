@@ -205,7 +205,11 @@ export default function ProductList({
         ? Number.parseFloat(product.originalPrice)
         : undefined,
       quantity: 1,
-      images: product.pictures?.map((pic: any) => pic.path || pic) || [product.image] || [],
+      images:
+        product.pictures?.map((pic: any) => pic.path || pic) || [
+          product.image,
+        ] ||
+        [],
       selectedSize: 'm', // Default size
       selectedColor: 'black', // Default color
       type: product.type,
@@ -230,7 +234,9 @@ export default function ProductList({
         name: product.name,
         price: product.price,
         originalPrice: product.originalPrice,
-        images: product.pictures?.map((pic: any) => pic.path || pic) || (product.image ? [product.image] : []),
+        images:
+          product.pictures?.map((pic: any) => pic.path || pic) ||
+          (product.image ? [product.image] : []),
         type: product.type,
         vendor: product.vendor,
       });
@@ -362,7 +368,7 @@ export default function ProductList({
                                             View all from this vendor
                                         </Link>
                                     </div> */}
-              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+              <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 items-stretch'>
                 {products.map((el) => {
                   return <ProductCard product={el} key={el.id} />;
                 })}
@@ -391,10 +397,10 @@ export default function ProductList({
                                             View all from this vendor
                                         </Link>
                                     </div>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 items-stretch">
                                         {data?.products.data.map((el) => {
                                             return (
-                                                <ProductCard product={el} />
+                                                <ProductCard product={el} key={el.id} />
                                             )
                                         })}
                                     </div>

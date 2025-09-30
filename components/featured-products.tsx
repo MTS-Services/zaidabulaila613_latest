@@ -115,7 +115,6 @@ export default function FeaturedProducts() {
 
         color: product.color[0],
         // size: product.size[0].value,
-
       }));
       setSelectedOptions(defaultSelections);
     }
@@ -396,7 +395,7 @@ export default function FeaturedProducts() {
         {loading ? (
           <Loader />
         ) : (
-          <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 mt-8'>
+          <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 mt-8 items-stretch'>
             {filteredProducts.map((product: any, index: number) => {
               return <ProductCard product={product} key={index} />;
             })}

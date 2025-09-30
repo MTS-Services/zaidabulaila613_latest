@@ -177,7 +177,7 @@ body {
 }
 
 .fancy-button::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   width: 100%;
@@ -279,7 +279,7 @@ body {
 }
 
 .vendor-button::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0;
@@ -416,7 +416,7 @@ body {
 
 /* Water filling animation container */
 .wishlist-button::before {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0;
@@ -565,9 +565,10 @@ body {
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   background: #cc9765;
   border: none;
-  border-radius: 0.5rem; /* Update to match our lg value */
+  border-radius: 0.5rem;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
   transition: 200ms;
   position: relative;
@@ -580,8 +581,18 @@ body {
   font-weight: bold;
   font-size: 14px;
   transition: 200ms;
-  width: 100%;
+  width: calc(100% - 40px);
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .cart-button .icon {
@@ -594,13 +605,28 @@ body {
   align-items: center;
   justify-content: center;
   transition: 200ms;
-  color: white; /* Added this to make the icon white */
+  color: white;
   right: 0;
 }
 
-.cart-button svg {
-  color: white; /* Added this to ensure the SVG is white */
-  stroke: white; /* Added this to ensure the stroke is white */
+/* When button contains only SVG (icon-only state) */
+.cart-button > svg {
+  position: relative;
+  z-index: 10;
+  color: white;
+  stroke: white;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.cart-button .icon svg,
+.cart-button .text svg {
+  color: white;
+  stroke: white;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .cart-button:hover {
@@ -627,6 +653,112 @@ body {
 
 .cart-button:active .icon svg {
   transform: scale(0.8);
+}
+
+/* Ensure consistent height for all product cards */
+.product-card-container {
+  height: 100%;
+  min-height: 450px;
+}
+
+/* Ensure perfect text centering without conflicting styles */
+
+.cart-button svg {
+  color: white;
+  stroke: white;
+}
+
+/* Responsive adjustments for product cards */
+@media (max-width: 640px) {
+  .product-card-container {
+    min-height: 380px;
+  }
+
+  .cart-button {
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .cart-button .text {
+    font-size: 12px;
+    transform: translateX(12px);
+    width: calc(100% - 36px);
+  }
+
+  .cart-button .icon {
+    width: 36px;
+    height: 28px;
+  }
+
+  .cart-button > svg,
+  .cart-button .icon svg,
+  .cart-button .text svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .product-card-container {
+    min-height: 400px;
+  }
+
+  .cart-button {
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .cart-button .text {
+    font-size: 13px;
+    transform: translateX(13px);
+    width: calc(100% - 38px);
+  }
+
+  .cart-button .icon {
+    width: 38px;
+    height: 30px;
+  }
+
+  .cart-button > svg,
+  .cart-button .icon svg,
+  .cart-button .text svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .product-card-container {
+    min-height: 420px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .product-card-container {
+    min-height: 460px;
+  }
+
+  .cart-button {
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .cart-button .text {
+    font-size: 14px;
+    width: calc(100% - 42px);
+  }
+
+  .cart-button .icon {
+    width: 42px;
+    height: 34px;
+  }
+
+  .cart-button > svg,
+  .cart-button .icon svg,
+  .cart-button .text svg {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 /* Shop by Type Button Styles */
@@ -669,7 +801,7 @@ body {
 }
 
 .shop-type-button::before {
-  content: "";
+  content: '';
   display: block;
   width: 0px;
   height: 86%;
@@ -742,7 +874,8 @@ body {
 .testimonial-card {
   transform: translateY(30px);
   opacity: 0;
-  transition: transform 0.6s ease-out, opacity 0.6s ease-out, box-shadow 0.3s ease;
+  transition: transform 0.6s ease-out, opacity 0.6s ease-out,
+    box-shadow 0.3s ease;
 }
 
 .testimonial-card.animate-in {
@@ -795,7 +928,7 @@ body {
 }
 
 .benefit-card:before {
-  content: "";
+  content: '';
   position: absolute;
   z-index: -1;
   top: -16px;
@@ -890,7 +1023,8 @@ body {
   stroke-linejoin: round;
   stroke-width: 3;
   /* Define the transition for transforming the Stroke */
-  transition: stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1), stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1),
+    stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .line-top-bottom {
@@ -945,7 +1079,8 @@ body {
   z-index: 50;
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* Add these search bar styles to the end of the file */
@@ -1018,8 +1153,9 @@ body {
   font-size: 0.95em;
   color: white;
   transition: all 0.3s ease;
-  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
-    Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+    sans-serif;
 }
 
 .search-input::placeholder {
@@ -1218,7 +1354,7 @@ body {
 }
 
 .shop-type-button::before {
-  content: "";
+  content: '';
   display: block;
   width: 0px;
   height: 86%;
@@ -1383,7 +1519,7 @@ body {
 
 .animated-upload-arrow::before,
 .animated-upload-arrow::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 18px;
   width: 10px;
@@ -1669,7 +1805,8 @@ body {
   display: flex;
   height: 48px;
   align-items: center;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px 1px 1px 0px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 1px 0px inset,
+    rgba(255, 255, 255, 0.17) 0px 1px 1px 0px;
   outline: none;
   justify-content: center;
   min-width: 55px;
@@ -1678,7 +1815,8 @@ body {
 .customCheckBox:hover {
   background-color: #2c2c2c;
   color: white;
-  box-shadow: rgba(0, 0, 0, 0.23) 0px -4px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px -1px 1px 0px,
+  box-shadow: rgba(0, 0, 0, 0.23) 0px -4px 1px 0px inset,
+    rgba(255, 255, 255, 0.17) 0px -1px 1px 0px,
     rgba(0, 0, 0, 0.17) 0px 2px 4px 1px;
 }
 
@@ -1721,7 +1859,8 @@ body {
 .customCheckBoxInput:checked + .customCheckBoxWrapper .customCheckBox {
   background-color: #cc9765;
   color: white;
-  box-shadow: rgba(0, 0, 0, 0.23) 0px -4px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px -1px 1px 0px,
+  box-shadow: rgba(0, 0, 0, 0.23) 0px -4px 1px 0px inset,
+    rgba(255, 255, 255, 0.17) 0px -1px 1px 0px,
     rgba(0, 0, 0, 0.17) 0px 2px 4px 1px;
 }
 
@@ -1731,7 +1870,8 @@ body {
 
 .customCheckBoxInput:checked + .customCheckBoxWrapper .customCheckBox:hover {
   background-color: #d9a97c;
-  box-shadow: rgba(0, 0, 0, 0.26) 0px -4px 1px 0px inset, rgba(255, 255, 255, 0.17) 0px -1px 1px 0px,
+  box-shadow: rgba(0, 0, 0, 0.26) 0px -4px 1px 0px inset,
+    rgba(255, 255, 255, 0.17) 0px -1px 1px 0px,
     rgba(0, 0, 0, 0.15) 0px 3px 6px 2px;
 }
 
@@ -1776,12 +1916,12 @@ body {
 }
 
 .neumorphic-button:hover {
-  box-shadow: 0 4px 3px 1px #fcfcfc, 0 6px 8px #d6d7d9, 0 -4px 4px #cecfd1, 0 -6px 4px #fefefe, inset 0 0 3px 3px
-    #cecfd1;
+  box-shadow: 0 4px 3px 1px #fcfcfc, 0 6px 8px #d6d7d9, 0 -4px 4px #cecfd1,
+    0 -6px 4px #fefefe, inset 0 0 3px 3px #cecfd1;
 }
 
 .neumorphic-button:active,
 .neumorphic-button:focus {
-  box-shadow: 0 4px 3px 1px #fcfcfc, 0 6px 8px #d6d7d9, 0 -4px 4px #cecfd1, 0 -6px 4px #fefefe, inset 0 0 5px 3px #999,
-    inset 0 0 30px #aaa;
+  box-shadow: 0 4px 3px 1px #fcfcfc, 0 6px 8px #d6d7d9, 0 -4px 4px #cecfd1,
+    0 -6px 4px #fefefe, inset 0 0 5px 3px #999, inset 0 0 30px #aaa;
 }

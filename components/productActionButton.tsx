@@ -45,11 +45,12 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
       selectedColor: product.selectedColor,
       quantity: product.quantity,
       // Transform pictures array to images array for cart compatibility
-      images: product.pictures?.map((pic: any) => {
-        const imagePath = pic.path || pic;
-        // Return the path as-is since we'll handle API_URL prefix in the display components
-        return imagePath;
-      }) || [],
+      images:
+        product.pictures?.map((pic: any) => {
+          const imagePath = pic.path || pic;
+          // Return the path as-is since we'll handle API_URL prefix in the display components
+          return imagePath;
+        }) || [],
     });
   };
   const { t } = useTranslation();
@@ -83,7 +84,7 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
     return cartItem ? (
       // If item is in cart, show ONLY the icon button
       <button
-        className={`cart-button noselect w-full mt-3 flex justify-center items-center ${className}`}
+        className={`cart-button noselect w-full ${className}`}
         onClick={() => router.push('/cart')}
       >
         <ShoppingBag className='h-5 w-5' />
@@ -91,7 +92,7 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
     ) : (
       // If item is not in cart, show "Add to Cart" button with text and icon
       <button
-        className={`cart-button noselect w-full mt-3 ${className}`}
+        className={`cart-button noselect w-full ${className}`}
         onClick={handleAddToCart}
       >
         <span className='text'>{t('productpageid.addtocart')}</span>
@@ -107,7 +108,7 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
     <>
       {canContactSeller ? (
         <button
-          className={`cart-button noselect w-full mt-3 ${className}`}
+          className={`cart-button noselect w-full ${className}`}
           onClick={() =>
             handleClick(product?.user?.account?.mobile, product?.name)
           }
@@ -123,7 +124,7 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
       ) : (
         <TooltipBox text='Upgrade your subscription.'>
           <button
-            className={`cart-button noselect w-full mt-3 ${className}`}
+            className={`cart-button noselect w-full ${className}`}
             onClick={() => router.push(`/dashboard/subscription`)}
           >
             <span className='text'>

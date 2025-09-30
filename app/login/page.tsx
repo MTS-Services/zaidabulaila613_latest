@@ -124,7 +124,7 @@ export default function SignIn() {
         sessionStorage.setItem("loginUser", JSON.stringify(loginUser));
       } catch {}
 
-      // optional cookie (middleware/SSR)
+      // optional cookie (middleware/SSR
       const isSecure = window.location.protocol === "https:";
       document.cookie = `access_token=${token}; Path=/; Max-Age=${
         60 * 60 * 24 * 30

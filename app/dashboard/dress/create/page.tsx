@@ -103,7 +103,7 @@ export default function UploadPage() {
       description: '',
       price: 0,
       oldPrice: 0,
-      type: 'used', // canonical values: new | used | rental
+      type: 'used',
       category: '',
       colors: [],
       selectedColor: '',
@@ -140,7 +140,7 @@ export default function UploadPage() {
     string,
     {
       description: string;
-      quantities: Record<string, number>; // size -> qty
+      quantities: Record<string, number>;
     }
   >;
   const [colorDetails, setColorDetails] = useState<ColorDetails>({});
@@ -184,7 +184,6 @@ export default function UploadPage() {
 
       const res = await fetch(input, {
         ...init,
-        // Use the timeout controller as the active signal
         signal: timeoutController.signal,
       });
       return res;
@@ -250,8 +249,8 @@ export default function UploadPage() {
       const q = colorDetails[c]?.quantities || {};
       Object.keys(q).forEach((size) => sizesSet.add(size));
     });
-    setValue('sizes', Array.from(sizesSet)); // maintain global sizes
-  }, [selectedColors]); // eslint-disable-line
+    setValue('sizes', Array.from(sizesSet));
+  }, [selectedColors]);
 
   // Auto-calc total qty
   useEffect(() => {
@@ -418,7 +417,7 @@ export default function UploadPage() {
           value: s,
           label: s,
         })),
-        state: data.state || "", // add state to payload
+        state: data.state || '', // add state to payload
       };
 
       // DEBUG: log payload object
@@ -456,7 +455,7 @@ export default function UploadPage() {
           'availableColors',
           JSON.stringify(payload.availableColors || [])
         );
-        fd.append("state", String(payload.state || "")); // append state
+        fd.append('state', String(payload.state || '')); // append state
         files.forEach((file) => fd.append(fileFieldName, file));
         return fd;
       };

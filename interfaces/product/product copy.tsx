@@ -38,9 +38,9 @@ export default function Product({ id }: { id: string }) {
   // Find the product based on the id
 
   // State for selected options
-  const [selectedSize, setSelectedSize] = useState<any | null>(null);
-  const [selectedColor, setSelectedColor] = useState<any | null>(null);
-  const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [mainImage, setMainImage] = useState<ProductPicture | null>(null);
   const [activeTab, setActiveTab] = useState('description');
   // State for image modal
@@ -48,12 +48,27 @@ export default function Product({ id }: { id: string }) {
   const [currentModalImage, setCurrentModalImage] = useState(0);
   // Cart and wishlist hooks
   const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
 
   const { language } = useTranslation();
   const { selectedCurrency } = useCurrency();
 
   const { cart } = useCart();
   const { user } = useAuth();
+
+  // Handle keyboard navigation
+  // useEffect(() => {
+  //   const handleKeyDown = (e: KeyboardEvent) => {
+  //     if (!isModalOpen) return
+
+  //     if (e.key === "Escape") closeModal()
+  //     if (e.key === "ArrowRight") nextImage()
+  //     if (e.key === "ArrowLeft") prevImage()
+  //   }
+
+  //   window.addEventListener("keydown", handleKeyDown)
+  //   return () => window.removeEventListener("keydown", handleKeyDown)
+  // }, [isModalOpen])
 
   const { data, loading, error } = useQuery<ProductByIdResponse>(
     GET_PRODUCT_BY_ID,
@@ -70,24 +85,11 @@ export default function Product({ id }: { id: string }) {
 
   useEffect(() => {
     if (data?.productById) {
-      // Initialize with first color
-      const firstColor = data?.productById.color[0] || '';
-      setSelectedColor(firstColor);
-
-      // Find the first available size for the first color
-      const firstAvailableColor = data?.productById.availableColors?.find(
-        (colorObj) => {
-          const colorValue =
-            language === 'AR' ? colorObj.color.ar : colorObj.color.en;
-          return colorValue.toLowerCase() === firstColor.toLowerCase();
-        }
-      );
-      const firstSize = firstAvailableColor?.sizes?.[0] || null;
-      setSelectedSize(firstSize);
-
+      setSelectedSize(data?.productById.size[0]?.value || '');
+      setSelectedColor(data?.productById.color[0] || '');
       setMainImage(data?.productById.pictures[0] || null);
     }
-  }, [data, language]);
+  }, [data]);
   const { t } = useTranslation();
 
   const product = data?.productById;
@@ -98,6 +100,25 @@ export default function Product({ id }: { id: string }) {
     return <div>Product not found</div>;
   }
   const cartItem = cart.find((el) => el.id === product.id);
+
+  // Handle add to cart
+  const handleAddToCart = () => {
+    // addToCart({
+    //   ...product,
+    //   selectedSize,
+    //   selectedColor,
+    //   quantity: selectedQuantity,
+    // })
+  };
+
+  // Handle wishlist toggle
+  // const handleWishlistToggle = () => {
+  //   if (isInWishlist(product.id)) {
+  //     removeFromWishlist(product.id)
+  //   } else {
+  //     addToWishlist(product)
+  //   }
+  // }
 
   // Open modal with specific image
   const openImageModal = (imageIndex: number) => {
@@ -140,49 +161,6 @@ export default function Product({ id }: { id: string }) {
         (c: string) => c.toLowerCase() === color.value.toLowerCase()
       )
   );
-
-  // Get available sizes for the selected color
-  const getAvailableSizesForColor = (colorName: string) => {
-    const colorObj = product.availableColors?.find((color) => {
-      const colorValue = language === 'AR' ? color.color.ar : color.color.en;
-      return colorValue.toLowerCase() === colorName.toLowerCase();
-    });
-    return colorObj?.sizes || [];
-  };
-
-  // Handle color selection
-  const handleColorChange = (colorValue: string) => {
-    setSelectedColor(colorValue);
-
-    // Get available sizes for this color
-    const availableSizes = getAvailableSizesForColor(colorValue);
-
-    // If current selected size is not available in this color, select the first available size
-    const isCurrentSizeAvailable = availableSizes.some(
-      (size: any) => size._id === selectedSize?._id
-    );
-
-    if (!isCurrentSizeAvailable && availableSizes.length > 0) {
-      setSelectedSize(availableSizes[0]);
-      // Reset quantity when size changes
-      setSelectedQuantity(1);
-    } else if (availableSizes.length === 0) {
-      setSelectedSize(null);
-      setSelectedQuantity(1);
-    }
-  };
-
-  // Handle size selection
-  const handleSizeChange = (size: any) => {
-    setSelectedSize(size);
-    // Reset quantity when size changes and ensure it doesn't exceed available quantity
-    setSelectedQuantity(Math.min(selectedQuantity, size.quantity));
-  };
-
-  // Get available sizes for currently selected color
-  const availableSizes = selectedColor
-    ? getAvailableSizesForColor(selectedColor)
-    : [];
 
   return (
     <div className='min-h-screen bg-white'>
@@ -350,217 +328,98 @@ export default function Product({ id }: { id: string }) {
                 {t('productpageid.color')}:{' '}
                 <span className='uppercase'>{selectedColor}</span>
               </div>
-
               <div className='flex flex-wrap gap-2'>
-                {matchedColors.map((color) => {
-                  const colorSizes = getAvailableSizesForColor(color.value);
-                  const hasAvailableSizes = colorSizes.some(
-                    (size: any) => size.quantity > 0
-                  );
-                  const totalQuantity = colorSizes.reduce(
-                    (sum: number, size: any) => sum + size.quantity,
-                    0
-                  );
-
-                  return (
-                    <div key={color.value} className='relative'>
-                      <button
-                        className={`w-8 h-8 rounded-full border transition-all duration-200 ${
-                          selectedColor === color.value
-                            ? 'ring-2 ring-gold ring-offset-2 scale-110'
-                            : 'border-slate-300 hover:border-slate-400'
-                        } ${
-                          !hasAvailableSizes
-                            ? 'opacity-30 cursor-not-allowed grayscale'
-                            : 'hover:scale-105'
-                        }`}
-                        style={{ backgroundColor: color.hex }}
-                        onClick={() =>
-                          hasAvailableSizes && handleColorChange(color.value)
-                        }
-                        disabled={!hasAvailableSizes}
-                        aria-label={`Select ${color.name} color`}
-                        title={
-                          !hasAvailableSizes
-                            ? `${color.name} - Out of stock`
-                            : `${
-                                color.name
-                              } - ${totalQuantity} items available in ${
-                                colorSizes.filter((s: any) => s.quantity > 0)
-                                  .length
-                              } sizes`
-                        }
-                      />
-                      {!hasAvailableSizes && (
-                        <div className='absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border border-white text-xs flex items-center justify-center'>
-                          <span className='text-white text-[8px]'>✕</span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                {matchedColors.map((color) => (
+                  <button
+                    key={color.value}
+                    className={`w-8 h-8 rounded-full border ${
+                      selectedColor === color.value
+                        ? 'ring-2 ring-gold ring-offset-2'
+                        : 'border-slate-300'
+                    }`}
+                    style={{ backgroundColor: color.hex }}
+                    onClick={() => setSelectedColor(color.value)}
+                    aria-label={`Select ${color.name} color`}
+                  />
+                ))}
               </div>
             </div>
 
             {/* Size Selection */}
-            <div className='space-y-4'>
+            <div className='space-y-2'>
               <div className='font-medium'>
-                {t('productpageid.size')}:{' '}
-                <span className='uppercase'>{selectedSize?.size}</span>
+                {t('productpageid.size')}: {selectedSize?.toUpperCase()}
               </div>
-              <div className='flex flex-wrap gap-2 '>
-                {availableSizes.map((s: any) => (
+              <div className='flex flex-wrap gap-2'>
+                {product.size.map((el) => (
                   <button
-                    key={s._id}
-                    className={`min-w-8 h-8 px-2 flex items-center justify-center border rounded-md ${
-                      selectedSize?._id === s._id
+                    key={el.value}
+                    className={`w-8 h-8 flex items-center justify-center border rounded-md ${
+                      selectedSize === el.value
                         ? 'bg-slate-900 text-white border-slate-900'
-                        : s.quantity > 0
-                        ? 'border-slate-300 text-slate-900 hover:border-slate-400'
-                        : 'border-slate-200 text-slate-400 cursor-not-allowed'
-                    }`}
-                    onClick={() => s.quantity > 0 && handleSizeChange(s)}
-                    disabled={s.quantity === 0}
-                    title={
-                      s.quantity === 0
-                        ? 'Out of stock'
-                        : `${s.quantity} available`
-                    }
+                        : 'border-slate-300 text-slate-900'
+                    } `}
+                    onClick={() => setSelectedSize(el.value)}
+                    // disabled={!el.inStock}
                   >
-                    {s.size}
+                    {el.label}
                   </button>
                 ))}
               </div>
-
-              {/* Selection Summary */}
-              <div className='bg-slate-50 rounded-lg p-4 space-y-2'>
-                {selectedColor ? (
-                  <div className='space-y-1'>
-                    <p className='text-sm text-slate-600 flex items-center gap-2'>
-                      <span className='font-medium'>
-                        {t('productpageid.color')}:
-                      </span>
-                      <span className='capitalize bg-white px-2 py-1 rounded border text-xs font-medium'>
-                        {selectedColor}
-                      </span>
-                      {availableSizes.length > 0 && (
-                        <span className='text-green-600 text-xs'>
-                          (
-                          {
-                            availableSizes.filter((s: any) => s.quantity > 0)
-                              .length
-                          }{' '}
-                          sizes available)
-                        </span>
-                      )}
-                    </p>
-
-                    {selectedSize ? (
-                      <p className='text-sm text-slate-600 flex items-center gap-2'>
-                        <span className='font-medium'>
-                          {t('productpageid.size')}:
-                        </span>
-                        <span className='bg-white px-2 py-1 rounded border text-xs font-medium'>
-                          {selectedSize.size}
-                        </span>
-                        <span
-                          className={`text-xs font-medium ${
-                            selectedSize.quantity > 0
-                              ? 'text-green-600'
-                              : 'text-red-600'
-                          }`}
-                        >
-                          ({selectedSize.quantity} available)
-                        </span>
-                      </p>
-                    ) : (
-                      <p className='text-sm text-amber-600'>
-                        Please select a size
-                      </p>
-                    )}
-
-                    {availableSizes.length === 0 && (
-                      <p className='text-sm text-amber-600'>
-                        ⚠️ No sizes available for this color
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <p className='text-sm text-slate-500'>
-                    Please select a color to see available sizes
-                  </p>
-                )}
-              </div>
-
               <Link href='#' className='text-sm text-gold hover:underline'>
                 {t('productpageid.sizeguide')}
               </Link>
             </div>
 
             {/* Quantity and Add to Cart */}
-            <div className='flex items-end gap-6'>
-              <div className='flex items-center gap-1'>
-                <div className='flex items-center border rounded-md'>
-                  <button
-                    className='px-3 py-3 text-slate-500 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed'
-                    onClick={decrementQuantity}
-                    disabled={selectedQuantity <= 1}
-                    aria-label='Decrease quantity'
-                  >
-                    <Minus className='h-4 w-4' />
-                  </button>
-
-                  <div className='w-12 text-center text-sm font-medium'>
-                    {selectedQuantity}
-                  </div>
-
-                  <button
-                    className='px-3 py-3 text-slate-500 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed'
-                    onClick={incrementQuantity}
-                    disabled={
-                      !selectedSize || selectedQuantity >= selectedSize.quantity
-                    }
-                    aria-label='Increase quantity'
-                  >
-                    <Plus className='h-4 w-4' />
-                  </button>
-                </div>
-                {selectedSize && (
-                  <p className='text-xs text-slate-500 text-center'>
-                    Max: {selectedSize.quantity}
-                  </p>
-                )}
+            <div className='flex items-center gap-4'>
+              <div className='flex items-center border rounded-md'>
+                <button
+                  className='px-3 py-2 text-slate-500 hover:text-slate-900'
+                  onClick={decrementQuantity}
+                >
+                  <Minus className='h-4 w-4' />
+                </button>
+                <div className='w-10 text-center'>{selectedQuantity}</div>
+                <button
+                  className='px-3 py-2 text-slate-500 hover:text-slate-900'
+                  onClick={incrementQuantity}
+                >
+                  <Plus className='h-4 w-4' />
+                </button>
               </div>
 
-              <div className='flex gap-2 flex-1 items-center'>
-                <ProductActionButton
-                  user={user}
+              {/* <Button className="bg-black hover:bg-black/90 text-white flex-1" onClick={handleAddToCart}>
+                ADD TO CART
+              </Button> */}
+              <ProductActionButton
+                user={user}
+                product={{
+                  ...product,
+                  quantity: selectedQuantity,
+                  selectedSize: selectedSize,
+                  selectedColor: selectedColor,
+                }}
+                cartItem={cartItem}
+                addToCart={addToCart}
+              />
+
+              <div className='h-10 w-10 flex items-center justify-center'>
+                <HeartButton
+                  productId={product.id}
+                  size='md'
                   product={{
-                    ...product,
-                    selectedSize,
-                    selectedColor,
-                    quantity: selectedQuantity,
+                    id: product.id,
+                    name: product.name,
+                    price: product.price || 0,
+                    vendor: {
+                      name: '',
+                      slug: '',
+                    },
+                    images: product.pictures.map((el) => el.path),
+                    originalPrice: product.oldPrice || 0,
                   }}
-                  cartItem={cartItem}
-                  addToCart={addToCart}
                 />
-                <div className='pt-2'>
-                  <HeartButton
-                    productId={product.id}
-                    size='md'
-                    product={{
-                      id: product.id,
-                      name: product.name,
-                      price: product.price || 0,
-                      vendor: {
-                        name: '',
-                        slug: '',
-                      },
-                      images: product.pictures.map((el) => el.path),
-                      originalPrice: product.oldPrice || 0,
-                    }}
-                  />
-                </div>
               </div>
             </div>
 
@@ -1020,3 +879,50 @@ const ProductSkeleton = () => {
     </section>
   );
 };
+//   return (
+//     <div className='animate-pulse flex flex-col md:flex-row gap-8 p-6'>
+//       {/* Left Side */}
+//       <div className='flex-1 space-y-4'>
+//         <div className='h-8 w-1/2 bg-gray-300 rounded' />
+//         <div className='flex items-center space-x-2'>
+//           <div className='h-4 w-16 bg-gray-200 rounded' />
+//           <div className='h-4 w-20 bg-gray-300 rounded' />
+//         </div>
+//         <div className='h-4 w-32 bg-gray-200 rounded' />
+//         {/* Color Circles */}
+//         <div className='flex items-center gap-2'>
+//           <div className='w-8 h-8 rounded-full bg-gray-300' />
+//           <div className='w-8 h-8 rounded-full bg-gray-300' />
+//           <div className='w-8 h-8 rounded-full bg-gray-300' />
+//           <div className='w-8 h-8 rounded-full bg-gray-300' />
+//         </div>
+//         {/* Sizes */}
+//         <div className='flex items-center gap-2'>
+//           <div className='px-4 py-2 bg-gray-300 rounded-md w-12 h-10' />
+//           <div className='px-4 py-2 bg-gray-300 rounded-md w-12 h-10' />
+//         </div>
+//         {/* Add to Cart */}
+//         <div className='flex items-center gap-4 mt-6'>
+//           <div className='h-12 w-40 bg-gray-300 rounded' />
+//           <div className='flex items-center gap-2'>
+//             <div className='w-8 h-8 bg-gray-300 rounded' />
+//             <div className='w-8 h-8 bg-gray-300 rounded' />
+//           </div>
+//         </div>
+//         {/* Ref + Category */}
+//         <div className='h-4 w-32 bg-gray-200 mt-4 rounded' />
+//         <div className='h-4 w-40 bg-gray-200 rounded' />
+//         {/* Social icons */}
+//         <div className='flex gap-3 mt-4'>
+//           <div className='w-6 h-6 rounded-full bg-gray-300' />
+//           <div className='w-6 h-6 rounded-full bg-gray-300' />
+//           <div className='w-6 h-6 rounded-full bg-gray-300' />
+//           <div className='w-6 h-6 rounded-full bg-gray-300' />
+//         </div>
+//       </div>
+
+//       {/* Right Side - Product Image */}
+//       <div className='w-full md:w-[500px] h-[500px] bg-gray-200 rounded-lg' />
+//     </div>
+//   );
+// };

@@ -1,44 +1,67 @@
-"use client"
+'use client';
 
-import { use, useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { ChevronRight, Filter, Heart, X, Percent, Star, ShoppingBag } from "lucide-react"
+import { use, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import {
+  ChevronRight,
+  Filter,
+  Heart,
+  X,
+  Percent,
+  Star,
+  ShoppingBag,
+} from 'lucide-react';
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Separator } from "@/components/ui/separator"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 // Add the import for the CSS file at the top of the file
-import "./styles.css"
-import { useQuery } from "@apollo/client"
-import { ShopById, ShopItem } from "@/types/shop"
-import { GET_PRODUCTS_BY_USER_ID, GET_SHOP_BY_ID } from "@/graphql/query"
-import { useLanguage } from "@/contexts/language-context"
-import { useTranslation } from "@/hooks/use-translation"
-import { config } from "@/constants/app"
-import { UserProductsByIdResponse, UserProductsResponse } from "@/types/product"
-import Loader from "@/components/loader"
-import ProductCard from "@/components/productCard"
-import { useCurrency } from "@/contexts/currency-context"
+import './styles.css';
+import { useQuery } from '@apollo/client';
+import { ShopById, ShopItem } from '@/types/shop';
+import { GET_PRODUCTS_BY_USER_ID, GET_SHOP_BY_ID } from '@/graphql/query';
+import { useLanguage } from '@/contexts/language-context';
+import { useTranslation } from '@/hooks/use-translation';
+import { config } from '@/constants/app';
+import {
+  UserProductsByIdResponse,
+  UserProductsResponse,
+} from '@/types/product';
+import Loader from '@/components/loader';
+import ProductCard from '@/components/productCard';
+import { useCurrency } from '@/contexts/currency-context';
 
-export default function VendorPage({ params }: { params: Promise<{ slug: string }> }) {
+export default function VendorPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   // Find the vendor based on the slug
   const { slug } = use(params);
-  const { language } = useTranslation()
-  const { selectedCurrency } = useCurrency()
+  const { language } = useTranslation();
+  const { selectedCurrency } = useCurrency();
 
   const [userId, setUserId] = useState<string | null>(null);
 
   // First query: Get Shop by ID
-  const {
-    loading,
-    error,
-    data,
-  } = useQuery<ShopById>(GET_SHOP_BY_ID, {
+  const { loading, error, data } = useQuery<ShopById>(GET_SHOP_BY_ID, {
     variables: {
       id: slug,
       language,
@@ -60,11 +83,11 @@ export default function VendorPage({ params }: { params: Promise<{ slug: string 
     variables: {
       id: userId,
       language,
-      currency: selectedCurrency.code.toLowerCase()
+      currency: selectedCurrency.code.toLowerCase(),
     },
     skip: !userId, // Skip until userId is set
   });
-  const vendor = data?.findShopById
+  const vendor = data?.findShopById;
 
   const handleClick = (phone: string) => {
     // const phoneNumber = '923001234567'; // Replace with your number (e.g., 92 for Pakistan)
@@ -75,23 +98,23 @@ export default function VendorPage({ params }: { params: Promise<{ slug: string 
   };
 
   // State for filters
-  const [productType, setProductType] = useState<string[]>([])
-  const [category, setCategory] = useState<string[]>([])
-  const [sortBy, setSortBy] = useState("newest")
+  const [productType, setProductType] = useState<string[]>([]);
+  const [category, setCategory] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState('newest');
 
   // Add the state for the filter modal after the other state declarations
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   // Dummy wishlist and cart functions
   const isInWishlist = (productId: number) => {
     // Replace with actual wishlist logic
-    return false
-  }
+    return false;
+  };
 
   const addToCart = (product: any) => {
     // Replace with actual cart logic
-    console.log("Added to cart:", product)
-  }
+    console.log('Added to cart:', product);
+  };
 
   // Toggle product type filter
   // const toggleProductType = (value: string) => {
@@ -148,31 +171,49 @@ export default function VendorPage({ params }: { params: Promise<{ slug: string 
   //     // Handle error appropriately
   //   }
   // }
-const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {loading &&
-        <VendorSkeleton />
-      }
-      {vendor &&
+    <div className='min-h-screen bg-slate-50'>
+      {loading && <VendorSkeleton />}
+      {vendor && (
         <>
           {/* Vendor Header */}
-          <div className="relative h-64 md:h-80">
-            <Image src={vendor.coverImage?.path ? config.API_URL + vendor.coverImage?.path : "/placeholder.svg"} alt={vendor.shopName} fill className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/30" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-              <div className="flex items-center gap-4">
-                <div className="relative h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden border-2 border-white shadow-sm">
-                  <Image src={vendor.profileImage?.path ? config.API_URL + vendor.profileImage?.path : "/placeholder.svg"} alt={vendor.shopName} fill className="object-cover" />
+          <div className='relative h-64 md:h-80'>
+            <Image
+              src={
+                vendor.coverImage?.path
+                  ? config.API_URL + vendor.coverImage?.path
+                  : '/placeholder.svg'
+              }
+              alt={vendor.shopName}
+              fill
+              className='object-cover'
+            />
+            <div className='absolute inset-0 bg-gradient-to-t from-black/70 to-black/30' />
+            <div className='absolute bottom-0 left-0 right-0 p-6 md:p-8'>
+              <div className='flex items-center gap-4'>
+                <div className='relative h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden border-2 border-white shadow-sm'>
+                  <Image
+                    src={
+                      vendor.profileImage?.path
+                        ? config.API_URL + vendor.profileImage?.path
+                        : '/placeholder.svg'
+                    }
+                    alt={vendor.shopName}
+                    fill
+                    className='object-cover'
+                  />
                 </div>
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-white">{vendor.shopName}</h1>
-                  <div className="flex items-center text-white/80 text-sm mt-1">
-                    <Link href="/vendors" className="hover:text-white">
-                     {t('navbar.vendors')}
+                  <h1 className='text-2xl md:text-3xl font-bold text-white'>
+                    {vendor.shopName}
+                  </h1>
+                  <div className='flex items-center text-white/80 text-sm mt-1'>
+                    <Link href='/vendors' className='hover:text-white'>
+                      {t('navbar.vendors')}
                     </Link>
-                    <ChevronRight className="h-3 w-3 mx-1" />
+                    <ChevronRight className='h-3 w-3 mx-1' />
                     <span>{vendor.shopName}</span>
                   </div>
                 </div>
@@ -181,89 +222,90 @@ const {t} = useTranslation();
           </div>
 
           {/* Vendor Description */}
-          <div className="bg-white border-b">
-            <div className="container mx-auto py-6 px-4 md:px-6">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className='bg-white border-b'>
+            <div className='container mx-auto py-6 px-4 md:px-6'>
+              <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
                 <div>
-                  <p className="text-slate-600 max-w-2xl">{vendor.description}</p>
-                  <div className="flex flex-wrap gap-2 mt-3">
+                  <p className='text-slate-600 max-w-2xl'>
+                    {vendor.description}
+                  </p>
+                  <div className='flex flex-wrap gap-2 mt-3'>
                     {vendor.tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary">
+                      <Badge key={index} variant='secondary'>
                         {tag}
                       </Badge>
                     ))}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className='flex items-center gap-2'>
                   {/* <Button variant="outline" size="sm">
                     Follow
                   </Button> */}
-                  {vendor?.shopPhoneNumber ?
-                    <Button size="sm" onClick={() => { vendor?.shopPhoneNumber ? handleClick(vendor?.shopPhoneNumber) : console.log("No phone number") }}>{t('vendorpage.contact')}</Button>
-                    :
+                  {vendor?.shopPhoneNumber ? (
+                    <Button
+                      size='sm'
+                      onClick={() => {
+                        vendor?.shopPhoneNumber
+                          ? handleClick(vendor?.shopPhoneNumber)
+                          : console.log('No phone number');
+                      }}
+                    >
+                      {t('vendorpage.contact')}
+                    </Button>
+                  ) : (
                     ''
-                  }
+                  )}
                 </div>
               </div>
             </div>
           </div>
 
           {/* Products Section */}
-          <div className="container mx-auto py-8 px-4 md:px-6">
-            {productLoading &&
-              <Loader />
-            }
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-
-              {
-                products?.getProductsByUserId.data.map((el) => {
-                  return (
-                    <ProductCard product={el} />
-                  )
-                })
-              }
-
+          <div className='container mx-auto py-8 px-4 md:px-6'>
+            {productLoading && <Loader />}
+            <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 items-stretch'>
+              {products?.getProductsByUserId.data.map((el) => {
+                return <ProductCard product={el} key={el.id} />;
+              })}
             </div>
           </div>
         </>
-
-      }
-
+      )}
     </div>
-  )
+  );
 }
 
 function VendorSkeleton() {
   return (
-    <div className="animate-pulse">
+    <div className='animate-pulse'>
       {/* Cover Image Placeholder */}
-      <div className="h-52 bg-gray-200 w-full" />
+      <div className='h-52 bg-gray-200 w-full' />
 
       {/* Profile, Name and Breadcrumb */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4">
+      <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12'>
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between'>
+          <div className='flex items-center gap-4'>
             {/* Profile Image */}
-            <div className="w-24 h-24 rounded-full bg-gray-300 border-4 border-white" />
+            <div className='w-24 h-24 rounded-full bg-gray-300 border-4 border-white' />
 
             {/* Name and Breadcrumb */}
-            <div className="space-y-2">
-              <div className="w-40 h-5 bg-gray-300 rounded" />
-              <div className="w-24 h-4 bg-gray-200 rounded" />
+            <div className='space-y-2'>
+              <div className='w-40 h-5 bg-gray-300 rounded' />
+              <div className='w-24 h-4 bg-gray-200 rounded' />
             </div>
           </div>
 
           {/* Button */}
-          <div className="mt-4 sm:mt-0">
-            <div className="w-36 h-10 bg-gray-300 rounded" />
+          <div className='mt-4 sm:mt-0'>
+            <div className='w-36 h-10 bg-gray-300 rounded' />
           </div>
         </div>
       </div>
 
       {/* Content Placeholder */}
-      <div className="mt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="h-5 w-1/2 bg-gray-200 rounded mb-2" />
-        <div className="h-5 w-1/3 bg-gray-100 rounded" />
+      <div className='mt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='h-5 w-1/2 bg-gray-200 rounded mb-2' />
+        <div className='h-5 w-1/3 bg-gray-100 rounded' />
       </div>
     </div>
   );
@@ -519,9 +561,6 @@ function VendorSkeleton() {
 //     ],
 //   },
 // ]
-
-
-
 
 // <div className="container mx-auto py-8 px-4 md:px-6">
 //       <div className="flex flex-col gap-6">

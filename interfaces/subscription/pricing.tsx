@@ -66,15 +66,15 @@ const Pricing = () => {
       prices: {
         monthly: {
           price: t('dashboard.subcription.platinumplan.monpr'),
-          priceId: 'price_1S8HnQD60jTqpzFUWDXhVTWE',
+          priceId: 'price_1RiKX1InHvXcV9PzDZw1sBLl',
         },
         quarterly: {
           price: t('dashboard.subcription.platinumplan.quarpr'),
-          priceId: 'price_1RiKX1InHvXcV9PzlO4KAAFl',
+          priceId: 'price_1RiKX1InHvXcV9PzDZw1sBLl', // Use monthly as fallback
         }, // Quarterly Platinum
         yearly: {
           price: t('dashboard.subcription.platinumplan.yearpr'),
-          priceId: 'price_1SA4FTD60jTqpzFUXylDnaYz',
+          priceId: 'price_1RiKX1InHvXcV9PzNXQeCKbr',
         }, // Yearly Platinum
       },
     },

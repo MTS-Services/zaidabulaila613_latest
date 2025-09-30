@@ -232,7 +232,7 @@ export default function UpdateProduct({ id }: { id: string }) {
     (async () => {
       try {
         const res = await fetchWithTimeout(
-          `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/products/${id}?currency=${selectedCurrency?.code || 'JOD'}`,
           {
             headers: { Authorization: `Bearer ${user.access_token}` },
             signal: controller.signal,
@@ -242,7 +242,13 @@ export default function UpdateProduct({ id }: { id: string }) {
         if (!res.ok) throw new Error("Failed to load product");
         const product = await res.json();
 
+        console.log("=== PRODUCT FETCH DEBUG ===");
+        console.log("Request URL:", `${process.env.NEXT_PUBLIC_API_URL}/products/${id}?currency=${selectedCurrency?.code || 'JOD'}`);
+        console.log("Selected Currency:", selectedCurrency);
         console.log("Fetched product:", product);
+        console.log("Product price:", product?.price);
+        console.log("Product oldPrice:", product?.oldPrice);
+        console.log("==========================");
 
         // Map product fields to form values
         const typeCanonical = String(product?.type || "").toLowerCase() as
@@ -313,6 +319,20 @@ export default function UpdateProduct({ id }: { id: string }) {
           );
         }, 0);
 
+        console.log("=== FORM RESET DEBUG ===");
+        console.log("Raw product price:", product?.price, typeof product?.price);
+        console.log("Raw product oldPrice:", product?.oldPrice, typeof product?.oldPrice);
+        console.log("Parsed price:", Number(product?.price || 0));
+        console.log("Parsed oldPrice:", Number(product?.oldPrice || 0));
+        
+        // Add debugging for current form values before reset
+        const currentFormValues = watch();
+        console.log("Form values BEFORE reset:", {
+          price: currentFormValues.price,
+          oldPrice: currentFormValues.oldPrice
+        });
+        console.log("========================");
+
         reset({
           name: product?.name || "",
           description: product?.description || "",
@@ -341,6 +361,15 @@ export default function UpdateProduct({ id }: { id: string }) {
           state: product?.state || product?.user?.account?.country || "",
           terms: true,
         });
+        
+        // Add debugging for form values after reset
+        setTimeout(() => {
+          const afterResetValues = watch();
+          console.log("Form values AFTER reset:", {
+            price: afterResetValues.price,
+            oldPrice: afterResetValues.oldPrice
+          });
+        }, 100);
         // ensure UI reflects new defaults
         setFormReady(true);
         setFormKey((k) => k + 1);
@@ -359,7 +388,7 @@ export default function UpdateProduct({ id }: { id: string }) {
     })();
     return () =>
       controller.abort(new DOMException("Unmounted", "AbortError") as any);
-  }, [user?.access_token, id, reset]);
+  }, [user?.access_token, id, reset, selectedCurrency]);
 
   // Keep colorDetails in sync with selected colors
   useEffect(() => {
@@ -497,7 +526,7 @@ export default function UpdateProduct({ id }: { id: string }) {
 
     const payload = {
       language: language || "EN",
-      currency: selectedCurrency?.code || "USD",
+      currency: selectedCurrency?.code || "JOD",
       name: data.name,
       description: data.description,
       category: data.category,

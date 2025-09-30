@@ -44,6 +44,12 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
       selectedSize: product.selectedSize,
       selectedColor: product.selectedColor,
       quantity: product.quantity,
+      // Transform pictures array to images array for cart compatibility
+      images: product.pictures?.map((pic: any) => {
+        const imagePath = pic.path || pic;
+        // Return the path as-is since we'll handle API_URL prefix in the display components
+        return imagePath;
+      }) || [],
     });
   };
   const { t } = useTranslation();

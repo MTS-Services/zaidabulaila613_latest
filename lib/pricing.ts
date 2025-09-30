@@ -39,9 +39,9 @@ export const pricingPlans: PricingPlan[] = [
             'Advanced dress management'
         ],
         prices: {
-            monthly: { price: 29.99, priceId: 'price_1S8HnQD60jTqpzFUWDXhVTWE' }, // Monthly Platinum
-            quarterly: { price: 80.97, priceId: 'price_1RiKX1InHvXcV9PzlO4KAAFl' }, // Quarterly Platinum
-            yearly: { price: 287.88, priceId: 'price_1SA4FTD60jTqpzFUXylDnaYz' } // Yearly Platinum
+            monthly: { price: 29.99, priceId: 'price_1RiKX1InHvXcV9PzDZw1sBLl' }, // Monthly Platinum
+            quarterly: { price: 80.97, priceId: 'price_1RiKX1InHvXcV9PzDZw1sBLl' }, // Use monthly for quarterly as fallback
+            yearly: { price: 287.88, priceId: 'price_1RiKX1InHvXcV9PzNXQeCKbr' } // Yearly Platinum
         }
     },
     {

@@ -12,6 +12,7 @@ import { useWishlist } from "@/hooks/use-wishlist"
 import { useCart } from "@/hooks/use-cart"
 import FilterModal from "@/components/filter-modal"
 import HeartButton from "@/components/heart-button"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function ShopByTypePage() {
   const searchParams = useSearchParams()
@@ -29,6 +30,7 @@ export default function ShopByTypePage() {
 
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist()
   const { addToCart } = useCart()
+  const { user } = useAuth()
 
   // Apply filters and group by vendor
 
@@ -40,7 +42,7 @@ export default function ShopByTypePage() {
       price: Number.parseFloat(product.price),
       originalPrice: product.originalPrice ? Number.parseFloat(product.originalPrice) : undefined,
       quantity: 1,
-      images: [product.image],
+      images: product.pictures?.map((pic: any) => pic.path || pic) || [product.image] || [],
       selectedSize: "m", // Default size
       selectedColor: "black", // Default color
       type: product.type,
@@ -58,7 +60,7 @@ export default function ShopByTypePage() {
         name: product.name,
         price: product.price,
         originalPrice: product.originalPrice,
-        images: [product.image],
+        images: product.pictures?.map((pic: any) => pic.path || pic) || (product.image ? [product.image] : []),
         type: product.type,
         vendor: product.vendor,
       })
@@ -261,19 +263,21 @@ export default function ShopByTypePage() {
                           </div>
                         </Link>
 
-                        {/* Cart Button */}
-                        <button
-                          className="cart-button noselect w-full mt-3"
-                          onClick={(e) => {
-                            e.preventDefault()
-                            handleAddToCart(product)
-                          }}
-                        >
-                          <span className="text">Add to Cart</span>
-                          <span className="icon">
-                            <ShoppingBag className="h-5 w-5" />
-                          </span>
-                        </button>
+                        {/* Cart Button - Only show if user doesn't own the product */}
+                        {!(user && user?.user?.id === product.user?.id) && (
+                          <button
+                            className="cart-button noselect w-full mt-3"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              handleAddToCart(product)
+                            }}
+                          >
+                            <span className="text">Add to Cart</span>
+                            <span className="icon">
+                              <ShoppingBag className="h-5 w-5" />
+                            </span>
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>

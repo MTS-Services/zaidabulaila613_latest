@@ -370,7 +370,7 @@ export default function FeaturedProducts() {
         <div className='mt-8 relative'>
           <div
             ref={scrollContainerRef}
-            className='flex gap-5 overflow-x-auto scrollbar-hide pb-4 space-x-4 -mx-4 px-4 relative touch-pan-x cursor-grab'
+            className='flex gap-5 overflow-x-auto scrollbar-hide pb-4 space-x-4 -mx-4 px-4 relative touch-pan-x cursor-grab justify-center md:justify-center'
             style={{
               WebkitOverflowScrolling: 'touch',
               scrollBehavior: 'smooth',

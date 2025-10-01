@@ -1,55 +1,63 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { shopTypeContent } from "@/constants/shop/shop-type"
-import { useLanguage } from "@/contexts/language-context"
-import { arProductTypes, enProductTypes } from "@/constants/product"
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { shopTypeContent } from '@/constants/shop/shop-type';
+import { useLanguage } from '@/contexts/language-context';
+import { arProductTypes, enProductTypes } from '@/constants/product';
 
 export default function ShopByType() {
-  const router = useRouter()
-  const [activeButton, setActiveButton] = useState<string | null>(null)
-  const {language} = useLanguage()
-  const { buttons, styles } = shopTypeContent
+  const router = useRouter();
+  const [activeButton, setActiveButton] = useState<string | null>(null);
+  const { language } = useLanguage();
+  const { buttons, styles } = shopTypeContent;
 
   const handleButtonClick = (buttonId: string, link: string) => {
-    setActiveButton(buttonId)
+    setActiveButton(buttonId);
     setTimeout(() => {
-      router.push(link)
-    }, shopTypeContent.navigationDelay)
-  }
+      router.push(link);
+    }, shopTypeContent.navigationDelay);
+  };
 
-  const prTypes = language === "AR" ? arProductTypes : enProductTypes
+  const prTypes = language === 'AR' ? arProductTypes : enProductTypes;
 
   return (
-    <section className="py-12 md:py-16 bg-white lg:hidden">
-      <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center mb-10">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-playfair">
+    <section className='py-12 md:py-16 bg-white lg:hidden'>
+      <div className='container px-4 md:px-6'>
+        <div className='flex flex-col items-center justify-center space-y-4 text-center mb-10'>
+          <div className='space-y-2'>
+            <h2 className='text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-playfair'>
               {shopTypeContent.title}
             </h2>
-            <p className="max-w-[500px] text-slate-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+            <p className='max-w-[500px] text-slate-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed'>
               {shopTypeContent.description}
             </p>
           </div>
         </div>
 
-        <div className="max-w-xs mx-auto">
-          <div className="customCheckBoxHolder">
+        <div className='max-w-xs mx-auto'>
+          <div className='customCheckBoxHolder space-y-2'>
             {prTypes.map((button, index) => (
-              <div key={index} className="w-full">
+              <div key={index} className='w-full'>
                 <input
-                  className="customCheckBoxInput"
+                  className='customCheckBoxInput'
                   id={`type-${index}`}
-                  type="radio"
-                  name="dressType"
+                  type='radio'
+                  name='dressType'
                   checked={activeButton === button}
-                  onChange={() => handleButtonClick(button, `/products?type=${button.toLowerCase()}`)}
+                  onChange={() =>
+                    handleButtonClick(
+                      button,
+                      `/products?type=${button.toLowerCase()}`
+                    )
+                  }
                 />
-                <label className={`customCheckBoxWrapper`} htmlFor={`type-${index}`}>
-                  <div className="customCheckBox">
-                    <div className="inner">{button}</div>
+                <label
+                  className={`customCheckBoxWrapper`}
+                  htmlFor={`type-${index}`}
+                >
+                  <div className='customCheckBox'>
+                    <div className='inner'>{button}</div>
                   </div>
                 </label>
               </div>
@@ -93,7 +101,9 @@ export default function ShopByType() {
           box-shadow: ${styles.shadows.hover};
         }
 
-        .customCheckBoxInput:checked + .customCheckBoxWrapper .customCheckBox:hover {
+        .customCheckBoxInput:checked
+          + .customCheckBoxWrapper
+          .customCheckBox:hover {
           background-color: ${styles.colors.active.hover};
           box-shadow: ${styles.shadows.active};
         }
@@ -102,12 +112,12 @@ export default function ShopByType() {
           .customCheckBox {
             height: ${styles.dimensions.desktop.height};
           }
-          
+
           .customCheckBox .inner {
             font-size: ${styles.dimensions.desktop.fontSize};
           }
         }
       `}</style>
     </section>
-  )
+  );
 }

@@ -463,6 +463,7 @@ export default function SignUp() {
         { label: 'Arabic', value: 'ar' },
         { label: 'English', value: 'en' },
       ],
+      defaultValue: 'en',
     },
     {
       type: 'Input',

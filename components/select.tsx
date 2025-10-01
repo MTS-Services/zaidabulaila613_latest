@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { IoChevronDown } from "react-icons/io5";
 
 interface Option {
     value: string;
@@ -85,14 +86,18 @@ const Select: React.FC<CustomSelectProps> = ({
 
             }
             {/* Input Field */}
-            <div ref={dropdownRef}>
+            <div ref={dropdownRef} className="relative">
                 <input
                     type="text"
                     placeholder={selectedOption?.label || placeholder}
                     value={searchTerm}
                     onChange={handleInputChange}
                     onFocus={() => setIsOpen(true)}
-                    className="block w-full max-w-[500px] rounded-md border-0 pl-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 pl-2 pr-10 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                />
+                <IoChevronDown 
+                    className={`absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                    size={16}
                 />
 
                 {/* Dropdown Options */}

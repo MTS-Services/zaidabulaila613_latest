@@ -83,6 +83,7 @@ export default function UploadPage() {
   const maxImagesLimit = uploadLimits?.limits?.maxImagesPerDress ?? 5;
   const canUploadVideos = uploadLimits?.limits?.canUploadVideos ?? false;
   const canAddNewDresses = uploadLimits?.limits?.canAddNewDresses ?? false;
+  const bulkUploadDresses = uploadLimits?.limits?.bulkUploadDresses ?? false;
 
   const { selectedCurrency } = useCurrency();
   const { language } = useTranslation();
@@ -233,35 +234,31 @@ export default function UploadPage() {
       controller.abort(new DOMException('Unmounted', 'AbortError') as any);
   }, [user?.access_token, setValue]);
 
-  // Keep colorDetails in sync with selected colors
+  // Keep colorDetails in sync with selected color
   useEffect(() => {
-    setColorDetails((prev) => {
-      const next: ColorDetails = {};
-      // keep existing for still-selected colors
-      selectedColors.forEach((c: string) => {
-        next[c] = prev[c] || { description: '', quantities: {} };
-      });
-      return next;
-    });
-    // also prune sizes when color removed
-    const sizesSet = new Set<string>();
-    selectedColors.forEach((c: string) => {
-      const q = colorDetails[c]?.quantities || {};
-      Object.keys(q).forEach((size) => sizesSet.add(size));
-    });
-    setValue('sizes', Array.from(sizesSet));
-  }, [selectedColors]);
+    const selectedColor = watch('selectedColor');
+    if (selectedColor) {
+      setColorDetails((prev) => ({
+        [selectedColor]: prev[selectedColor] || {
+          description: '',
+          quantities: {},
+        },
+      }));
+    } else {
+      setColorDetails({});
+    }
+  }, [watch('selectedColor')]);
 
-  // Auto-calc total qty
+  // Auto-calc total qty from size quantities
   useEffect(() => {
-    const total = Object.values(colorDetails).reduce((sum, cd) => {
-      return (
-        sum +
-        Object.values(cd.quantities).reduce((s, q) => s + (Number(q) || 0), 0)
-      );
-    }, 0);
-    setValue('qty', total);
-  }, [colorDetails, setValue]);
+    const selectedColor = watch('selectedColor');
+    if (selectedColor && colorDetails[selectedColor]) {
+      const total = Object.values(
+        colorDetails[selectedColor].quantities
+      ).reduce((sum, q) => sum + (Number(q) || 0), 0);
+      setValue('qty', total);
+    }
+  }, [colorDetails, watch('selectedColor'), setValue]);
 
   if (!user) {
     return null;
@@ -323,29 +320,35 @@ export default function UploadPage() {
 
   // Build availableColors payload from colorDetails
   const buildAvailableColors = () => {
-    return selectedColors.map((color: string) => {
-      const details = colorDetails[color] || {
-        description: '',
-        quantities: {},
-      };
-      const desc = (details.description || '').trim();
-      const sizes = Object.entries(details.quantities)
-        .filter(([, qty]) => (Number(qty) || 0) > 0)
-        .map(([size, qty]) => ({
-          size,
-          sizeSpecific: /^\d+$/.test(size) ? size : '',
-          quantity: Number(qty),
-          // Send multilingual color description to match backend shape
-          colorDisction: {
-            en: desc,
-            ar: desc,
-          },
-        }));
-      return {
-        color,
+    const selectedColor = watch('selectedColor');
+    if (!selectedColor) {
+      return [];
+    }
+
+    const details = colorDetails[selectedColor] || {
+      description: '',
+      quantities: {},
+    };
+    const desc = (details.description || '').trim();
+    const sizes = Object.entries(details.quantities)
+      .filter(([, qty]) => (Number(qty) || 0) > 0)
+      .map(([size, qty]) => ({
+        size,
+        sizeSpecific: /^\d+$/.test(size) ? size : '',
+        quantity: Number(qty),
+        // Send multilingual color description to match backend shape
+        colorDisction: {
+          en: desc,
+          ar: desc,
+        },
+      }));
+
+    return [
+      {
+        color: selectedColor,
         sizes,
-      };
-    });
+      },
+    ];
   };
 
   // Handle form submission via REST
@@ -363,7 +366,8 @@ export default function UploadPage() {
     );
     console.groupEnd();
 
-    if (files.length < 2) {
+    // Check minimum images requirement based on bulkUploadDresses
+    if (!bulkUploadDresses && files.length < 2) {
       enqueueSnackbar({
         message: t('createProduct.messages.minImages'),
         variant: 'warning',
@@ -762,7 +766,7 @@ export default function UploadPage() {
                       <RadioGroupItem value='used' id='type-used' />
                       <Label htmlFor='type-used' className='flex items-center'>
                         <span className='bg-amber-100 text-amber-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2'>
-                          {t('createProduct.dressType.used.label')}
+                          Sell Used
                         </span>
                         {t('createProduct.dressType.used.description')}
                       </Label>
@@ -774,7 +778,7 @@ export default function UploadPage() {
                         className='flex items-center'
                       >
                         <span className='bg-purple-100 text-purple-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2'>
-                          {t('createProduct.dressType.rental.label')}
+                          Rent Used
                         </span>
                         {t('createProduct.dressType.rental.description')}
                       </Label>
@@ -981,6 +985,57 @@ export default function UploadPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className='space-y-6'>
+                  {/* Colors */}
+                  <div className='space-y-3'>
+                    <Label>
+                      {t('createProduct.specifications.colors.label')}{' '}
+                      <span className='text-red-500'>*</span>
+                    </Label>
+                    <RadioGroup
+                      value={watch('selectedColor')}
+                      onValueChange={(value) => {
+                        setValue('selectedColor', value);
+                        setValue('colors', [value]);
+                        setColorDetails({
+                          [value]: {
+                            description: '',
+                            quantities: {},
+                          },
+                        });
+                      }}
+                      className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2'
+                    >
+                      {colorOptions.map((color) => (
+                        <div
+                          key={color.name}
+                          className='flex items-center space-x-2'
+                        >
+                          <RadioGroupItem
+                            value={color.value}
+                            id={`color-${color.name}`}
+                          />
+                          <Label
+                            htmlFor={`color-${color.name}`}
+                            className='flex items-center gap-2'
+                          >
+                            <span
+                              className='h-4 w-4 rounded-full border'
+                              style={{ backgroundColor: color.hex }}
+                            />
+                            {color.name}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                    {errors.colors && (
+                      <p className='text-sm text-red-500'>
+                        {t(errors.colors.message as string)}
+                      </p>
+                    )}
+                  </div>
+
+                  <Separator />
+
                   {/* Sizes - now shown per selected color; hidden until a color is selected */}
                   <div className='space-y-3'>
                     <div className='flex items-center justify-between'>
@@ -1038,70 +1093,77 @@ export default function UploadPage() {
                       </div>
                     )}
 
-                    {selectedColors.length === 0 ? (
+                    {!watch('selectedColor') ? (
                       <p className='text-sm text-slate-500'>
                         {t('createProduct.specifications.colors.label')} —
-                        please select at least one color to choose sizes.
+                        please select a color first to choose sizes.
                       </p>
                     ) : (
                       <div className='space-y-6'>
-                        {selectedColors.map((color: string) => (
-                          <div key={color} className='border rounded-md p-3'>
-                            <div className='flex items-center justify-between mb-3'>
-                              <div className='flex items-center gap-2'>
-                                <span
-                                  className='h-4 w-4 rounded-full border'
-                                  style={{
-                                    backgroundColor:
-                                      colorOptions.find(
-                                        (c) => c.value === color
-                                      )?.hex || '#ddd',
-                                  }}
-                                />
-                                <span className='font-medium'>{color}</span>
-                              </div>
+                        <div className='border rounded-md p-3'>
+                          <div className='flex items-center justify-between mb-3'>
+                            <div className='flex items-center gap-2'>
+                              <span
+                                className='h-4 w-4 rounded-full border'
+                                style={{
+                                  backgroundColor:
+                                    colorOptions.find(
+                                      (c) => c.value === watch('selectedColor')
+                                    )?.hex || '#ddd',
+                                }}
+                              />
+                              <span className='font-medium'>
+                                {watch('selectedColor')}
+                              </span>
                             </div>
+                          </div>
 
-                            {/* Color description */}
-                            <div className='mb-3'>
-                              <Label className='text-xs'>
-                                Color Description
-                              </Label>
-                              <Input
-                                value={colorDetails[color]?.description || ''}
-                                onChange={(e) =>
+                          {/* Color description */}
+                          <div className='mb-3'>
+                            <Label className='text-xs'>Color Description</Label>
+                            <Input
+                              value={
+                                colorDetails[watch('selectedColor') || '']
+                                  ?.description || ''
+                              }
+                              onChange={(e) => {
+                                const selectedColor = watch('selectedColor');
+                                if (selectedColor) {
                                   setColorDetails((prev) => ({
                                     ...prev,
-                                    [color]: {
-                                      ...(prev[color] || {
+                                    [selectedColor]: {
+                                      ...(prev[selectedColor] || {
                                         description: '',
                                         quantities: {},
                                       }),
                                       description: e.target.value,
                                     },
-                                  }))
+                                  }));
                                 }
-                                placeholder='e.g., Dark red'
-                              />
-                            </div>
+                              }}
+                              placeholder='e.g., Dark red'
+                            />
+                          </div>
 
-                            {/* Sizes for this color */}
-                            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
-                              {sizeOptions.map((size) => {
-                                const checked =
-                                  !!colorDetails[color]?.quantities?.[size] ||
-                                  colorDetails[color]?.quantities?.[size] === 0;
-                                const qty =
-                                  colorDetails[color]?.quantities?.[size] ?? 0;
-                                return (
-                                  <div
-                                    key={`${color}-${size}`}
-                                    className='flex items-center gap-2'
-                                  >
-                                    <Checkbox
-                                      id={`size-${color}-${size}`}
-                                      checked={checked}
-                                      onCheckedChange={(c) => {
+                          {/* Sizes for this color */}
+                          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
+                            {sizeOptions.map((size) => {
+                              const color = watch('selectedColor') || '';
+                              const checked =
+                                !!colorDetails[color]?.quantities?.[size] ||
+                                colorDetails[color]?.quantities?.[size] === 0;
+                              const qty =
+                                colorDetails[color]?.quantities?.[size] ?? 0;
+                              return (
+                                <div
+                                  key={`${color}-${size}`}
+                                  className='flex items-center gap-2'
+                                >
+                                  <Checkbox
+                                    id={`size-${color}-${size}`}
+                                    checked={checked}
+                                    onCheckedChange={(c) => {
+                                      if (color) {
                                         setColorDetails((prev) => {
                                           const current = prev[color] || {
                                             description: '',
@@ -1118,17 +1180,7 @@ export default function UploadPage() {
                                           }
                                           // update global sizes
                                           const sizesSet = new Set(
-                                            Object.values({
-                                              ...prev,
-                                              [color]: {
-                                                ...current,
-                                                quantities: nextQuantities,
-                                              },
-                                            })
-                                              .map((cd) =>
-                                                Object.keys(cd.quantities)
-                                              )
-                                              .flat()
+                                            Object.keys(nextQuantities)
                                           );
                                           setValue(
                                             'sizes',
@@ -1142,24 +1194,24 @@ export default function UploadPage() {
                                             },
                                           };
                                         });
-                                      }}
-                                    />
-                                    <Label
-                                      htmlFor={`size-${color}-${size}`}
-                                      className='mr-2'
-                                    >
-                                      {size}
-                                    </Label>
-                                    {checked && (
-                                      <Input
-                                        type='number'
-                                        min={0}
-                                        className='h-8 w-24'
-                                        value={qty}
-                                        onChange={(e) => {
-                                          const val = Number(
-                                            e.target.value || 0
-                                          );
+                                      }
+                                    }}
+                                  />
+                                  <Label
+                                    htmlFor={`size-${color}-${size}`}
+                                    className='mr-2'
+                                  >
+                                    {size}
+                                  </Label>
+                                  {checked && (
+                                    <Input
+                                      type='number'
+                                      min={0}
+                                      className='h-8 w-24'
+                                      value={qty}
+                                      onChange={(e) => {
+                                        const val = Number(e.target.value || 0);
+                                        if (color) {
                                           setColorDetails((prev) => {
                                             const current = prev[color] || {
                                               description: '',
@@ -1169,24 +1221,6 @@ export default function UploadPage() {
                                               ...current.quantities,
                                               [size]: val,
                                             };
-                                            // update global sizes list (keep if >0 or keep presence)
-                                            const sizesSet = new Set(
-                                              Object.values({
-                                                ...prev,
-                                                [color]: {
-                                                  ...current,
-                                                  quantities: nextQuantities,
-                                                },
-                                              })
-                                                .map((cd) =>
-                                                  Object.keys(cd.quantities)
-                                                )
-                                                .flat()
-                                            );
-                                            setValue(
-                                              'sizes',
-                                              Array.from(sizesSet)
-                                            );
                                             return {
                                               ...prev,
                                               [color]: {
@@ -1195,82 +1229,21 @@ export default function UploadPage() {
                                               },
                                             };
                                           });
-                                        }}
-                                        placeholder='Qty'
-                                      />
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
+                                        }
+                                      }}
+                                      placeholder='Qty'
+                                    />
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
-                        ))}
+                        </div>
                       </div>
                     )}
                     {errors.sizes && (
                       <p className='text-sm text-red-500'>
                         {t(errors.sizes.message as string)}
-                      </p>
-                    )}
-                  </div>
-
-                  <Separator />
-
-                  {/* Colors */}
-                  <div className='space-y-3'>
-                    <Label>
-                      {t('createProduct.specifications.colors.label')}{' '}
-                      <span className='text-red-500'>*</span>
-                    </Label>
-                    <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2'>
-                      {colorOptions.map((color) => (
-                        <div
-                          key={color.name}
-                          className='flex items-center space-x-2'
-                        >
-                          <Checkbox
-                            id={`color-${color.name}`}
-                            checked={watch('colors').includes(color.value)}
-                            onCheckedChange={(checked) => {
-                              const colors = watch('colors');
-                              if (checked) {
-                                setValue('colors', [...colors, color.value]);
-                                setColorDetails((prev) => ({
-                                  ...prev,
-                                  [color.value]: prev[color.value] || {
-                                    description: '',
-                                    quantities: {},
-                                  },
-                                }));
-                              } else {
-                                setValue(
-                                  'colors',
-                                  colors.filter((c) => c !== color.value)
-                                );
-                                setColorDetails((prev) => {
-                                  const next = { ...prev };
-                                  delete next[color.value];
-                                  return next;
-                                });
-                              }
-                            }}
-                          />
-                          <Label
-                            htmlFor={`color-${color.name}`}
-                            className='flex items-center gap-2'
-                          >
-                            <span
-                              className='h-4 w-4 rounded-full border'
-                              style={{ backgroundColor: color.hex }}
-                            />
-                            {color.name}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                    {errors.colors && (
-                      <p className='text-sm text-red-500'>
-                        {t(errors.colors.message as string)}
                       </p>
                     )}
                   </div>

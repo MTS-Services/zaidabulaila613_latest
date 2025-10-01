@@ -240,7 +240,6 @@
 
 //=================================// 9-17-2025 added number with country code
 
-
 'use client';
 
 import { useState } from 'react';
@@ -318,7 +317,7 @@ export default function ForgotPasswordPage() {
               onValueChange={(value: 'email' | 'whatsapp') => {
                 if (value) {
                   setVerificationType(value);
-                  setIdentifier(''); 
+                  setIdentifier('');
                 }
               }}
               className='inline-flex'
@@ -353,10 +352,10 @@ export default function ForgotPasswordPage() {
               <PhoneInput
                 id='identifier'
                 international
-                defaultCountry='KW'
+                defaultCountry='JO'
                 value={identifier}
                 onChange={(value) => setIdentifier(value || '')}
-                className='PhoneInputInput' 
+                className='PhoneInputInput'
                 style={{
                   border: '1px solid #D1D5DB',
                   borderRadius: '0.375rem',

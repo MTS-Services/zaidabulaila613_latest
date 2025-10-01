@@ -1292,7 +1292,7 @@ export default function UpdateProduct({ id }: { id: string }) {
                                   }));
                                 }
                               }}
-                              placeholder='e.g., Dark red'
+                              placeholder='e.g., Light, Dark, Neon'
                             />
                           </div>
 

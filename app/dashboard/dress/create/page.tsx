@@ -1141,7 +1141,7 @@ export default function UploadPage() {
                                   }));
                                 }
                               }}
-                              placeholder='e.g., Dark red'
+                              placeholder='e.g., Light, Dark, Neon'
                             />
                           </div>
 

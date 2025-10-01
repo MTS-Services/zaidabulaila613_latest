@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useQuery } from "@apollo/client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Info, Upload, X } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useQuery } from '@apollo/client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Info, Upload, X } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -17,42 +17,42 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { toast } from "@/components/ui/use-toast";
-import { config } from "@/constants/app";
-import { arColors, enColors } from "@/constants/colors";
-import { useAuth } from "@/contexts/auth-context";
-import { useCurrency } from "@/contexts/currency-context";
-import { GET_CATEGORIES } from "@/graphql/query";
-import { useTranslation } from "@/hooks/use-translation";
+} from '@/components/ui/tooltip';
+import { toast } from '@/components/ui/use-toast';
+import { config } from '@/constants/app';
+import { arColors, enColors } from '@/constants/colors';
+import { useAuth } from '@/contexts/auth-context';
+import { useCurrency } from '@/contexts/currency-context';
+import { GET_CATEGORIES } from '@/graphql/query';
+import { useTranslation } from '@/hooks/use-translation';
 import {
   FormSchemaUpdateDress,
   updateDressFormSchema,
-} from "@/lib/validators/auth";
-import { enqueueSnackbar } from "notistack";
+} from '@/lib/validators/auth';
+import { enqueueSnackbar } from 'notistack';
 
 // Helper: check AbortError
 const isAbortError = (e: any) =>
-  e?.name === "AbortError" || /aborted/i.test(e?.message || "");
+  e?.name === 'AbortError' || /aborted/i.test(e?.message || '');
 
 // NEW: safe number helper to avoid NaN in payload
 const safeNum = (v: any, fallback = 0) =>
@@ -66,14 +66,14 @@ const fetchWithTimeout = async (
 ) => {
   const timeoutController = new AbortController();
   const timeoutId = setTimeout(() => {
-    timeoutController.abort(new DOMException("Timeout", "TimeoutError") as any);
+    timeoutController.abort(new DOMException('Timeout', 'TimeoutError') as any);
   }, timeoutMs);
 
   const externalSignal = init.signal as AbortSignal | undefined;
   const onExternalAbort = () => {
     timeoutController.abort(
       ((externalSignal as any)?.reason as any) ??
-        (new DOMException("Aborted", "AbortError") as any)
+        (new DOMException('Aborted', 'AbortError') as any)
     );
   };
 
@@ -82,7 +82,7 @@ const fetchWithTimeout = async (
       if (externalSignal.aborted) {
         onExternalAbort();
       } else {
-        externalSignal.addEventListener("abort", onExternalAbort, {
+        externalSignal.addEventListener('abort', onExternalAbort, {
           once: true,
         });
       }
@@ -95,7 +95,7 @@ const fetchWithTimeout = async (
   } finally {
     clearTimeout(timeoutId);
     if (externalSignal) {
-      externalSignal.removeEventListener("abort", onExternalAbort);
+      externalSignal.removeEventListener('abort', onExternalAbort);
     }
   }
 };
@@ -110,7 +110,7 @@ export default function UpdateProduct({ id }: { id: string }) {
   const categoryOptions = useMemo(() => {
     return (categoryData?.categories || []).map((category: any) => ({
       value: category.id || category._id,
-      label: category.name?.[language.toLowerCase()] || "Unnamed",
+      label: category.name?.[language.toLowerCase()] || 'Unnamed',
     }));
   }, [categoryData, language]);
 
@@ -134,6 +134,7 @@ export default function UpdateProduct({ id }: { id: string }) {
   const maxImagesLimit = uploadLimits?.limits?.maxImagesPerDress ?? 5;
   const canUploadVideos = uploadLimits?.limits?.canUploadVideos ?? false;
   const canAddNewDresses = uploadLimits?.limits?.canAddNewDresses ?? false;
+  const bulkUploadDresses = uploadLimits?.limits?.bulkUploadDresses ?? false;
 
   // Media
   const [files, setFiles] = useState<File[]>([]); // newly added files
@@ -147,17 +148,17 @@ export default function UpdateProduct({ id }: { id: string }) {
     resolver: zodResolver(updateDressFormSchema),
     shouldUnregister: false,
     defaultValues: {
-      name: "",
-      description: "",
+      name: '',
+      description: '',
       price: 0,
       oldPrice: 0,
-      type: "used", // canonical: new | used | rental
-      category: "",
+      type: 'used', // canonical: new | used | rental
+      category: '',
       colors: [],
-      selectedColor: "",
+      selectedColor: '',
       sizes: [],
-      material: "",
-      careInstructions: "",
+      material: '',
+      careInstructions: '',
       chest: 0,
       waist: 0,
       hip: 0,
@@ -167,8 +168,8 @@ export default function UpdateProduct({ id }: { id: string }) {
       sleeve: false,
       underlay: false,
       qty: 1,
-      ref: "",
-      state: "",
+      ref: '',
+      state: '',
       terms: true, // default checked
     },
   });
@@ -182,8 +183,8 @@ export default function UpdateProduct({ id }: { id: string }) {
     reset,
   } = form;
 
-  const selectedColors: string[] = watch("colors") || [];
-  const dressType = watch("type");
+  const selectedColors: string[] = watch('colors') || [];
+  const dressType = watch('type');
 
   // Color details (per selected color): description + per-size quantities
   type ColorDetails = Record<
@@ -210,19 +211,19 @@ export default function UpdateProduct({ id }: { id: string }) {
           },
           20000
         );
-        if (!res.ok) throw new Error("Failed to fetch upload limits");
+        if (!res.ok) throw new Error('Failed to fetch upload limits');
         const json = await res.json();
         setUploadLimits(json);
       } catch (e: any) {
         if (isAbortError(e)) {
-          console.info("upload-limits request aborted:", e?.message);
+          console.info('upload-limits request aborted:', e?.message);
         } else {
-          console.error("upload-limits fetch error:", e);
+          console.error('upload-limits fetch error:', e);
         }
       }
     })();
     return () =>
-      controller.abort(new DOMException("Unmounted", "AbortError") as any);
+      controller.abort(new DOMException('Unmounted', 'AbortError') as any);
   }, [user?.access_token]);
 
   // Fetch product details via REST and prefill
@@ -232,29 +233,36 @@ export default function UpdateProduct({ id }: { id: string }) {
     (async () => {
       try {
         const res = await fetchWithTimeout(
-          `${process.env.NEXT_PUBLIC_API_URL}/products/${id}?currency=${selectedCurrency?.code || 'JOD'}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/products/${id}?currency=${
+            selectedCurrency?.code || 'JOD'
+          }`,
           {
             headers: { Authorization: `Bearer ${user.access_token}` },
             signal: controller.signal,
           },
           30000
         );
-        if (!res.ok) throw new Error("Failed to load product");
+        if (!res.ok) throw new Error('Failed to load product');
         const product = await res.json();
 
-        console.log("=== PRODUCT FETCH DEBUG ===");
-        console.log("Request URL:", `${process.env.NEXT_PUBLIC_API_URL}/products/${id}?currency=${selectedCurrency?.code || 'JOD'}`);
-        console.log("Selected Currency:", selectedCurrency);
-        console.log("Fetched product:", product);
-        console.log("Product price:", product?.price);
-        console.log("Product oldPrice:", product?.oldPrice);
-        console.log("==========================");
+        console.log('=== PRODUCT FETCH DEBUG ===');
+        console.log(
+          'Request URL:',
+          `${process.env.NEXT_PUBLIC_API_URL}/products/${id}?currency=${
+            selectedCurrency?.code || 'JOD'
+          }`
+        );
+        console.log('Selected Currency:', selectedCurrency);
+        console.log('Fetched product:', product);
+        console.log('Product price:', product?.price);
+        console.log('Product oldPrice:', product?.oldPrice);
+        console.log('==========================');
 
         // Map product fields to form values
-        const typeCanonical = String(product?.type || "").toLowerCase() as
-          | "new"
-          | "used"
-          | "rental";
+        const typeCanonical = String(product?.type || '').toLowerCase() as
+          | 'new'
+          | 'used'
+          | 'rental';
         const colors = Array.isArray(product?.color)
           ? product.color.map((c: string) => String(c).toLowerCase())
           : [];
@@ -268,19 +276,19 @@ export default function UpdateProduct({ id }: { id: string }) {
         if (Array.isArray(product?.availableColors)) {
           for (const col of product.availableColors) {
             const colorKey = String(
-              col?.color?.en || col?.color || ""
+              col?.color?.en || col?.color || ''
             ).toLowerCase();
             const quantities: Record<string, number> = {};
-            let desc = "";
+            let desc = '';
             if (Array.isArray(col?.sizes)) {
               for (const s of col.sizes) {
-                const size = String(s?.size || "");
+                const size = String(s?.size || '');
                 const qty = Number(s?.quantity || 0);
                 if (size) {
                   quantities[size] = qty;
                   sizesFromAvailable.add(size);
                 }
-                const dis = s?.colorDisction?.en || s?.colorDisction || "";
+                const dis = s?.colorDisction?.en || s?.colorDisction || '';
                 if (dis && !desc) desc = String(dis);
               }
             }
@@ -299,7 +307,7 @@ export default function UpdateProduct({ id }: { id: string }) {
           ? product.pictures
           : [];
         const mappedMedia = pictures.map((p: any) => ({
-          id: String(p?._id || p?.id || ""), // ensure string id
+          id: String(p?._id || p?.id || ''), // ensure string id
           path: p?.path,
         }));
 
@@ -319,32 +327,40 @@ export default function UpdateProduct({ id }: { id: string }) {
           );
         }, 0);
 
-        console.log("=== FORM RESET DEBUG ===");
-        console.log("Raw product price:", product?.price, typeof product?.price);
-        console.log("Raw product oldPrice:", product?.oldPrice, typeof product?.oldPrice);
-        console.log("Parsed price:", Number(product?.price || 0));
-        console.log("Parsed oldPrice:", Number(product?.oldPrice || 0));
-        
+        console.log('=== FORM RESET DEBUG ===');
+        console.log(
+          'Raw product price:',
+          product?.price,
+          typeof product?.price
+        );
+        console.log(
+          'Raw product oldPrice:',
+          product?.oldPrice,
+          typeof product?.oldPrice
+        );
+        console.log('Parsed price:', Number(product?.price || 0));
+        console.log('Parsed oldPrice:', Number(product?.oldPrice || 0));
+
         // Add debugging for current form values before reset
         const currentFormValues = watch();
-        console.log("Form values BEFORE reset:", {
+        console.log('Form values BEFORE reset:', {
           price: currentFormValues.price,
-          oldPrice: currentFormValues.oldPrice
+          oldPrice: currentFormValues.oldPrice,
         });
-        console.log("========================");
+        console.log('========================');
 
         reset({
-          name: product?.name || "",
-          description: product?.description || "",
+          name: product?.name || '',
+          description: product?.description || '',
           price: Number(product?.price || 0),
           oldPrice: Number(product?.oldPrice || 0),
-          type: typeCanonical || "used",
-          category: product?.category?._id || product?.category?.id || "",
+          type: typeCanonical || 'used',
+          category: product?.category?._id || product?.category?.id || '',
           colors,
-          selectedColor: product?.selectedColor || "",
+          selectedColor: colors.length > 0 ? colors[0] : '',
           sizes: sizesUnion,
-          material: product?.material || "",
-          careInstructions: product?.careInstructions || "",
+          material: product?.material || '',
+          careInstructions: product?.careInstructions || '',
           chest: Number(product?.chest || 0),
           waist: Number(product?.waist || 0),
           hip: Number(product?.hip || 0),
@@ -357,17 +373,17 @@ export default function UpdateProduct({ id }: { id: string }) {
           sleeve: Boolean(product?.sleeve),
           underlay: Boolean(product?.underlay),
           qty: qtyTotal || Number(product?.qty || 1),
-          ref: product?.ref || "",
-          state: product?.state || product?.user?.account?.country || "",
+          ref: product?.ref || '',
+          state: product?.state || product?.user?.account?.country || '',
           terms: true,
         });
-        
+
         // Add debugging for form values after reset
         setTimeout(() => {
           const afterResetValues = watch();
-          console.log("Form values AFTER reset:", {
+          console.log('Form values AFTER reset:', {
             price: afterResetValues.price,
-            oldPrice: afterResetValues.oldPrice
+            oldPrice: afterResetValues.oldPrice,
           });
         }, 100);
         // ensure UI reflects new defaults
@@ -375,64 +391,60 @@ export default function UpdateProduct({ id }: { id: string }) {
         setFormKey((k) => k + 1);
       } catch (e: any) {
         if (isAbortError(e)) {
-          console.info("product request aborted:", e?.message);
+          console.info('product request aborted:', e?.message);
           return;
         }
-        console.error("product fetch error:", e);
+        console.error('product fetch error:', e);
         toast({
-          title: "Error loading product",
-          description: e?.message || "Failed to load product",
-          variant: "destructive",
+          title: 'Error loading product',
+          description: e?.message || 'Failed to load product',
+          variant: 'destructive',
         });
       }
     })();
     return () =>
-      controller.abort(new DOMException("Unmounted", "AbortError") as any);
+      controller.abort(new DOMException('Unmounted', 'AbortError') as any);
   }, [user?.access_token, id, reset, selectedCurrency]);
 
-  // Keep colorDetails in sync with selected colors
+  // Keep colorDetails in sync with selected color (simplified for single selection)
   useEffect(() => {
-    setColorDetails((prev) => {
-      const next: ColorDetails = {};
-      selectedColors.forEach((c: string) => {
-        next[c] = prev[c] || { description: "", quantities: {} };
-      });
-      return next;
-    });
-    // also update global sizes union across all colors
-    const sizesSet = new Set<string>();
-    selectedColors.forEach((c: string) => {
-      const q = colorDetails[c]?.quantities || {};
-      Object.keys(q).forEach((size) => sizesSet.add(size));
-    });
-    setValue("sizes", Array.from(sizesSet));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedColors]);
+    const selectedColor = watch('selectedColor');
+    if (selectedColor) {
+      setColorDetails((prev) => ({
+        [selectedColor]: prev[selectedColor] || {
+          description: '',
+          quantities: {},
+        },
+      }));
+    } else {
+      setColorDetails({});
+    }
+  }, [watch('selectedColor')]);
 
-  // Auto-calc total qty from colorDetails
+  // Auto-calc total qty from size quantities
   useEffect(() => {
-    const total = Object.values(colorDetails).reduce((sum, cd) => {
-      return (
-        sum +
-        Object.values(cd.quantities).reduce((s, q) => s + (Number(q) || 0), 0)
-      );
-    }, 0);
-    setValue("qty", total);
-  }, [colorDetails, setValue]);
+    const selectedColor = watch('selectedColor');
+    if (selectedColor && colorDetails[selectedColor]) {
+      const total = Object.values(
+        colorDetails[selectedColor].quantities
+      ).reduce((sum, q) => sum + (Number(q) || 0), 0);
+      setValue('qty', total);
+    }
+  }, [colorDetails, watch('selectedColor'), setValue]);
 
   // FIX: declare all hooks before any early returns
-  const baseSizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
-  const numericSizes = ["36", "38", "40", "42", "44", "46", "48", "50", "52"];
+  const baseSizeOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const numericSizes = ['36', '38', '40', '42', '44', '46', '48', '50', '52'];
   const sizeOptions = useMemo(() => [...baseSizeOptions, ...numericSizes], []);
-  const colorOptions = language === "AR" ? arColors : enColors;
+  const colorOptions = language === 'AR' ? arColors : enColors;
 
   if (!user) return null;
 
   // Optional: simple gate to avoid showing empty fields before form is hydrated
   if (!formReady) {
     return (
-      <div className="flex justify-center items-center min-h-[40vh]">
-        {t("common.loading") || "Loading..."}
+      <div className='flex justify-center items-center min-h-[40vh]'>
+        {t('common.loading') || 'Loading...'}
       </div>
     );
   }
@@ -449,8 +461,8 @@ export default function UpdateProduct({ id }: { id: string }) {
       enqueueSnackbar(
         `Maximum ${maxImagesLimit} media allowed, upgrade your subscription to add more.`,
         {
-          variant: "error",
-          anchorOrigin: { horizontal: "center", vertical: "bottom" },
+          variant: 'error',
+          anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
         }
       );
       return;
@@ -471,30 +483,43 @@ export default function UpdateProduct({ id }: { id: string }) {
     setRemovedExistingIds((prev) => Array.from(new Set([...prev, mediaId])));
   };
 
-  // Build availableColors payload from colorDetails
+  // Build availableColors payload for single color selection
   const buildAvailableColors = () => {
-    return selectedColors.map((color: string) => {
-      const details = colorDetails[color] || {
-        description: "",
-        quantities: {},
-      };
-      const desc = (details.description || "").trim();
-      const sizes = Object.entries(details.quantities)
-        .filter(([, qty]) => (Number(qty) || 0) > 0)
-        .map(([size, qty]) => ({
-          size,
-          sizeSpecific: /^\d+$/.test(size) ? size : "",
-          quantity: Number(qty),
-          colorDisction: { en: desc, ar: desc },
-        }));
-      return { color, sizes };
-    });
+    const selectedColor = watch('selectedColor');
+    if (!selectedColor) {
+      return [];
+    }
+
+    const details = colorDetails[selectedColor] || {
+      description: '',
+      quantities: {},
+    };
+    const desc = (details.description || '').trim();
+    const sizes = Object.entries(details.quantities)
+      .filter(([, qty]) => (Number(qty) || 0) > 0)
+      .map(([size, qty]) => ({
+        size,
+        sizeSpecific: /^\d+$/.test(size) ? size : '',
+        quantity: Number(qty),
+        // Send multilingual color description to match backend shape
+        colorDisction: {
+          en: desc,
+          ar: desc,
+        },
+      }));
+
+    return [
+      {
+        color: selectedColor,
+        sizes,
+      },
+    ];
   };
 
   const onSubmit = async (data: FormSchemaUpdateDress) => {
     // DEBUG: log entire RHF data
-    console.group("[Update] Raw Form Values");
-    console.log("form data:", data);
+    console.group('[Update] Raw Form Values');
+    console.log('form data:', data);
     console.groupEnd();
 
     const keptExisting = existingMedia.filter(
@@ -502,37 +527,38 @@ export default function UpdateProduct({ id }: { id: string }) {
     );
     const keptExistingIds = keptExisting.map((m) => m.id);
     const totalMediaAfter = keptExisting.length + files.length;
-    if (totalMediaAfter < 2) {
+    // Check minimum images requirement based on bulkUploadDresses
+    if (!bulkUploadDresses && totalMediaAfter < 2) {
       enqueueSnackbar({
-        message: t("createProduct.messages.minImages"),
-        variant: "warning",
-        anchorOrigin: { horizontal: "center", vertical: "bottom" },
+        message: t('createProduct.messages.minImages'),
+        variant: 'warning',
+        anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
       });
       return;
     }
     if (totalMediaAfter > maxImagesLimit) {
       enqueueSnackbar(
-        t("createProduct.messages.maxImages").replace(
-          "5",
+        t('createProduct.messages.maxImages').replace(
+          '5',
           String(maxImagesLimit)
         ),
         {
-          variant: "error",
-          anchorOrigin: { horizontal: "center", vertical: "bottom" },
+          variant: 'error',
+          anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
         }
       );
       return;
     }
 
     const payload = {
-      language: language || "EN",
-      currency: selectedCurrency?.code || "JOD",
+      language: language || 'EN',
+      currency: selectedCurrency?.code || 'JOD',
       name: data.name,
       description: data.description,
       category: data.category,
       price: safeNum(data.price, 0),
       oldPrice: safeNum(data.oldPrice, 0),
-      type: (data.type || "").toLowerCase(),
+      type: (data.type || '').toLowerCase(),
       color: data.colors,
       sleeve: data.sleeve,
       underlay: data.underlay,
@@ -548,83 +574,83 @@ export default function UpdateProduct({ id }: { id: string }) {
       hip: safeNum(data.hip, 0),
       waist: safeNum(data.waist, 0),
       chest: safeNum(data.chest, 0),
-      size: Array.from(new Set(watch("sizes") || [])).map((s) => ({
+      size: Array.from(new Set(watch('sizes') || [])).map((s) => ({
         value: s,
         label: s,
       })),
-      state: data.state || "",
+      state: data.state || '',
     };
 
     // DEBUG: payload and media state
-    console.groupCollapsed("[Update] Payload Preview");
-    console.log("payload:", payload);
-    console.log("removedExistingIds:", removedExistingIds);
-    console.log("keptExistingIds:", keptExistingIds);
+    console.groupCollapsed('[Update] Payload Preview');
+    console.log('payload:', payload);
+    console.log('removedExistingIds:', removedExistingIds);
+    console.log('keptExistingIds:', keptExistingIds);
     console.log(
-      "new files:",
+      'new files:',
       files.map((f) => ({ name: f.name, type: f.type, size: f.size }))
     );
     console.groupEnd();
 
     const buildFormData = (fileFieldName: string) => {
       const fd = new FormData();
-      fd.append("language", String(payload.language));
-      fd.append("currency", String(payload.currency));
-      fd.append("name", String(payload.name));
-      fd.append("description", String(payload.description));
-      fd.append("category", String(payload.category));
-      fd.append("price", String(safeNum(payload.price, 0)));
-      fd.append("oldPrice", String(safeNum(payload.oldPrice, 0)));
-      fd.append("type", String(payload.type));
-      fd.append("sleeve", String(payload.sleeve));
-      fd.append("underlay", String(payload.underlay));
-      fd.append("qty", String(safeNum(payload.qty, 0)));
-      fd.append("ref", String(payload.ref || ""));
-      fd.append("material", String(payload.material || ""));
-      fd.append("careInstructions", String(payload.careInstructions || ""));
-      fd.append("length", String(safeNum(payload.length, 0)));
-      fd.append("height", String(safeNum(payload.height, 0)));
-      fd.append("high", String(safeNum(payload.high, 0)));
-      fd.append("shoulder", String(safeNum(payload.shoulder, 0)));
-      fd.append("hip", String(safeNum(payload.hip, 0)));
-      fd.append("waist", String(safeNum(payload.waist, 0)));
-      fd.append("chest", String(safeNum(payload.chest, 0)));
-      fd.append("color", JSON.stringify(payload.color || []));
-      fd.append("size", JSON.stringify(payload.size || []));
+      fd.append('language', String(payload.language));
+      fd.append('currency', String(payload.currency));
+      fd.append('name', String(payload.name));
+      fd.append('description', String(payload.description));
+      fd.append('category', String(payload.category));
+      fd.append('price', String(safeNum(payload.price, 0)));
+      fd.append('oldPrice', String(safeNum(payload.oldPrice, 0)));
+      fd.append('type', String(payload.type));
+      fd.append('sleeve', String(payload.sleeve));
+      fd.append('underlay', String(payload.underlay));
+      fd.append('qty', String(safeNum(payload.qty, 0)));
+      fd.append('ref', String(payload.ref || ''));
+      fd.append('material', String(payload.material || ''));
+      fd.append('careInstructions', String(payload.careInstructions || ''));
+      fd.append('length', String(safeNum(payload.length, 0)));
+      fd.append('height', String(safeNum(payload.height, 0)));
+      fd.append('high', String(safeNum(payload.high, 0)));
+      fd.append('shoulder', String(safeNum(payload.shoulder, 0)));
+      fd.append('hip', String(safeNum(payload.hip, 0)));
+      fd.append('waist', String(safeNum(payload.waist, 0)));
+      fd.append('chest', String(safeNum(payload.chest, 0)));
+      fd.append('color', JSON.stringify(payload.color || []));
+      fd.append('size', JSON.stringify(payload.size || []));
       fd.append(
-        "availableColors",
+        'availableColors',
         JSON.stringify(payload.availableColors || [])
       );
-      fd.append("state", String(payload.state || ""));
+      fd.append('state', String(payload.state || ''));
 
       // Removed pictures (send in multiple shapes)
       if (removedExistingIds.length) {
-        const csv = removedExistingIds.join(",");
-        fd.append("picturesToRemove", JSON.stringify(removedExistingIds));
-        fd.append("picturesToRemoveCsv", csv);
-        fd.append("picturesToDelete", JSON.stringify(removedExistingIds));
-        fd.append("picturesToDeleteCsv", csv);
+        const csv = removedExistingIds.join(',');
+        fd.append('picturesToRemove', JSON.stringify(removedExistingIds));
+        fd.append('picturesToRemoveCsv', csv);
+        fd.append('picturesToDelete', JSON.stringify(removedExistingIds));
+        fd.append('picturesToDeleteCsv', csv);
         removedExistingIds.forEach((id) => {
-          fd.append("picturesToRemove[]", id);
-          fd.append("removePictures[]", id);
-          fd.append("picturesToDelete[]", id);
-          fd.append("deletedPictures[]", id);
-          fd.append("deletedPictureIds[]", id);
-          fd.append("removedPictures[]", id);
-          fd.append("removedPictureIds[]", id);
-          fd.append("removedMediaIds[]", id);
+          fd.append('picturesToRemove[]', id);
+          fd.append('removePictures[]', id);
+          fd.append('picturesToDelete[]', id);
+          fd.append('deletedPictures[]', id);
+          fd.append('deletedPictureIds[]', id);
+          fd.append('removedPictures[]', id);
+          fd.append('removedPictureIds[]', id);
+          fd.append('removedMediaIds[]', id);
         });
       }
 
       // Kept pictures (some servers prefer a whitelist)
       if (keptExistingIds.length) {
-        const keepCsv = keptExistingIds.join(",");
-        fd.append("keepPictures", JSON.stringify(keptExistingIds));
-        fd.append("keepPicturesCsv", keepCsv);
+        const keepCsv = keptExistingIds.join(',');
+        fd.append('keepPictures', JSON.stringify(keptExistingIds));
+        fd.append('keepPicturesCsv', keepCsv);
         keptExistingIds.forEach((id) => {
-          fd.append("keepPictures[]", id);
-          fd.append("existingPictures[]", id);
-          fd.append("keptPictureIds[]", id);
+          fd.append('keepPictures[]', id);
+          fd.append('existingPictures[]', id);
+          fd.append('keptPictureIds[]', id);
         });
       }
 
@@ -633,15 +659,15 @@ export default function UpdateProduct({ id }: { id: string }) {
     };
 
     const FILE_FIELD_CANDIDATES = [
-      "images",
-      "image",
-      "files",
-      "file",
-      "photos",
-      "photo",
-      "pictures",
-      "pictures[]",
-      "images[]",
+      'images',
+      'image',
+      'files',
+      'file',
+      'photos',
+      'photo',
+      'pictures',
+      'pictures[]',
+      'images[]',
     ];
     const url = `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`;
     const headers = { Authorization: `Bearer ${user?.access_token}` };
@@ -662,7 +688,7 @@ export default function UpdateProduct({ id }: { id: string }) {
     };
 
     let success = false;
-    let lastErrMessage = "";
+    let lastErrMessage = '';
     try {
       for (let i = 0; i < FILE_FIELD_CANDIDATES.length; i++) {
         const fieldName = FILE_FIELD_CANDIDATES[i];
@@ -673,18 +699,18 @@ export default function UpdateProduct({ id }: { id: string }) {
 
         const res = await fetchWithTimeout(
           url,
-          { method: "PUT", headers, body: formData },
+          { method: 'PUT', headers, body: formData },
           60000
         );
 
         // DEBUG: log response
         console.groupCollapsed(`[Update] Response for "${fieldName}"`);
         console.log(
-          "status:",
+          'status:',
           res.status,
-          "ok:",
+          'ok:',
           res.ok,
-          "statusText:",
+          'statusText:',
           res.statusText
         );
         console.groupEnd();
@@ -693,28 +719,28 @@ export default function UpdateProduct({ id }: { id: string }) {
           success = true;
           try {
             const body = await res.clone().json();
-            console.group("[Update] Server JSON");
+            console.group('[Update] Server JSON');
             console.log(body);
             console.groupEnd();
           } catch {
             try {
               const text = await res.clone().text();
-              console.group("[Update] Server Text");
+              console.group('[Update] Server Text');
               console.log(text);
               console.groupEnd();
             } catch {}
           }
           enqueueSnackbar({
             message:
-              t("updateProduct.messages.success") ||
-              "Your dress has been updated successfully.",
-            variant: "success",
-            anchorOrigin: { horizontal: "center", vertical: "bottom" },
+              t('updateProduct.messages.success') ||
+              'Your dress has been updated successfully.',
+            variant: 'success',
+            anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
           });
-          router.push("/dashboard/dress");
+          router.push('/dashboard/dress');
           break;
         } else {
-          let serverMessage = "Failed to update product";
+          let serverMessage = 'Failed to update product';
           try {
             const body = await res.json();
             serverMessage = body?.message || serverMessage;
@@ -730,7 +756,7 @@ export default function UpdateProduct({ id }: { id: string }) {
         }
       }
       if (!success) {
-        const tried = FILE_FIELD_CANDIDATES.join(", ");
+        const tried = FILE_FIELD_CANDIDATES.join(', ');
         throw new Error(
           `Unexpected field for uploaded files. Tried: ${tried}. Please confirm the expected field name on the server.`
         );
@@ -738,39 +764,39 @@ export default function UpdateProduct({ id }: { id: string }) {
     } catch (e: any) {
       const message =
         e?.message ||
-        "There was an error updating your dress. Please try again.";
+        'There was an error updating your dress. Please try again.';
       if (/Unexpected field/i.test(message)) {
         console.warn(
           `[Hint] Server returns "Unexpected field". Adjust the files field name to match server config.`
         );
       }
       toast({
-        title: "Error updating dress",
+        title: 'Error updating dress',
         description: message,
-        variant: "destructive",
+        variant: 'destructive',
       });
       enqueueSnackbar(message, {
-        variant: "error",
-        anchorOrigin: { horizontal: "center", vertical: "bottom" },
+        variant: 'error',
+        anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
       });
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 md:py-12">
-      <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center mb-8">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-playfair">
-              {t("updateProduct.title")}
+    <div className='min-h-screen bg-slate-50 py-8 md:py-12'>
+      <div className='container px-4 md:px-6'>
+        <div className='flex flex-col items-center justify-center space-y-4 text-center mb-8'>
+          <div className='space-y-2'>
+            <h1 className='text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl font-playfair'>
+              {t('updateProduct.title')}
             </h1>
-            <p className="max-w-[700px] text-slate-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              {t("updateProduct.description")}
+            <p className='max-w-[700px] text-slate-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed'>
+              {t('updateProduct.description')}
             </p>
             {uploadLimits?.subscriptionType && (
-              <p className="text-sm text-slate-600">
-                Subscription:{" "}
-                <span className="font-medium">
+              <p className='text-sm text-slate-600'>
+                Subscription:{' '}
+                <span className='font-medium'>
                   {uploadLimits.subscriptionType}
                 </span>
               </p>
@@ -781,41 +807,41 @@ export default function UpdateProduct({ id }: { id: string }) {
         <form
           key={formKey}
           onSubmit={handleSubmit(onSubmit)}
-          className="max-w-4xl mx-auto"
+          className='max-w-4xl mx-auto'
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
             {/* Left Column - Media */}
-            <div className="md:col-span-1">
+            <div className='md:col-span-1'>
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("createProduct.images.title")}</CardTitle>
+                  <CardTitle>{t('createProduct.images.title')}</CardTitle>
                   <CardDescription>
-                    {t("createProduct.images.description")}
+                    {t('createProduct.images.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="border-2 border-dashed border-slate-200 rounded-lg p-4 text-center">
+                  <div className='space-y-4'>
+                    <div className='border-2 border-dashed border-slate-200 rounded-lg p-4 text-center'>
                       <input
-                        type="file"
-                        id="images"
+                        type='file'
+                        id='images'
                         multiple
                         accept={canUploadVideos ? `image/*,video/*` : `image/*`}
-                        className="hidden"
+                        className='hidden'
                         onChange={handleImageUpload}
                       />
                       <label
-                        htmlFor="images"
-                        className="flex flex-col items-center justify-center gap-2 cursor-pointer py-4"
+                        htmlFor='images'
+                        className='flex flex-col items-center justify-center gap-2 cursor-pointer py-4'
                       >
-                        <Upload className="h-8 w-8 text-slate-400" />
-                        <span className="text-sm font-medium text-slate-900">
-                          {t("createProduct.images.uploadText")}
+                        <Upload className='h-8 w-8 text-slate-400' />
+                        <span className='text-sm font-medium text-slate-900'>
+                          {t('createProduct.images.uploadText')}
                         </span>
-                        <span className="text-xs text-slate-500">
-                          {t("createProduct.images.uploadHint")}
+                        <span className='text-xs text-slate-500'>
+                          {t('createProduct.images.uploadHint')}
                         </span>
-                        <span className="text-xs text-slate-500">
+                        <span className='text-xs text-slate-500'>
                           Limit: {maxImagesLimit} media
                         </span>
                       </label>
@@ -825,9 +851,9 @@ export default function UpdateProduct({ id }: { id: string }) {
                     {existingMedia.filter(
                       (m) => !removedExistingIds.includes(m.id)
                     ).length > 0 && (
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium">
-                          {t("updateProduct.current_images")} (
+                      <div className='space-y-2'>
+                        <p className='text-sm font-medium'>
+                          {t('updateProduct.current_images')} (
                           {
                             existingMedia.filter(
                               (m) => !removedExistingIds.includes(m.id)
@@ -835,44 +861,44 @@ export default function UpdateProduct({ id }: { id: string }) {
                           }
                           /{maxImagesLimit})
                         </p>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className='grid grid-cols-2 gap-2'>
                           {existingMedia
                             .filter((m) => !removedExistingIds.includes(m.id))
                             .map((m, index) => {
                               const src =
                                 (config?.API_URL ||
                                   process.env.NEXT_PUBLIC_API_URL ||
-                                  "") + m.path;
+                                  '') + m.path;
                               const isVideo = /\.(mp4|webm|ogg)$/i.test(
-                                m.path || ""
+                                m.path || ''
                               );
                               return (
                                 <div
                                   key={m.id || index}
-                                  className="relative group"
+                                  className='relative group'
                                 >
-                                  <div className="aspect-square relative rounded-md overflow-hidden bg-gray-100">
+                                  <div className='aspect-square relative rounded-md overflow-hidden bg-gray-100'>
                                     {isVideo ? (
                                       <video
                                         src={src}
                                         controls
-                                        className="w-full h-full object-cover"
+                                        className='w-full h-full object-cover'
                                       />
                                     ) : (
                                       <Image
-                                        src={src || "/placeholder.svg"}
+                                        src={src || '/placeholder.svg'}
                                         alt={`Media ${index + 1}`}
                                         fill
-                                        className="object-cover"
+                                        className='object-cover'
                                       />
                                     )}
                                   </div>
                                   <button
-                                    type="button"
+                                    type='button'
                                     onClick={() => removeExistingMedia(m.id)}
-                                    className="absolute top-1 right-1 bg-white/80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    className='absolute top-1 right-1 bg-white/80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity'
                                   >
-                                    <X className="h-4 w-4 text-red-500" />
+                                    <X className='h-4 w-4 text-red-500' />
                                   </button>
                                 </div>
                               );
@@ -883,39 +909,39 @@ export default function UpdateProduct({ id }: { id: string }) {
 
                     {/* New media */}
                     {files.length > 0 && (
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium">
-                          {t("updateProduct.new_images")} ({files.length}/
+                      <div className='space-y-2'>
+                        <p className='text-sm font-medium'>
+                          {t('updateProduct.new_images')} ({files.length}/
                           {maxImagesLimit})
                         </p>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className='grid grid-cols-2 gap-2'>
                           {files.map((file, index) => {
                             const src = URL.createObjectURL(file);
-                            const isVideo = file.type.startsWith("video");
+                            const isVideo = file.type.startsWith('video');
                             return (
-                              <div key={index} className="relative group">
-                                <div className="aspect-square relative rounded-md overflow-hidden bg-gray-100">
+                              <div key={index} className='relative group'>
+                                <div className='aspect-square relative rounded-md overflow-hidden bg-gray-100'>
                                   {isVideo ? (
                                     <video
                                       src={src}
                                       controls
-                                      className="w-full h-full object-cover"
+                                      className='w-full h-full object-cover'
                                     />
                                   ) : (
                                     <Image
-                                      src={src || "/placeholder.svg"}
+                                      src={src || '/placeholder.svg'}
                                       alt={`Media ${index + 1}`}
                                       fill
-                                      className="object-cover"
+                                      className='object-cover'
                                     />
                                   )}
                                 </div>
                                 <button
-                                  type="button"
+                                  type='button'
                                   onClick={() => removeNewMedia(index)}
-                                  className="absolute top-1 right-1 bg-white/80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  className='absolute top-1 right-1 bg-white/80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity'
                                 >
-                                  <X className="h-4 w-4 text-red-500" />
+                                  <X className='h-4 w-4 text-red-500' />
                                 </button>
                               </div>
                             );
@@ -927,61 +953,61 @@ export default function UpdateProduct({ id }: { id: string }) {
                 </CardContent>
               </Card>
 
-              <Card className="mt-6">
+              <Card className='mt-6'>
                 <CardHeader>
-                  <CardTitle>{t("createProduct.dressType.title")}</CardTitle>
+                  <CardTitle>{t('createProduct.dressType.title')}</CardTitle>
                   <CardDescription>
-                    {t("createProduct.dressType.description")}
+                    {t('createProduct.dressType.description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Controller
-                    name="type"
+                    name='type'
                     control={control}
                     render={({ field }) => (
                       <RadioGroup
                         value={field.value}
                         onValueChange={(value) => field.onChange(value)}
-                        className="space-y-3"
+                        className='space-y-3'
                       >
-                        <div className="flex items-center space-x-2">
+                        <div className='flex items-center space-x-2'>
                           <RadioGroupItem
-                            value="new"
-                            id="type-new"
+                            value='new'
+                            id='type-new'
                             disabled={!canAddNewDresses}
                           />
                           <Label
-                            htmlFor="type-new"
-                            className="flex items-center"
+                            htmlFor='type-new'
+                            className='flex items-center'
                           >
-                            <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
-                              {t("createProduct.dressType.new.label")}
+                            <span className='bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2'>
+                              {t('createProduct.dressType.new.label')}
                             </span>
-                            {t("createProduct.dressType.new.description")}
+                            {t('createProduct.dressType.new.description')}
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="used" id="type-used" />
+                        <div className='flex items-center space-x-2'>
+                          <RadioGroupItem value='used' id='type-used' />
                           <Label
-                            htmlFor="type-used"
-                            className="flex items-center"
+                            htmlFor='type-used'
+                            className='flex items-center'
                           >
-                            <span className="bg-amber-100 text-amber-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
-                              {t("createProduct.dressType.used.label")}
+                            <span className='bg-amber-100 text-amber-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2'>
+                              Sell Used
                             </span>
-                            {t("createProduct.dressType.used.description")}
+                            {t('createProduct.dressType.used.description')}
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="rental" id="type-rental" />
+                        <div className='flex items-center space-x-2'>
+                          <RadioGroupItem value='rental' id='type-rental' />
                           <Label
-                            htmlFor="type-rental"
-                            className="flex items-center"
+                            htmlFor='type-rental'
+                            className='flex items-center'
                           >
-                            <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
-                              {t("createProduct.dressType.rental.label")}
+                            <span className='bg-purple-100 text-purple-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2'>
+                              Rent Used
                             </span>
-                            {t("createProduct.dressType.rental.description")}
+                            {t('createProduct.dressType.rental.description')}
                           </Label>
                         </div>
                       </RadioGroup>
@@ -992,68 +1018,68 @@ export default function UpdateProduct({ id }: { id: string }) {
             </div>
 
             {/* Right Column - Details */}
-            <div className="md:col-span-2 space-y-6">
+            <div className='md:col-span-2 space-y-6'>
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("createProduct.basicInfo.title")}</CardTitle>
+                  <CardTitle>{t('createProduct.basicInfo.title')}</CardTitle>
                   <CardDescription>
-                    {t("createProduct.basicInfo.subtitle")}
+                    {t('createProduct.basicInfo.subtitle')}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className='space-y-4'>
                   {/* Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="name">
-                      {t("createProduct.basicInfo.name.label")}{" "}
-                      <span className="text-red-500">*</span>
+                  <div className='space-y-2'>
+                    <Label htmlFor='name'>
+                      {t('createProduct.basicInfo.name.label')}{' '}
+                      <span className='text-red-500'>*</span>
                     </Label>
                     <Input
-                      id="name"
-                      {...register("name")}
+                      id='name'
+                      {...register('name')}
                       placeholder={t(
-                        "createProduct.basicInfo.name.placeholder"
+                        'createProduct.basicInfo.name.placeholder'
                       )}
                     />
                     {errors.name && (
-                      <p className="text-sm text-red-500">
+                      <p className='text-sm text-red-500'>
                         {t(errors.name.message as string)}
                       </p>
                     )}
                   </div>
                   {/* Description */}
-                  <div className="space-y-2">
-                    <Label htmlFor="description">
-                      {t("createProduct.basicInfo.description.label")}{" "}
-                      <span className="text-red-500">*</span>
+                  <div className='space-y-2'>
+                    <Label htmlFor='description'>
+                      {t('createProduct.basicInfo.description.label')}{' '}
+                      <span className='text-red-500'>*</span>
                     </Label>
                     <Textarea
-                      id="description"
-                      {...register("description")}
+                      id='description'
+                      {...register('description')}
                       placeholder={t(
-                        "createProduct.basicInfo.description.placeholder"
+                        'createProduct.basicInfo.description.placeholder'
                       )}
                       rows={4}
                     />
                     {errors.description && (
-                      <p className="text-sm text-red-500">
+                      <p className='text-sm text-red-500'>
                         {t(errors.description.message as string)}
                       </p>
                     )}
                   </div>
                   {/* Category */}
-                  <div className="space-y-2">
-                    <Label htmlFor="category">
-                      {t("createProduct.basicInfo.category.label")}{" "}
-                      <span className="text-red-500">*</span>
+                  <div className='space-y-2'>
+                    <Label htmlFor='category'>
+                      {t('createProduct.basicInfo.category.label')}{' '}
+                      <span className='text-red-500'>*</span>
                     </Label>
                     <Select
-                      value={watch("category")}
-                      onValueChange={(value) => setValue("category", value)}
+                      value={watch('category')}
+                      onValueChange={(value) => setValue('category', value)}
                     >
                       <SelectTrigger>
                         <SelectValue
                           placeholder={t(
-                            "createProduct.basicInfo.category.placeholder"
+                            'createProduct.basicInfo.category.placeholder'
                           )}
                         />
                       </SelectTrigger>
@@ -1069,67 +1095,67 @@ export default function UpdateProduct({ id }: { id: string }) {
                       </SelectContent>
                     </Select>
                     {errors.category && (
-                      <p className="text-sm text-red-500">
+                      <p className='text-sm text-red-500'>
                         {t(errors.category.message as string)}
                       </p>
                     )}
                   </div>
 
                   {/* Price Information */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="price">
-                        {t("createProduct.basicInfo.price.label")} (
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <div className='space-y-2'>
+                      <Label htmlFor='price'>
+                        {t('createProduct.basicInfo.price.label')} (
                         {selectedCurrency.code})
-                        {dressType === "rental" &&
-                          ` / ${t("createProduct.perDay")}`}{" "}
-                        <span className="text-red-500">*</span>
+                        {dressType === 'rental' &&
+                          ` / ${t('createProduct.perDay')}`}{' '}
+                        <span className='text-red-500'>*</span>
                       </Label>
                       <Input
-                        id="price"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        className="pl-3"
-                        {...register("price", {
-                          setValueAs: (v) => (v === "" ? 0 : Number(v)),
+                        id='price'
+                        type='number'
+                        min='0'
+                        step='0.01'
+                        className='pl-3'
+                        {...register('price', {
+                          setValueAs: (v) => (v === '' ? 0 : Number(v)),
                         })}
                       />
                       {errors.price && (
-                        <p className="text-sm text-red-500">
+                        <p className='text-sm text-red-500'>
                           {t(errors.price.message as string)}
                         </p>
                       )}
                     </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="oldPrice">
-                          {t("createProduct.basicInfo.oldPrice.label")} (
+                    <div className='space-y-2'>
+                      <div className='flex items-center justify-between'>
+                        <Label htmlFor='oldPrice'>
+                          {t('createProduct.basicInfo.oldPrice.label')} (
                           {selectedCurrency.code})
-                          {dressType === "rental" &&
-                            ` / ${t("createProduct.perDay")}`}
+                          {dressType === 'rental' &&
+                            ` / ${t('createProduct.perDay')}`}
                         </Label>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Info className="h-4 w-4 text-slate-400" />
+                              <Info className='h-4 w-4 text-slate-400' />
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p className="w-[200px] text-xs">
-                                {t("createProduct.basicInfo.oldPrice.tooltip")}
+                              <p className='w-[200px] text-xs'>
+                                {t('createProduct.basicInfo.oldPrice.tooltip')}
                               </p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
                       </div>
                       <Input
-                        id="oldPrice"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        className="pl-3"
-                        {...register("oldPrice", {
-                          setValueAs: (v) => (v === "" ? 0 : Number(v)),
+                        id='oldPrice'
+                        type='number'
+                        min='0'
+                        step='0.01'
+                        className='pl-3'
+                        {...register('oldPrice', {
+                          setValueAs: (v) => (v === '' ? 0 : Number(v)),
                         })}
                       />
                     </div>
@@ -1140,100 +1166,158 @@ export default function UpdateProduct({ id }: { id: string }) {
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    {t("createProduct.specifications.title")}
+                    {t('createProduct.specifications.title')}
                   </CardTitle>
                   <CardDescription>
-                    {t("createProduct.specifications.description")}
+                    {t('createProduct.specifications.description')}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Sizes (per color) */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
+                <CardContent className='space-y-6'>
+                  {/* Colors */}
+                  <div className='space-y-3'>
+                    <Label>
+                      {t('createProduct.specifications.colors.label')}{' '}
+                      <span className='text-red-500'>*</span>
+                    </Label>
+                    <RadioGroup
+                      value={watch('selectedColor')}
+                      onValueChange={(value) => {
+                        setValue('selectedColor', value);
+                        setValue('colors', [value]);
+                        setColorDetails({
+                          [value]: {
+                            description: '',
+                            quantities: {},
+                          },
+                        });
+                      }}
+                      className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2'
+                    >
+                      {colorOptions.map((color) => (
+                        <div
+                          key={color.name}
+                          className='flex items-center space-x-2'
+                        >
+                          <RadioGroupItem
+                            value={color.value}
+                            id={`color-${color.name}`}
+                          />
+                          <Label
+                            htmlFor={`color-${color.name}`}
+                            className='flex items-center gap-2'
+                          >
+                            <span
+                              className='h-4 w-4 rounded-full border'
+                              style={{ backgroundColor: color.hex }}
+                            />
+                            {color.name}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                    {errors.colors && (
+                      <p className='text-sm text-red-500'>
+                        {t(errors.colors.message as string)}
+                      </p>
+                    )}
+                  </div>
+
+                  <Separator />
+
+                  {/* Sizes - now shown per selected color; hidden until a color is selected */}
+                  <div className='space-y-3'>
+                    <div className='flex items-center justify-between'>
                       <Label>
-                        {t("createProduct.specifications.sizes.label")}{" "}
-                        <span className="text-red-500">*</span>
+                        {t('createProduct.specifications.sizes.label')}{' '}
+                        <span className='text-red-500'>*</span>
                       </Label>
                       <Button
-                        type="button"
-                        variant="link"
-                        className="text-gold p-0 h-auto"
+                        type='button'
+                        variant='link'
+                        className='text-gold p-0 h-auto'
                         onClick={() => {
                           // toggle handled below via local state; keep simple
                         }}
                       >
-                        {t("createProduct.specifications.sizes.guide")}
+                        {t('createProduct.specifications.sizes.guide')}
                       </Button>
                     </div>
 
                     {/* Show per selected color blocks like UploadPage */}
-                    {selectedColors.length === 0 ? (
-                      <p className="text-sm text-slate-500">
-                        {t("createProduct.specifications.colors.label")} —
-                        please select at least one color to choose sizes.
+                    {!watch('selectedColor') ? (
+                      <p className='text-sm text-slate-500'>
+                        {t('createProduct.specifications.colors.label')} —
+                        please select a color first to choose sizes.
                       </p>
                     ) : (
-                      <div className="space-y-6">
-                        {selectedColors.map((color: string) => (
-                          <div key={color} className="border rounded-md p-3">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className="h-4 w-4 rounded-full border"
-                                  style={{
-                                    backgroundColor:
-                                      colorOptions.find(
-                                        (c) => c.value === color
-                                      )?.hex || "#ddd",
-                                  }}
-                                />
-                                <span className="font-medium">{color}</span>
-                              </div>
+                      <div className='space-y-6'>
+                        <div className='border rounded-md p-3'>
+                          <div className='flex items-center justify-between mb-3'>
+                            <div className='flex items-center gap-2'>
+                              <span
+                                className='h-4 w-4 rounded-full border'
+                                style={{
+                                  backgroundColor:
+                                    colorOptions.find(
+                                      (c) => c.value === watch('selectedColor')
+                                    )?.hex || '#ddd',
+                                }}
+                              />
+                              <span className='font-medium'>
+                                {watch('selectedColor')}
+                              </span>
                             </div>
+                          </div>
 
-                            {/* Color description */}
-                            <div className="mb-3">
-                              <Label className="text-xs">
-                                Color Description
-                              </Label>
-                              <Input
-                                value={colorDetails[color]?.description || ""}
-                                onChange={(e) =>
+                          {/* Color description */}
+                          <div className='mb-3'>
+                            <Label className='text-xs'>Color Description</Label>
+                            <Input
+                              value={
+                                colorDetails[watch('selectedColor') || '']
+                                  ?.description || ''
+                              }
+                              onChange={(e) => {
+                                const selectedColor = watch('selectedColor');
+                                if (selectedColor) {
                                   setColorDetails((prev) => ({
                                     ...prev,
-                                    [color]: {
-                                      ...(prev[color] || {
-                                        description: "",
+                                    [selectedColor]: {
+                                      ...(prev[selectedColor] || {
+                                        description: '',
                                         quantities: {},
                                       }),
                                       description: e.target.value,
                                     },
-                                  }))
+                                  }));
                                 }
-                                placeholder="e.g., Dark red"
-                              />
-                            </div>
+                              }}
+                              placeholder='e.g., Dark red'
+                            />
+                          </div>
 
-                            {/* Sizes for this color with quantities */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                              {sizeOptions.map((size) => {
-                                const checked =
-                                  !!colorDetails[color]?.quantities?.[size] ||
-                                  colorDetails[color]?.quantities?.[size] === 0;
-                                const qty =
-                                  colorDetails[color]?.quantities?.[size] ?? 0;
-                                return (
-                                  <div
-                                    key={`${color}-${size}`}
-                                    className="flex items-center gap-2"
-                                  >
-                                    <Checkbox
-                                      id={`size-${color}-${size}`}
-                                      checked={checked}
-                                      onCheckedChange={(c) => {
+                          {/* Sizes for this color */}
+                          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
+                            {sizeOptions.map((size) => {
+                              const color = watch('selectedColor') || '';
+                              const checked =
+                                !!colorDetails[color]?.quantities?.[size] ||
+                                colorDetails[color]?.quantities?.[size] === 0;
+                              const qty =
+                                colorDetails[color]?.quantities?.[size] ?? 0;
+                              return (
+                                <div
+                                  key={`${color}-${size}`}
+                                  className='flex items-center gap-2'
+                                >
+                                  <Checkbox
+                                    id={`size-${color}-${size}`}
+                                    checked={checked}
+                                    onCheckedChange={(c) => {
+                                      if (color) {
                                         setColorDetails((prev) => {
                                           const current = prev[color] || {
-                                            description: "",
+                                            description: '',
                                             quantities: {},
                                           };
                                           const nextQuantities = {
@@ -1247,20 +1331,10 @@ export default function UpdateProduct({ id }: { id: string }) {
                                           }
                                           // update global sizes
                                           const sizesSet = new Set(
-                                            Object.values({
-                                              ...prev,
-                                              [color]: {
-                                                ...current,
-                                                quantities: nextQuantities,
-                                              },
-                                            })
-                                              .map((cd: any) =>
-                                                Object.keys(cd.quantities)
-                                              )
-                                              .flat()
+                                            Object.keys(nextQuantities)
                                           );
                                           setValue(
-                                            "sizes",
+                                            'sizes',
                                             Array.from(sizesSet)
                                           );
                                           return {
@@ -1271,50 +1345,33 @@ export default function UpdateProduct({ id }: { id: string }) {
                                             },
                                           };
                                         });
-                                      }}
-                                    />
-                                    <Label
-                                      htmlFor={`size-${color}-${size}`}
-                                      className="mr-2"
-                                    >
-                                      {size}
-                                    </Label>
-                                    {checked && (
-                                      <Input
-                                        type="number"
-                                        min={0}
-                                        className="h-8 w-24"
-                                        value={qty}
-                                        onChange={(e) => {
-                                          const val = Number(
-                                            e.target.value || 0
-                                          );
+                                      }
+                                    }}
+                                  />
+                                  <Label
+                                    htmlFor={`size-${color}-${size}`}
+                                    className='mr-2'
+                                  >
+                                    {size}
+                                  </Label>
+                                  {checked && (
+                                    <Input
+                                      type='number'
+                                      min={0}
+                                      className='h-8 w-24'
+                                      value={qty}
+                                      onChange={(e) => {
+                                        const val = Number(e.target.value || 0);
+                                        if (color) {
                                           setColorDetails((prev) => {
                                             const current = prev[color] || {
-                                              description: "",
+                                              description: '',
                                               quantities: {},
                                             };
                                             const nextQuantities = {
                                               ...current.quantities,
                                               [size]: val,
                                             };
-                                            const sizesSet = new Set(
-                                              Object.values({
-                                                ...prev,
-                                                [color]: {
-                                                  ...current,
-                                                  quantities: nextQuantities,
-                                                },
-                                              })
-                                                .map((cd: any) =>
-                                                  Object.keys(cd.quantities)
-                                                )
-                                                .flat()
-                                            );
-                                            setValue(
-                                              "sizes",
-                                              Array.from(sizesSet)
-                                            );
                                             return {
                                               ...prev,
                                               [color]: {
@@ -1323,20 +1380,20 @@ export default function UpdateProduct({ id }: { id: string }) {
                                               },
                                             };
                                           });
-                                        }}
-                                        placeholder="Qty"
-                                      />
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
+                                        }
+                                      }}
+                                      placeholder='Qty'
+                                    />
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
-                        ))}
+                        </div>
                       </div>
                     )}
                     {errors.sizes && (
-                      <p className="text-sm text-red-500">
+                      <p className='text-sm text-red-500'>
                         {t(errors.sizes.message as string)}
                       </p>
                     )}
@@ -1344,101 +1401,40 @@ export default function UpdateProduct({ id }: { id: string }) {
 
                   <Separator />
 
-                  {/* Colors */}
-                  <div className="space-y-3">
-                    <Label>
-                      {t("createProduct.specifications.colors.label")}{" "}
-                      <span className="text-red-500">*</span>
-                    </Label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                      {colorOptions.map((color) => (
-                        <div
-                          key={color.name}
-                          className="flex items-center space-x-2"
-                        >
-                          <Checkbox
-                            id={`color-${color.name}`}
-                            checked={watch("colors").includes(color.value)}
-                            onCheckedChange={(checked) => {
-                              const colors = watch("colors");
-                              if (checked) {
-                                setValue("colors", [...colors, color.value]);
-                                setColorDetails((prev) => ({
-                                  ...prev,
-                                  [color.value]: prev[color.value] || {
-                                    description: "",
-                                    quantities: {},
-                                  },
-                                }));
-                              } else {
-                                setValue(
-                                  "colors",
-                                  colors.filter((c) => c !== color.value)
-                                );
-                                setColorDetails((prev) => {
-                                  const next = { ...prev };
-                                  delete next[color.value];
-                                  return next;
-                                });
-                              }
-                            }}
-                          />
-                          <Label
-                            htmlFor={`color-${color.name}`}
-                            className="flex items-center gap-2"
-                          >
-                            <span
-                              className="h-4 w-4 rounded-full border"
-                              style={{ backgroundColor: color.hex }}
-                            />
-                            {color.name}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                    {errors.colors && (
-                      <p className="text-sm text-red-500">
-                        {t(errors.colors.message as string)}
-                      </p>
-                    )}
-                  </div>
-
-                  <Separator />
-
                   {/* Material and Care */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="material">
-                        {t("createProduct.specifications.material.label")}
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <div className='space-y-2'>
+                      <Label htmlFor='material'>
+                        {t('createProduct.specifications.material.label')}
                       </Label>
                       <Input
-                        id="material"
-                        {...register("material")}
+                        id='material'
+                        {...register('material')}
                         placeholder={t(
-                          "createProduct.specifications.material.placeholder"
+                          'createProduct.specifications.material.placeholder'
                         )}
                       />
                       {errors.material && (
-                        <p className="text-sm text-red-500">
+                        <p className='text-sm text-red-500'>
                           {t(errors.material.message as string)}
                         </p>
                       )}
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="careInstructions">
+                    <div className='space-y-2'>
+                      <Label htmlFor='careInstructions'>
                         {t(
-                          "createProduct.specifications.careInstructions.label"
+                          'createProduct.specifications.careInstructions.label'
                         )}
                       </Label>
                       <Input
-                        id="careInstructions"
-                        {...register("careInstructions")}
+                        id='careInstructions'
+                        {...register('careInstructions')}
                         placeholder={t(
-                          "createProduct.specifications.careInstructions.placeholder"
+                          'createProduct.specifications.careInstructions.placeholder'
                         )}
                       />
                       {errors.careInstructions && (
-                        <p className="text-sm text-red-500">
+                        <p className='text-sm text-red-500'>
                           {t(errors.careInstructions.message as string)}
                         </p>
                       )}
@@ -1446,121 +1442,121 @@ export default function UpdateProduct({ id }: { id: string }) {
                   </div>
 
                   {/* Measurements */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="chest">
-                        {t("createProduct.specifications.measurements.chest")}
+                  <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+                    <div className='space-y-2'>
+                      <Label htmlFor='chest'>
+                        {t('createProduct.specifications.measurements.chest')}
                       </Label>
                       <Input
-                        id="chest"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("chest", { valueAsNumber: true })}
+                        id='chest'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('chest', { valueAsNumber: true })}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="waist">
-                        {t("createProduct.specifications.measurements.waist")}
+                    <div className='space-y-2'>
+                      <Label htmlFor='waist'>
+                        {t('createProduct.specifications.measurements.waist')}
                       </Label>
                       <Input
-                        id="waist"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("waist", { valueAsNumber: true })}
+                        id='waist'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('waist', { valueAsNumber: true })}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="hip">
-                        {t("createProduct.specifications.measurements.hip")}
+                    <div className='space-y-2'>
+                      <Label htmlFor='hip'>
+                        {t('createProduct.specifications.measurements.hip')}
                       </Label>
                       <Input
-                        id="hip"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("hip", { valueAsNumber: true })}
+                        id='hip'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('hip', { valueAsNumber: true })}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="shoulder">
+                    <div className='space-y-2'>
+                      <Label htmlFor='shoulder'>
                         {t(
-                          "createProduct.specifications.measurements.shoulder"
+                          'createProduct.specifications.measurements.shoulder'
                         )}
                       </Label>
                       <Input
-                        id="shoulder"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("shoulder", {
-                          setValueAs: (v) => (v === "" ? null : Number(v)),
+                        id='shoulder'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('shoulder', {
+                          setValueAs: (v) => (v === '' ? null : Number(v)),
                         })}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="high">
-                        {t("createProduct.specifications.measurements.height")}
+                    <div className='space-y-2'>
+                      <Label htmlFor='high'>
+                        {t('createProduct.specifications.measurements.height')}
                       </Label>
                       <Input
-                        id="high"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("high", { valueAsNumber: true })}
+                        id='high'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('high', { valueAsNumber: true })}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="length">
-                        {t("createProduct.specifications.measurements.length")}
+                    <div className='space-y-2'>
+                      <Label htmlFor='length'>
+                        {t('createProduct.specifications.measurements.length')}
                       </Label>
                       <Input
-                        id="length"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        {...register("length", { valueAsNumber: true })}
+                        id='length'
+                        type='number'
+                        min='0'
+                        step='0.5'
+                        {...register('length', { valueAsNumber: true })}
                       />
                     </div>
                   </div>
 
                   {/* Options */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
                     {/* sleeve */}
                     <Controller
-                      name="sleeve"
+                      name='sleeve'
                       control={control}
                       render={({ field }) => (
-                        <div className="flex items-center space-x-2">
+                        <div className='flex items-center space-x-2'>
                           <Checkbox
-                            id="sleeve"
+                            id='sleeve'
                             checked={!!field.value}
                             onCheckedChange={(checked) =>
                               field.onChange(!!checked)
                             }
                           />
-                          <Label htmlFor="sleeve">
-                            {t("createProduct.specifications.options.sleeve")}
+                          <Label htmlFor='sleeve'>
+                            {t('createProduct.specifications.options.sleeve')}
                           </Label>
                         </div>
                       )}
                     />
                     {/* underlay */}
                     <Controller
-                      name="underlay"
+                      name='underlay'
                       control={control}
                       render={({ field }) => (
-                        <div className="flex items-center space-x-2">
+                        <div className='flex items-center space-x-2'>
                           <Checkbox
-                            id="underlay"
+                            id='underlay'
                             checked={!!field.value}
                             onCheckedChange={(checked) =>
                               field.onChange(!!checked)
                             }
                           />
-                          <Label htmlFor="underlay">
-                            {t("createProduct.specifications.options.underlay")}
+                          <Label htmlFor='underlay'>
+                            {t('createProduct.specifications.options.underlay')}
                           </Label>
                         </div>
                       )}
@@ -1568,36 +1564,36 @@ export default function UpdateProduct({ id }: { id: string }) {
                   </div>
 
                   {/* Quantity and Reference */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="qty">
-                        {t("createProduct.specifications.quantity.label")}{" "}
-                        <span className="text-red-500">*</span>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <div className='space-y-2'>
+                      <Label htmlFor='qty'>
+                        {t('createProduct.specifications.quantity.label')}{' '}
+                        <span className='text-red-500'>*</span>
                       </Label>
                       <Input
-                        id="qty"
-                        type="number"
-                        min="1"
-                        {...register("qty", { valueAsNumber: true })}
+                        id='qty'
+                        type='number'
+                        min='1'
+                        {...register('qty', { valueAsNumber: true })}
                         readOnly
                       />
                       {errors.qty && (
-                        <p className="text-sm text-red-500">
+                        <p className='text-sm text-red-500'>
                           {t(errors.qty.message as string)}
                         </p>
                       )}
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="ref">
-                        {t("createProduct.specifications.reference.label")}
+                    <div className='space-y-2'>
+                      <Label htmlFor='ref'>
+                        {t('createProduct.specifications.reference.label')}
                       </Label>
                       <Input
-                        id="ref"
-                        {...register("ref")}
-                        placeholder="e.g., Designer reference number"
+                        id='ref'
+                        {...register('ref')}
+                        placeholder='e.g., Designer reference number'
                       />
                       {errors.ref && (
-                        <p className="text-sm text-red-500">
+                        <p className='text-sm text-red-500'>
                           {t(errors.ref.message as string)}
                         </p>
                       )}
@@ -1605,20 +1601,20 @@ export default function UpdateProduct({ id }: { id: string }) {
                   </div>
 
                   {/* State/City */}
-                  <div className="space-y-2">
-                    <Label htmlFor="state">
-                      {t("createProduct.specifications.city.label")}{" "}
-                      <span className="text-red-500">*</span>
+                  <div className='space-y-2'>
+                    <Label htmlFor='state'>
+                      {t('createProduct.specifications.city.label')}{' '}
+                      <span className='text-red-500'>*</span>
                     </Label>
                     <Input
-                      id="state"
-                      {...register("state")}
+                      id='state'
+                      {...register('state')}
                       placeholder={t(
-                        "createProduct.specifications.city.placeholder"
+                        'createProduct.specifications.city.placeholder'
                       )}
                     />
                     {errors.state && (
-                      <p className="text-sm text-red-500">
+                      <p className='text-sm text-red-500'>
                         {t(errors.state.message as string)}
                       </p>
                     )}
@@ -1627,34 +1623,34 @@ export default function UpdateProduct({ id }: { id: string }) {
               </Card>
 
               <Card>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center space-x-2 pt-2">
+                <CardContent className='space-y-4'>
+                  <div className='flex items-center space-x-2 pt-2'>
                     {/* terms */}
                     <Controller
-                      name="terms"
+                      name='terms'
                       control={control}
                       render={({ field }) => (
                         <>
                           <Checkbox
-                            id="terms"
+                            id='terms'
                             checked={!!field.value}
                             onCheckedChange={(checked) =>
                               field.onChange(!!checked)
                             }
                           />
-                          <Label htmlFor="terms" className="text-sm">
-                            {t("createProduct.terms.agree")}{" "}
+                          <Label htmlFor='terms' className='text-sm'>
+                            {t('createProduct.terms.agree')}{' '}
                             <Link
-                              href="#"
-                              className="text-gold hover:underline"
+                              href='#'
+                              className='text-gold hover:underline'
                             >
-                              {t("createProduct.terms.terms")}
-                            </Link>{" "}
+                              {t('createProduct.terms.terms')}
+                            </Link>{' '}
                             <Link
-                              href="#"
-                              className="text-gold hover:underline"
+                              href='#'
+                              className='text-gold hover:underline'
                             >
-                              {t("createProduct.terms.privacy")}
+                              {t('createProduct.terms.privacy')}
                             </Link>
                           </Label>
                         </>
@@ -1662,25 +1658,25 @@ export default function UpdateProduct({ id }: { id: string }) {
                     />
                   </div>
                   {errors.terms && (
-                    <p className="text-sm text-red-500">
+                    <p className='text-sm text-red-500'>
                       {t(errors.terms.message as string)}
                     </p>
                   )}
                 </CardContent>
-                <CardFooter className="flex justify-between">
+                <CardFooter className='flex justify-between'>
                   <Button
-                    variant="outline"
-                    type="button"
+                    variant='outline'
+                    type='button'
                     onClick={() => router.back()}
                   >
-                    {t("createProduct.actions.cancel")}
+                    {t('createProduct.actions.cancel')}
                   </Button>
                   <Button
-                    type="submit"
-                    className="bg-black hover:bg-black/90 text-white"
+                    type='submit'
+                    className='bg-black hover:bg-black/90 text-white'
                   >
-                    <Upload className="h-4 w-4 mr-2" />
-                    {t("updateProduct.actions.update") || "Update"}
+                    <Upload className='h-4 w-4 mr-2' />
+                    {t('updateProduct.actions.update') || 'Update'}
                   </Button>
                 </CardFooter>
               </Card>

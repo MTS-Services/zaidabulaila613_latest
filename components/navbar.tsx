@@ -81,12 +81,12 @@ export default function Navbar() {
 
   const vendors = data?.shops?.data || [];
 
-  const displayVendors = vendors.map((el) => {
-    return {
-      label: el.shopName,
-      href: `/vendors/${el.id}`,
-    };
-  });
+  // const displayVendors = vendors.map((el) => {
+  //   return {
+  //     label: el.shopName,
+  //     href: `/vendors/${el.id}`,
+  //   };
+  // });
 
   const displayCategories = categories?.map((el) => {
     return {
@@ -190,6 +190,20 @@ export default function Navbar() {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const accountMenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Mobile drawer expandable sections state
+  const [expandedSections, setExpandedSections] = useState({
+    shops: false,
+    vendors: false,
+    categories: false,
+  });
+
+  const toggleSection = (section: 'shops' | 'vendors' | 'categories') => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
   return (
     <>
       <header
@@ -287,13 +301,13 @@ export default function Navbar() {
                 label={t('navbar.categories')}
                 items={displayCategories}
               />
-              <NavLinkWithDropdown
+              {/* <NavLinkWithDropdown
                 label={t('navbar.vendors')}
                 items={[
                   { label: t('navbar.allVendors'), href: '/vendors' },
                   ...displayVendors,
                 ]}
-              />
+              /> */}
               {/* <NavLink href="#" label="Contact" /> */}
             </div>
           </div>
@@ -733,145 +747,367 @@ export default function Navbar() {
             isDrawerOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
-          {/* Search in Drawer */}
-          <div className='p-4 border-b'>
-            <div className='search-container w-full'>
-              <input
-                readOnly
-                checked={false}
-                className='search-checkbox'
-                type='checkbox'
-                // onChange={() => setSearchExpanded(!searchExpanded)}
-              />
-              <div className='search-mainbox w-full'>
-                <div
-                  className={
-                    language === 'AR'
-                      ? `search-iconContainer-ar`
-                      : `search-iconContainer`
-                  }
-                >
-                  <svg
-                    viewBox='0 0 512 512'
-                    height='1em'
-                    xmlns='http://www.w3.org/2000/svg'
-                    className='search-icon'
+          {/* Mobile Menu Content */}
+          <div className='flex flex-col h-full'>
+            {/* Search in Drawer */}
+            <div className='p-4 border-b'>
+              <div className='search-container w-full'>
+                <input
+                  readOnly
+                  checked={false}
+                  className='search-checkbox'
+                  type='checkbox'
+                />
+                <div className='search-mainbox w-full'>
+                  <div
+                    className={
+                      language === 'AR'
+                        ? `search-iconContainer-ar`
+                        : `search-iconContainer`
+                    }
                   >
-                    <path d='M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z'></path>
-                  </svg>
+                    <svg
+                      viewBox='0 0 512 512'
+                      height='1em'
+                      xmlns='http://www.w3.org/2000/svg'
+                      className='search-icon'
+                    >
+                      <path d='M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z'></path>
+                    </svg>
+                  </div>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      updateQuery({ search: searchTerm });
+                    }}
+                  >
+                    <input
+                      className='search-input'
+                      placeholder={t('common.search')}
+                      type='text'
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </form>
                 </div>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    updateQuery({ search: searchTerm });
-                  }}
-                >
-                  <input
-                    className='search-input'
-                    placeholder={t('common.search')}
-                    type='text'
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </form>
+              </div>
+              <div className='flex mt-3 justify-center gap-5 items-center'>
+                <div className='relative inline-block text-left'>
+                  <button
+                    onClick={() => setOpen(!open)}
+                    className='inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none'
+                  >
+                    {language === 'EN' ? 'English' : 'العربية'}
+                    <svg
+                      className='h-4 w-4'
+                      viewBox='0 0 20 20'
+                      fill='currentColor'
+                    >
+                      <path
+                        fillRule='evenodd'
+                        d='M5.23 7.21a.75.75 0 011.06.02L10 11.187l3.71-3.955a.75.75 0 011.08 1.04l-4.25 4.52a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z'
+                        clipRule='evenodd'
+                      />
+                    </svg>
+                  </button>
+
+                  {open && (
+                    <div className='absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5'>
+                      <div className='py-1'>
+                        <button
+                          onClick={() => handleSelect('EN')}
+                          className={`w-full text-left px-4 py-2 text-sm ${
+                            language === 'EN'
+                              ? 'bg-gray-100 text-gray-900 font-medium'
+                              : 'text-gray-700'
+                          }`}
+                        >
+                          English
+                        </button>
+                        <button
+                          onClick={() => handleSelect('AR')}
+                          className={`w-full text-left px-4 py-2 text-sm ${
+                            language === 'AR'
+                              ? 'bg-gray-100 text-gray-900 font-medium'
+                              : 'text-gray-700'
+                          }`}
+                        >
+                          العربية
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className='relative group'>
+                  <button className='flex items-center gap-2 text-sm text-slate-600 hover:text-gold'>
+                    <ReactCountryFlag
+                      countryCode={selectedCurrency.countryCode}
+                      svg
+                      style={{ width: '1em', height: '1em' }}
+                    />
+                    <span>{selectedCurrency.symbol}</span>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      width='12'
+                      height='12'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    >
+                      <polyline points='6 9 12 15 18 9'></polyline>
+                    </svg>
+                  </button>
+
+                  {/* Mobile currency selector */}
+                  <div className='absolute right-0 top-full mt-1 w-56 bg-white rounded-md shadow-lg py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200'>
+                    {currencies.map((currency) => (
+                      <button
+                        key={currency.id}
+                        className={`block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 ${
+                          selectedCurrency.code === currency.code
+                            ? 'text-gold font-medium'
+                            : 'text-slate-700'
+                        }`}
+                        onClick={() => setSelectedCurrency(currency)}
+                      >
+                        <span className='flex items-center gap-2'>
+                          <ReactCountryFlag
+                            countryCode={currency.countryCode}
+                            svg
+                            style={{ width: '1em', height: '1em' }}
+                          />
+                          <span>{currency.symbol}</span>
+                          <span className='text-xs text-slate-500 ml-1'>
+                            - {currency.name}
+                          </span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
-            <div className='flex mt-3 justify-center gap-5 items-center'>
-              <div className='relative inline-block text-left'>
+
+            {/* Menu Content */}
+            <div className='flex-1 overflow-y-auto'>
+              {/* Login/Signup Section - Only show if not authenticated */}
+              {!isAuthenticated && (
+                <>
+                  <div className='border-b'>
+                    <Link
+                      href='/login'
+                      className='w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-gray-50 hover:text-gold transition-colors'
+                      onClick={() => setIsDrawerOpen(false)}
+                    >
+                      <User className='h-5 w-5' />
+                      <span className='text-base font-medium'>Login</span>
+                    </Link>
+                  </div>
+
+                  <div className='border-b'>
+                    <Link
+                      href='/signup'
+                      className='w-full flex items-center gap-3 p-4 text-gray-700 hover:bg-gray-50 hover:text-gold transition-colors'
+                      onClick={() => setIsDrawerOpen(false)}
+                    >
+                      <User className='h-5 w-5' />
+                      <span className='text-base font-medium'>Signup</span>
+                    </Link>
+                  </div>
+                </>
+              )}
+
+              {/* User Menu - Only show if authenticated */}
+              {isAuthenticated && user && (
+                <div className='border-b'>
+                  <div className='flex items-center gap-3 p-4 text-gray-700 bg-gray-50'>
+                    <User className='h-5 w-5' />
+                    <span className='text-base font-medium'>
+                      {user.user?.account?.firstName || 'User'}
+                    </span>
+                  </div>
+                  <div className='px-4 pb-4 space-y-1 bg-gray-50'>
+                    <Link
+                      href='/dashboard'
+                      className='block py-2 px-4 text-sm text-gray-600 hover:text-gold hover:bg-white rounded transition-colors'
+                      onClick={() => setIsDrawerOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      href='/dashboard/orders'
+                      className='block py-2 px-4 text-sm text-gray-600 hover:text-gold hover:bg-white rounded transition-colors'
+                      onClick={() => setIsDrawerOpen(false)}
+                    >
+                      Orders
+                    </Link>
+                    <button
+                      className='block w-full text-left py-2 px-4 text-sm text-red-600 hover:text-red-700 hover:bg-white rounded transition-colors'
+                      onClick={() => {
+                        logout();
+                        setIsDrawerOpen(false);
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Shops Section */}
+              <div className='border-b'>
                 <button
-                  onClick={() => setOpen(!open)}
-                  className='inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none'
+                  className='w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors'
+                  onClick={() => toggleSection('shops')}
                 >
-                  {language === 'EN' ? 'English' : 'العربية'}
+                  <span className='text-base font-medium text-gray-700'>
+                    Shops
+                  </span>
                   <svg
-                    className='h-4 w-4'
-                    viewBox='0 0 20 20'
-                    fill='currentColor'
+                    className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
+                      expandedSections.shops ? 'rotate-45' : 'rotate-0'
+                    }`}
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
                   >
                     <path
-                      fillRule='evenodd'
-                      d='M5.23 7.21a.75.75 0 011.06.02L10 11.187l3.71-3.955a.75.75 0 011.08 1.04l-4.25 4.52a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z'
-                      clipRule='evenodd'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M12 6v6m0 0v6m0-6h6m-6 0H6'
                     />
                   </svg>
                 </button>
-
-                {open && (
-                  <div className='absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5'>
-                    <div className='py-1'>
-                      <button
-                        onClick={() => handleSelect('EN')}
-                        className={`w-full text-left px-4 py-2 text-sm ${
-                          language === 'EN'
-                            ? 'bg-gray-100 text-gray-900 font-medium'
-                            : 'text-gray-700'
-                        }`}
+                {expandedSections.shops && (
+                  <div className='px-4 pb-4 space-y-1 bg-gray-50'>
+                    {displayProductTypes.map((type, index) => (
+                      <Link
+                        key={index}
+                        href={type.href}
+                        className='block py-2 px-4 text-sm text-gray-600 hover:text-gold hover:bg-white rounded transition-colors'
+                        onClick={() => setIsDrawerOpen(false)}
                       >
-                        English
-                      </button>
-                      <button
-                        onClick={() => handleSelect('AR')}
-                        className={`w-full text-left px-4 py-2 text-sm ${
-                          language === 'AR'
-                            ? 'bg-gray-100 text-gray-900 font-medium'
-                            : 'text-gray-700'
-                        }`}
-                      >
-                        العربية
-                      </button>
-                    </div>
+                        {type.label}
+                      </Link>
+                    ))}
                   </div>
                 )}
               </div>
-              <div className='relative group'>
-                <button className='flex items-center gap-2 text-sm text-slate-600 hover:text-gold'>
-                  <ReactCountryFlag
-                    countryCode={selectedCurrency.countryCode}
-                    svg
-                    style={{ width: '1em', height: '1em' }}
-                  />
-                  <span>{selectedCurrency.symbol}</span>
+
+              {/* Vendors Section */}
+              {/* <div className='border-b'>
+                <button
+                  className='w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors'
+                  onClick={() => toggleSection('vendors')}
+                >
+                  <span className='text-base font-medium text-gray-700'>
+                    Vendors
+                  </span>
                   <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    width='12'
-                    height='12'
-                    viewBox='0 0 24 24'
+                    className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
+                      expandedSections.vendors ? 'rotate-45' : 'rotate-0'
+                    }`}
                     fill='none'
                     stroke='currentColor'
-                    strokeWidth='2'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
+                    viewBox='0 0 24 24'
                   >
-                    <polyline points='6 9 12 15 18 9'></polyline>
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M12 6v6m0 0v6m0-6h6m-6 0H6'
+                    />
                   </svg>
                 </button>
-
-                {/* Desktop currency selector */}
-                <div className='absolute right-0 top-full mt-1 w-56 bg-white rounded-md shadow-lg py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200'>
-                  {currencies.map((currency) => (
-                    <button
-                      key={currency.id} // Changed from currency.code to currency.id
-                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-slate-100 ${
-                        selectedCurrency.code === currency.code
-                          ? 'text-gold font-medium'
-                          : 'text-slate-700'
-                      }`}
-                      onClick={() => setSelectedCurrency(currency)}
+                {expandedSections.vendors && (
+                  <div className='px-4 pb-4 space-y-1 bg-gray-50'>
+                    <Link
+                      href='/vendors'
+                      className='block py-2 px-4 text-sm text-gray-600 hover:text-gold hover:bg-white rounded transition-colors'
+                      onClick={() => setIsDrawerOpen(false)}
                     >
-                      <span className='flex items-center gap-2'>
-                        <ReactCountryFlag
-                          countryCode={currency.countryCode}
-                          svg
-                          style={{ width: '1em', height: '1em' }}
-                        />
-                        <span>{currency.symbol}</span>
-                        <span className='text-xs text-slate-500 ml-1'>
-                          - {currency.name}
-                        </span>
-                      </span>
-                    </button>
-                  ))}
-                </div>
+                      All Vendors
+                    </Link>
+                    {displayVendors.map((vendor, index) => (
+                      <Link
+                        key={index}
+                        href={vendor.href}
+                        className='block py-2 px-4 text-sm text-gray-600 hover:text-gold hover:bg-white rounded transition-colors'
+                        onClick={() => setIsDrawerOpen(false)}
+                      >
+                        {vendor.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div> */}
+
+              {/* Categories Section */}
+              <div className='border-b'>
+                <button
+                  className='w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors'
+                  onClick={() => toggleSection('categories')}
+                >
+                  <span className='text-base font-medium text-gray-700'>
+                    Categories
+                  </span>
+                  <svg
+                    className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
+                      expandedSections.categories ? 'rotate-45' : 'rotate-0'
+                    }`}
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M12 6v6m0 0v6m0-6h6m-6 0H6'
+                    />
+                  </svg>
+                </button>
+                {expandedSections.categories && (
+                  <div className='px-4 pb-4 space-y-1 bg-gray-50'>
+                    {displayCategories.map((category, index) => (
+                      <Link
+                        key={index}
+                        href={category.href}
+                        className='block py-2 px-4 text-sm text-gray-600 hover:text-gold hover:bg-white rounded transition-colors'
+                        onClick={() => setIsDrawerOpen(false)}
+                      >
+                        {category.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Need Help Section */}
+            <div className='p-4 border-t bg-gray-50'>
+              <h3 className='text-base font-medium text-gray-700 mb-3'>
+                Need Help?
+              </h3>
+              <div className='space-y-3'>
+                <a
+                  href={contactInfo.phone.href}
+                  className='flex items-center gap-3 text-sm text-gray-600 hover:text-gold transition-colors'
+                >
+                  <Phone className='h-4 w-4' />
+                  <span>{contactInfo.phone.display}</span>
+                </a>
+                <a
+                  href={contactInfo.email.href}
+                  className='flex items-center gap-3 text-sm text-gray-600 hover:text-gold transition-colors'
+                >
+                  <Mail className='h-4 w-4' />
+                  <span>{contactInfo.email.display}</span>
+                </a>
               </div>
             </div>
           </div>

@@ -742,45 +742,66 @@ export default function UploadPage() {
                     {t('createProduct.dressType.description')}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className='px-4 py-4'>
                   <RadioGroup
                     value={dressType}
                     onValueChange={(value) => setValue('type', value)}
                     className='space-y-3'
                   >
                     {/* NEW: Respect canAddNewDresses */}
-                    <div className='flex items-center space-x-2'>
+                    <div className='flex items-start space-x-2 w-full'>
                       <RadioGroupItem
                         value='new'
                         id='type-new'
                         disabled={!canAddNewDresses}
+                        className='flex-shrink-0 mt-1'
                       />
-                      <Label htmlFor='type-new' className='flex items-center'>
-                        <span className='bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2'>
+                      <Label
+                        htmlFor='type-new'
+                        className='flex items-start flex-wrap flex-1'
+                      >
+                        <span className='bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2 flex-shrink-0'>
                           {t('createProduct.dressType.new.label')}
                         </span>
-                        {t('createProduct.dressType.new.description')}
+                        <span className='flex-1 min-w-0'>
+                          {t('createProduct.dressType.new.description')}
+                        </span>
                       </Label>
                     </div>
-                    <div className='flex items-center space-x-2'>
-                      <RadioGroupItem value='used' id='type-used' />
-                      <Label htmlFor='type-used' className='flex items-center'>
-                        <span className='bg-amber-100 text-amber-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2'>
+                    <div className='flex items-start space-x-2 w-full'>
+                      <RadioGroupItem
+                        value='used'
+                        id='type-used'
+                        className='flex-shrink-0 mt-1'
+                      />
+                      <Label
+                        htmlFor='type-used'
+                        className='flex items-start flex-wrap flex-1'
+                      >
+                        <span className='bg-amber-100 text-amber-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2 flex-shrink-0'>
                           Sell Used
                         </span>
-                        {t('createProduct.dressType.used.description')}
+                        <span className='flex-1 min-w-0'>
+                          {t('createProduct.dressType.used.description')}
+                        </span>
                       </Label>
                     </div>
-                    <div className='flex items-center space-x-2'>
-                      <RadioGroupItem value='rental' id='type-rental' />
+                    <div className='flex items-start space-x-2 w-full'>
+                      <RadioGroupItem
+                        value='rental'
+                        id='type-rental'
+                        className='flex-shrink-0 mt-1'
+                      />
                       <Label
                         htmlFor='type-rental'
-                        className='flex items-center'
+                        className='flex items-start flex-wrap flex-1'
                       >
-                        <span className='bg-purple-100 text-purple-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2'>
+                        <span className='bg-purple-100 text-purple-800 text-xs font-medium px-2 py-0.5 rounded-full mr-2 flex-shrink-0'>
                           Rent Used
                         </span>
-                        {t('createProduct.dressType.rental.description')}
+                        <span className='flex-1 min-w-0'>
+                          {t('createProduct.dressType.rental.description')}
+                        </span>
                       </Label>
                     </div>
                   </RadioGroup>

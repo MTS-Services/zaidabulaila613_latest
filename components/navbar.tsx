@@ -988,7 +988,7 @@ export default function Navbar() {
                       <Link
                         key={index}
                         href={type.href}
-                        className='block py-2 px-4 text-sm text-gray-600 hover:text-gold hover:bg-white rounded transition-colors'
+                        className='block py-2 px-4 text-sm font-medium text-gray-700 hover:text-gold hover:bg-white rounded transition-colors'
                         onClick={() => setIsDrawerOpen(false)}
                       >
                         {type.label}
@@ -1077,7 +1077,7 @@ export default function Navbar() {
                       <Link
                         key={index}
                         href={category.href}
-                        className='block py-2 px-4 text-sm text-gray-600 hover:text-gold hover:bg-white rounded transition-colors'
+                        className='block py-2 px-4 text-sm font-medium text-gray-700 hover:text-gold hover:bg-white rounded transition-colors'
                         onClick={() => setIsDrawerOpen(false)}
                       >
                         {category.label}

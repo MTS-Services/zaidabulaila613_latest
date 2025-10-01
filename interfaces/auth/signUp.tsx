@@ -691,11 +691,11 @@ export default function SignUp() {
             buttonTitle='Sign Up'
           />
           <div className='mt-6 pt-6 border-t border-gray-200'>
-            <div className='w-full flex items-center justify-center gap-2 text-gray-500 text-sm '>
+            {/* <div className='w-full flex items-center justify-center gap-2 text-gray-500 text-sm '>
               <hr className='flex-1 border-gray-300' />
               {t('common.or') ?? 'or'}
               <hr className='flex-1 border-gray-300' />
-            </div>
+            </div> */}
             <div
               id='google-signup'
               className='mt-4 w-full flex justify-center min-h-[44px]'

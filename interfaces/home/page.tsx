@@ -42,7 +42,7 @@ export default function Home() {
         {/* Remove the DiscountBannerFull component */}
 
         {/* Vendor Selection */}
-        <VendorSelection />
+        {/* <VendorSelection /> */}
 
         {/* Categories */}
         <CategorySection />

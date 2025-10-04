@@ -159,7 +159,7 @@ export default function HeroSection() {
               <p className='text-white/90 text-xl md:text-2xl'>
                 {slides[selectedIndex].lowerheading}
               </p>
-              {/* Show banner-specific button if isLink is true */}
+              {/* Show button only if isLink is true */}
               {slides[selectedIndex].isLink &&
                 slides[selectedIndex].linkText &&
                 slides[selectedIndex].link && (
@@ -183,17 +183,6 @@ export default function HeroSection() {
                     )}
                   </div>
                 )}
-              {/* Show default button if user is not logged in and banner doesn't have isLink true */}
-              {!user && !slides[selectedIndex].isLink && (
-                <div className='flex flex-col sm:flex-row gap-4 pt-4'>
-                  <a
-                    href={heroContent.cta.href}
-                    className='fancy-button fancy-button-primary pointer-events-auto'
-                  >
-                    {t('hero.button')}
-                  </a>
-                </div>
-              )}
             </div>
           )}
         </div>

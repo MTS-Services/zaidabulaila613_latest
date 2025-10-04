@@ -85,6 +85,11 @@ export default function UploadPage() {
   const canAddNewDresses = uploadLimits?.limits?.canAddNewDresses ?? false;
   const bulkUploadDresses = uploadLimits?.limits?.bulkUploadDresses ?? false;
 
+  // Check if subscription is basic or platinum (restricted plans)
+  const isRestrictedPlan =
+    uploadLimits?.subscriptionType &&
+    ['basic', 'platinum'].includes(uploadLimits.subscriptionType.toLowerCase());
+
   const { selectedCurrency } = useCurrency();
   const { language } = useTranslation();
   const { bulkUpload, allowedDressTypes, maxMediaPerDress, maxDresses } =
@@ -249,16 +254,19 @@ export default function UploadPage() {
     }
   }, [watch('selectedColor')]);
 
-  // Auto-calc total qty from size quantities
+  // Auto-calc total qty from size quantities (only for unrestricted plans)
   useEffect(() => {
     const selectedColor = watch('selectedColor');
-    if (selectedColor && colorDetails[selectedColor]) {
+    if (selectedColor && colorDetails[selectedColor] && !isRestrictedPlan) {
       const total = Object.values(
         colorDetails[selectedColor].quantities
       ).reduce((sum, q) => sum + (Number(q) || 0), 0);
       setValue('qty', total);
+    } else if (isRestrictedPlan) {
+      // For restricted plans, always keep quantity at 1
+      setValue('qty', 1);
     }
-  }, [colorDetails, watch('selectedColor'), setValue]);
+  }, [colorDetails, watch('selectedColor'), setValue, isRestrictedPlan]);
 
   if (!user) {
     return null;
@@ -1120,118 +1128,111 @@ export default function UploadPage() {
                         please select a color first to choose sizes.
                       </p>
                     ) : (
-                      <div className='space-y-6'>
-                        <div className='border rounded-md p-3'>
-                          <div className='flex items-center justify-between mb-3'>
-                            <div className='flex items-center gap-2'>
-                              <span
-                                className='h-4 w-4 rounded-full border'
-                                style={{
-                                  backgroundColor:
-                                    colorOptions.find(
-                                      (c) => c.value === watch('selectedColor')
-                                    )?.hex || '#ddd',
-                                }}
-                              />
-                              <span className='font-medium'>
-                                {watch('selectedColor')}
-                              </span>
+                      <>
+                        {isRestrictedPlan && (
+                          <div className='bg-blue-50 border border-blue-200 rounded-md p-3 mb-4'>
+                            <div className='flex items-start gap-2'>
+                              <Info className='h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0' />
+                              <div className='text-sm text-blue-800'>
+                                <p className='font-medium'>
+                                  Size & Quantity Restrictions
+                                </p>
+                                <p className='mt-1'>
+                                  Your {uploadLimits?.subscriptionType} plan
+                                  allows only <strong>one size</strong> per
+                                  dress with a fixed quantity of{' '}
+                                  <strong>1</strong>.{' '}
+                                  <Link
+                                    href='/dashboard/subscription'
+                                    className='text-blue-600 underline hover:text-blue-800'
+                                  >
+                                    Upgrade your plan
+                                  </Link>{' '}
+                                  to select multiple sizes and quantities.
+                                </p>
+                              </div>
                             </div>
                           </div>
+                        )}
+                        <div className='space-y-6'>
+                          <div className='border rounded-md p-3'>
+                            <div className='flex items-center justify-between mb-3'>
+                              <div className='flex items-center gap-2'>
+                                <span
+                                  className='h-4 w-4 rounded-full border'
+                                  style={{
+                                    backgroundColor:
+                                      colorOptions.find(
+                                        (c) =>
+                                          c.value === watch('selectedColor')
+                                      )?.hex || '#ddd',
+                                  }}
+                                />
+                                <span className='font-medium'>
+                                  {watch('selectedColor')}
+                                </span>
+                              </div>
+                            </div>
 
-                          {/* Color description */}
-                          <div className='mb-3'>
-                            <Label className='text-xs'>Color Description</Label>
-                            <Input
-                              value={
-                                colorDetails[watch('selectedColor') || '']
-                                  ?.description || ''
-                              }
-                              onChange={(e) => {
-                                const selectedColor = watch('selectedColor');
-                                if (selectedColor) {
-                                  setColorDetails((prev) => ({
-                                    ...prev,
-                                    [selectedColor]: {
-                                      ...(prev[selectedColor] || {
-                                        description: '',
-                                        quantities: {},
-                                      }),
-                                      description: e.target.value,
-                                    },
-                                  }));
+                            {/* Color description */}
+                            <div className='mb-3'>
+                              <Label className='text-xs'>
+                                Color Description
+                              </Label>
+                              <Input
+                                value={
+                                  colorDetails[watch('selectedColor') || '']
+                                    ?.description || ''
                                 }
-                              }}
-                              placeholder='e.g., Light, Dark, Neon'
-                            />
-                          </div>
+                                onChange={(e) => {
+                                  const selectedColor = watch('selectedColor');
+                                  if (selectedColor) {
+                                    setColorDetails((prev) => ({
+                                      ...prev,
+                                      [selectedColor]: {
+                                        ...(prev[selectedColor] || {
+                                          description: '',
+                                          quantities: {},
+                                        }),
+                                        description: e.target.value,
+                                      },
+                                    }));
+                                  }
+                                }}
+                                placeholder='e.g., Light, Dark, Neon'
+                              />
+                            </div>
 
-                          {/* Sizes for this color */}
-                          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
-                            {sizeOptions.map((size) => {
-                              const color = watch('selectedColor') || '';
-                              const checked =
-                                !!colorDetails[color]?.quantities?.[size] ||
-                                colorDetails[color]?.quantities?.[size] === 0;
-                              const qty =
-                                colorDetails[color]?.quantities?.[size] ?? 0;
-                              return (
-                                <div
-                                  key={`${color}-${size}`}
-                                  className='flex items-center gap-2'
-                                >
-                                  <Checkbox
-                                    id={`size-${color}-${size}`}
-                                    checked={checked}
-                                    onCheckedChange={(c) => {
-                                      if (color) {
-                                        setColorDetails((prev) => {
-                                          const current = prev[color] || {
-                                            description: '',
-                                            quantities: {},
-                                          };
-                                          const nextQuantities = {
-                                            ...current.quantities,
-                                          };
-                                          if (c) {
-                                            if (!(size in nextQuantities))
-                                              nextQuantities[size] = 0;
-                                          } else {
-                                            delete nextQuantities[size];
-                                          }
-                                          // update global sizes
-                                          const sizesSet = new Set(
-                                            Object.keys(nextQuantities)
-                                          );
-                                          setValue(
-                                            'sizes',
-                                            Array.from(sizesSet)
-                                          );
-                                          return {
-                                            ...prev,
-                                            [color]: {
-                                              ...current,
-                                              quantities: nextQuantities,
-                                            },
-                                          };
-                                        });
-                                      }
-                                    }}
-                                  />
-                                  <Label
-                                    htmlFor={`size-${color}-${size}`}
-                                    className='mr-2'
+                            {/* Sizes for this color */}
+                            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
+                              {sizeOptions.map((size) => {
+                                const color = watch('selectedColor') || '';
+                                const checked =
+                                  !!colorDetails[color]?.quantities?.[size] ||
+                                  colorDetails[color]?.quantities?.[size] === 0;
+                                const qty =
+                                  colorDetails[color]?.quantities?.[size] ??
+                                  (isRestrictedPlan ? 1 : 0);
+
+                                // For restricted plans, check how many sizes are already selected
+                                const selectedSizesCount = Object.keys(
+                                  colorDetails[color]?.quantities || {}
+                                ).length;
+                                const canSelectMoreSizes =
+                                  !isRestrictedPlan ||
+                                  selectedSizesCount === 0 ||
+                                  checked;
+
+                                return (
+                                  <div
+                                    key={`${color}-${size}`}
+                                    className='flex items-center gap-2'
                                   >
-                                    {size}
-                                  </Label>
-                                  {checked && (
-                                    <Input
-                                      type='number'
-                                      min={0}
-                                      className='h-8 w-24'
-                                      value={qty}
-                                      onChange={(e) => {
-                                        const val = Number(e.target.value || 0);
+                                    <Checkbox
+                                      id={`size-${color}-${size}`}
+                                      checked={checked}
+                                      disabled={!canSelectMoreSizes}
+                                      onCheckedChange={(c) => {
                                         if (color) {
                                           setColorDetails((prev) => {
                                             const current = prev[color] || {
@@ -1240,8 +1241,32 @@ export default function UploadPage() {
                                             };
                                             const nextQuantities = {
                                               ...current.quantities,
-                                              [size]: val,
                                             };
+                                            if (c) {
+                                              if (isRestrictedPlan) {
+                                                // For restricted plans, clear other sizes and set this one to 1
+                                                Object.keys(
+                                                  nextQuantities
+                                                ).forEach((key) => {
+                                                  if (key !== size)
+                                                    delete nextQuantities[key];
+                                                });
+                                                nextQuantities[size] = 1;
+                                              } else {
+                                                if (!(size in nextQuantities))
+                                                  nextQuantities[size] = 0;
+                                              }
+                                            } else {
+                                              delete nextQuantities[size];
+                                            }
+                                            // update global sizes
+                                            const sizesSet = new Set(
+                                              Object.keys(nextQuantities)
+                                            );
+                                            setValue(
+                                              'sizes',
+                                              Array.from(sizesSet)
+                                            );
                                             return {
                                               ...prev,
                                               [color]: {
@@ -1252,15 +1277,67 @@ export default function UploadPage() {
                                           });
                                         }
                                       }}
-                                      placeholder='Qty'
                                     />
-                                  )}
-                                </div>
-                              );
-                            })}
+                                    <Label
+                                      htmlFor={`size-${color}-${size}`}
+                                      className='mr-2'
+                                    >
+                                      {size}
+                                    </Label>
+                                    {checked && (
+                                      <Input
+                                        type='number'
+                                        min={isRestrictedPlan ? 1 : 0}
+                                        max={isRestrictedPlan ? 1 : undefined}
+                                        className='h-8 w-24'
+                                        value={qty}
+                                        readOnly={!!isRestrictedPlan}
+                                        onChange={(e) => {
+                                          if (isRestrictedPlan) return; // Prevent changes for restricted plans
+                                          const val = Number(
+                                            e.target.value || 0
+                                          );
+                                          if (color) {
+                                            setColorDetails((prev) => {
+                                              const current = prev[color] || {
+                                                description: '',
+                                                quantities: {},
+                                              };
+                                              const nextQuantities = {
+                                                ...current.quantities,
+                                                [size]: val,
+                                              };
+                                              return {
+                                                ...prev,
+                                                [color]: {
+                                                  ...current,
+                                                  quantities: nextQuantities,
+                                                },
+                                              };
+                                            });
+                                          }
+                                        }}
+                                        onKeyDown={(e) => {
+                                          if (
+                                            isRestrictedPlan &&
+                                            (e.key === 'Backspace' ||
+                                              e.key === 'Delete')
+                                          ) {
+                                            e.preventDefault(); // Prevent deletion of the "1" in restricted plans
+                                          }
+                                        }}
+                                        placeholder={
+                                          isRestrictedPlan ? '1' : 'Qty'
+                                        }
+                                      />
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </>
                     )}
                     {errors.sizes && (
                       <p className='text-sm text-red-500'>
@@ -1438,16 +1515,48 @@ export default function UploadPage() {
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     <div className='space-y-2'>
                       <Label htmlFor='qty'>
-                        {t('createProduct.specifications.quantity.label')}{' '}
-                        <span className='text-red-500'>*</span>
+                        Quantity <span className='text-red-500'>*</span>
+                        {isRestrictedPlan && (
+                          <span className='text-xs text-slate-500 ml-2'>
+                            (Fixed at 1 for {uploadLimits?.subscriptionType}{' '}
+                            plan)
+                          </span>
+                        )}
                       </Label>
                       <Input
                         id='qty'
                         type='number'
                         min='1'
+                        max={isRestrictedPlan ? 1 : undefined}
                         {...register('qty', { valueAsNumber: true })}
                         readOnly
+                        value={isRestrictedPlan ? 1 : watch('qty')}
+                        onKeyDown={(e) => {
+                          if (
+                            isRestrictedPlan &&
+                            (e.key === 'Backspace' || e.key === 'Delete')
+                          ) {
+                            e.preventDefault(); // Prevent deletion of the "1" in restricted plans
+                          }
+                        }}
+                        className={
+                          isRestrictedPlan
+                            ? 'bg-slate-50 cursor-not-allowed'
+                            : ''
+                        }
                       />
+                      {isRestrictedPlan && (
+                        <p className='text-xs text-slate-500'>
+                          This field is fixed at 1 for basic and platinum plans.
+                          <Link
+                            href='/dashboard/subscription'
+                            className='text-blue-600 underline hover:text-blue-800'
+                          >
+                            Upgrade to change quantity
+                          </Link>
+                          .
+                        </p>
+                      )}
                       {errors.qty && (
                         <p className='text-sm text-red-500'>
                           {t(errors.qty.message as string)}

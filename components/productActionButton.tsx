@@ -122,20 +122,18 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
           </span>
         </button>
       ) : (
-        <TooltipBox text='Upgrade your subscription.'>
-          <button
-            className={`cart-button noselect w-full ${className}`}
-            onClick={() => router.push(`/dashboard/subscription`)}
-          >
-            <span className='text'>
-              {/* {product.type === "rental" ? "Rent Now" : "Contact Seller"} */}
-              Contact Seller
-            </span>
-            <span className='icon'>
-              <ShoppingBag className='h-5 w-5' />
-            </span>
-          </button>
-        </TooltipBox>
+        <button
+          className={`cart-button noselect w-full ${className}`}
+          onClick={() => router.push(`/dashboard/subscription`)}
+        >
+          <span className='text'>
+            {/* {product.type === "rental" ? "Rent Now" : "Contact Seller"} */}
+            Contact Seller
+          </span>
+          <span className='icon'>
+            <ShoppingBag className='h-5 w-5' />
+          </span>
+        </button>
       )}
     </>
   );

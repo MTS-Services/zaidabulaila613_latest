@@ -1,31 +1,32 @@
 // components/forms.tsx
-"use client";
+'use client';
 
-import Input from "@/components/input";
-import Select from "@/components/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, DefaultValues, useForm } from "react-hook-form";
-import { FiCheckCircle, FiXCircle } from "react-icons/fi";
-import PhoneInput from "react-phone-number-input";
-import countriesEn from "react-phone-number-input/locale/en.json";
-import "react-phone-number-input/style.css";
-import { z } from "zod";
-import { Button } from "./ui/button";
+import Input from '@/components/input';
+import Select from '@/components/select';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, DefaultValues, useForm } from 'react-hook-form';
+import { FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import PhoneInput from 'react-phone-number-input';
+import countriesEn from 'react-phone-number-input/locale/en.json';
+import 'react-phone-number-input/style.css';
+import { z } from 'zod';
+import { Button } from './ui/button';
+import { useTranslation } from '@/hooks/use-translation';
 
 // --- START: Password Strength Meter Component ---
 const passwordRules = [
-  { text: "Minimum 8 characters", test: (p: string) => p.length >= 8 },
+  { text: 'Minimum 8 characters', test: (p: string) => p.length >= 8 },
   {
-    text: "At least 1 uppercase letter",
+    text: 'At least 1 uppercase letter',
     test: (p: string) => /[A-Z]/.test(p),
   },
   {
-    text: "At least 1 lowercase letter",
+    text: 'At least 1 lowercase letter',
     test: (p: string) => /[a-z]/.test(p),
   },
-  { text: "At least 1 number", test: (p: string) => /[0-9]/.test(p) },
+  { text: 'At least 1 number', test: (p: string) => /[0-9]/.test(p) },
   {
-    text: "At least 1 special character",
+    text: 'At least 1 special character',
     test: (p: string) => /[!@#$%^&*(),.?":{}|<>]/.test(p),
   },
 ];
@@ -34,15 +35,15 @@ const PasswordStrengthMeter = ({ password }: { password: string }) => {
   const passedRulesCount = passwordRules.filter((rule) =>
     rule.test(password)
   ).length;
-  let strengthText = "Weak";
-  let strengthColorClass = "text-red-500";
+  let strengthText = 'Weak';
+  let strengthColorClass = 'text-red-500';
 
   if (passedRulesCount === 5) {
-    strengthText = "Strong";
-    strengthColorClass = "text-green-500";
+    strengthText = 'Strong';
+    strengthColorClass = 'text-green-500';
   } else if (passedRulesCount >= 3) {
-    strengthText = "Medium";
-    strengthColorClass = "text-yellow-500";
+    strengthText = 'Medium';
+    strengthColorClass = 'text-yellow-500';
   }
 
   const ValidationItem = ({
@@ -54,24 +55,24 @@ const PasswordStrengthMeter = ({ password }: { password: string }) => {
   }) => (
     <li
       className={`flex items-center text-sm transition-colors ${
-        isPassed ? "text-green-600" : "text-gray-500"
+        isPassed ? 'text-green-600' : 'text-gray-500'
       }`}
     >
       {isPassed ? (
-        <FiCheckCircle className="mr-2" />
+        <FiCheckCircle className='mr-2' />
       ) : (
-        <FiXCircle className="mr-2" />
+        <FiXCircle className='mr-2' />
       )}
       {text}
     </li>
   );
 
   return (
-    <div className="mt-2 text-left">
+    <div className='mt-2 text-left'>
       <p className={`text-sm font-semibold mb-2 ${strengthColorClass}`}>
         Password strength: {strengthText}
       </p>
-      <ul className="space-y-1">
+      <ul className='space-y-1'>
         {passwordRules.map((rule) => (
           <ValidationItem
             key={rule.text}
@@ -91,28 +92,28 @@ function isPasswordStrong(password: string) {
 }
 
 type InputField = {
-  type: "Input";
+  type: 'Input';
   name: string;
   label: string;
   inputType: string;
   multiLine?: boolean;
 };
 type SelectField = {
-  type: "Select";
+  type: 'Select';
   name: string;
   label: string;
   options: { label: string; value: string }[];
   defaultValue?: string;
 };
-type IconSelectorField = { type: "IconSelector"; name: string; label: string };
+type IconSelectorField = { type: 'IconSelector'; name: string; label: string };
 type PhoneField = {
-  type: "Phone";
+  type: 'Phone';
   name: string;
   label: string;
   defaultCountry?: string;
 };
 type CountryField = {
-  type: "Country";
+  type: 'Country';
   name: string;
   label: string;
   defaultValue?: string;
@@ -131,7 +132,7 @@ interface FormProps<T extends z.ZodType<any, any>> {
   isPending: boolean;
   buttonTitle: string;
   defaultValues?: DefaultValues<z.infer<T>>;
-  fieldDir?: "row" | "column";
+  fieldDir?: 'row' | 'column';
   showPasswordStrength?: boolean;
 }
 
@@ -145,6 +146,7 @@ export default function Form<T extends z.ZodType<any, any>>({
   buttonTitle,
   showPasswordStrength,
 }: FormProps<T>) {
+  const { t } = useTranslation();
   const {
     control,
     handleSubmit,
@@ -155,29 +157,39 @@ export default function Form<T extends z.ZodType<any, any>>({
     defaultValues: defaultValues,
   });
 
-  const passwordValue = watch("password" as any);
+  const passwordValue = watch('password' as any);
 
   const countryOptions = Object.entries(countriesEn)
     .filter(
       ([code, label]) =>
-        !["ext.", "Phone number country", "Phone"].includes(label)
+        !['ext.', 'Phone number country', 'Phone'].includes(label)
     )
     .map(([value, label]) => ({ value, label }));
 
+  // Helper function to translate error messages
+  const translateError = (errorMessage: string | undefined): string => {
+    if (!errorMessage) return '';
+    // Check if error message is a translation key (starts with validator.)
+    if (errorMessage.startsWith('validator.')) {
+      return t(errorMessage) || errorMessage;
+    }
+    return errorMessage;
+  };
+
   // Check if password field exists in formFields
-  const hasPasswordField = formFields.some((f) => f.name === "password");
+  const hasPasswordField = formFields.some((f) => f.name === 'password');
 
   // Only enable submit if password is strong (when password field exists and showPasswordStrength is true)
   const canSubmit =
     !hasPasswordField ||
     !showPasswordStrength ||
-    isPasswordStrong(passwordValue || "");
+    isPasswordStrong(passwordValue || '');
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
       <div
         className={`grid grid-cols-1 md:grid-cols-${
-          fieldDir === "column" ? "1" : "2"
+          fieldDir === 'column' ? '1' : '2'
         } gap-4`}
       >
         {formFields.map((field: Field) => (
@@ -186,20 +198,20 @@ export default function Form<T extends z.ZodType<any, any>>({
             name={field.name as any}
             control={control}
             render={({ field: controllerField }) => {
-              if (field.type === "Input") {
+              if (field.type === 'Input') {
                 return (
                   <div>
                     <Input
                       label={field.label}
-                      type={field.inputType || "text"}
+                      type={field.inputType || 'text'}
                       {...controllerField}
-                      error={
+                      error={translateError(
                         errors?.[field.name as keyof typeof errors]
                           ?.message as string
-                      }
+                      )}
                       multiLine={field.multiLine}
                     />
-                    {field.name === "password" &&
+                    {field.name === 'password' &&
                       showPasswordStrength &&
                       passwordValue && (
                         <PasswordStrengthMeter password={passwordValue} />
@@ -207,65 +219,65 @@ export default function Form<T extends z.ZodType<any, any>>({
                   </div>
                 );
               }
-              if (field.type === "Select") {
+              if (field.type === 'Select') {
                 return (
                   <Select
                     label={field.label}
                     options={field.options || []}
                     onSelect={controllerField.onChange}
-                    error={
+                    error={translateError(
                       errors?.[field.name as keyof typeof errors]
                         ?.message as string
-                    }
+                    )}
                     defaultValue={field.defaultValue}
                   />
                 );
               }
-              if (field.type === "Phone") {
+              if (field.type === 'Phone') {
                 return (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>
                       {field.label}
                     </label>
                     <PhoneInput
                       {...controllerField}
                       international
-                      defaultCountry={"JO"}
-                      className="border rounded-md p-2 w-full"
+                      defaultCountry={'JO'}
+                      className='border rounded-md p-2 w-full'
                       onChange={controllerField.onChange}
                       value={controllerField.value}
                     />
                     {errors?.[field.name as keyof typeof errors]?.message && (
-                      <span className="text-xs text-red-600">
-                        {
+                      <span className='text-xs text-red-600'>
+                        {translateError(
                           errors[field.name as keyof typeof errors]
                             ?.message as string
-                        }
+                        )}
                       </span>
                     )}
                   </div>
                 );
               }
-              if (field.type === "Country") {
+              if (field.type === 'Country') {
                 return (
                   <Select
                     label={field.label}
                     options={countryOptions}
                     onSelect={controllerField.onChange}
-                    error={
+                    error={translateError(
                       errors?.[field.name as keyof typeof errors]
                         ?.message as string
-                    }
-                    defaultValue={field.defaultValue || "JO"}
+                    )}
+                    defaultValue={field.defaultValue || 'JO'}
                   />
                 );
               }
-              return null;
+              return <div></div>;
             }}
           />
         ))}
       </div>
-      <Button type="submit" disabled={isPending || !canSubmit}>
+      <Button type='submit' disabled={isPending || !canSubmit}>
         {buttonTitle}
       </Button>
     </form>

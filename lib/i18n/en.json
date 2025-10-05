@@ -602,7 +602,7 @@
       "country": "Country is required",
       "countryleast": "Country name must be at least 2 characters",
       "lang": "Language is required",
-      "langstreet": "Language must be at least 2 characters",
+      "langleast": "Language must be at least 2 characters",
       "otp": "OTP is Required",
       "forgot": "ForgotPassword",
       "reg": "Register"
@@ -611,7 +611,7 @@
       "password": "Password is Required",
       "passwordleast": "Password must contain at least 6 character(s)",
       "confirm": "Confirm password is Required",
-      "confirmleast": "Confirm password must contain at least 6 character(s)",
+      "confirmleast": "Confirm password must contain at least 6 characters",
       "notmatch": "The passwords did not match",
       "phone": "Email or Phone is Required"
     }

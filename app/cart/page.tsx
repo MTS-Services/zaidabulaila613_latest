@@ -16,14 +16,17 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/hooks/use-cart';
 import { useWishlist } from '@/hooks/use-wishlist';
+import { useCurrency } from '@/contexts/currency-context';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/hooks/use-translation';
 import { config } from '@/constants/app';
+import { convertCurrency } from '@/lib/currency-converter';
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } =
     useCart();
   const { addToWishlist } = useWishlist();
+  const { selectedCurrency } = useCurrency();
   const [promoCode, setPromoCode] = useState('');
 
   const router = useRouter();
@@ -33,6 +36,26 @@ export default function CartPage() {
   const shipping = subtotal > 100 ? 0 : 10;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
+
+  // Format currency with conversion
+  const formatCurrency = (amount: any, originalCurrency?: string) => {
+    const numAmount = Number(amount) || 0;
+    const symbol = selectedCurrency?.symbol || '$';
+
+    // If no original currency provided, assume it's already in current currency
+    if (!originalCurrency || originalCurrency === selectedCurrency?.code) {
+      return `${symbol} ${numAmount.toFixed(2)}`;
+    }
+
+    // Convert from original currency to current currency
+    const convertedAmount = convertCurrency(
+      numAmount,
+      originalCurrency,
+      selectedCurrency?.code || 'USD'
+    );
+
+    return `${symbol} ${convertedAmount.toFixed(2)}`;
+  };
 
   // Handle move to wishlist
   const handleMoveToWishlist = (item: any) => {
@@ -48,7 +71,7 @@ export default function CartPage() {
   const { t } = useTranslation();
 
   return (
-    <div className='min-h-screen bg-slate-50'>
+    <div className='min-h-screen bg-slate-50' key={selectedCurrency?.code}>
       <div className='container px-4 md:px-6 py-8 md:py-12'>
         <div className='flex items-center justify-between mb-8'>
           <h1 className='text-2xl md:text-3xl font-bold'>
@@ -76,11 +99,11 @@ export default function CartPage() {
                     <div className='relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md'>
                       <Image
                         src={
-                          (item.images?.[0] && item.images[0].startsWith('http') 
+                          item.images?.[0] && item.images[0].startsWith('http')
                             ? item.images[0]
-                            : item.images?.[0] 
+                            : item.images?.[0]
                             ? `${config.API_URL}${item.images[0]}`
-                            : '/placeholder.svg?height=96&width=96')
+                            : '/placeholder.svg?height=96&width=96'
                         }
                         alt={item.name}
                         fill
@@ -117,10 +140,15 @@ export default function CartPage() {
                           </div>
                         </div>
                         <div className='text-right mt-1 sm:mt-0'>
-                          <div className='font-bold'>${item.price}</div>
+                          <div className='font-bold'>
+                            {formatCurrency(item.price, item.originalCurrency)}
+                          </div>
                           {item.originalPrice && (
                             <div className='text-sm text-slate-500 line-through'>
-                              ${item.originalPrice.toFixed(2)}
+                              {formatCurrency(
+                                item.originalPrice,
+                                item.originalCurrency
+                              )}
                             </div>
                           )}
                         </div>
@@ -207,7 +235,9 @@ export default function CartPage() {
                   <span className='text-slate-600'>
                     {t('cartpage.subtotal')}
                   </span>
-                  <span className='font-medium'>${subtotal.toFixed(2)}</span>
+                  <span className='font-medium'>
+                    {formatCurrency(subtotal)}
+                  </span>
                 </div>
                 <div className='flex justify-between'>
                   <span className='text-slate-600'>
@@ -216,19 +246,19 @@ export default function CartPage() {
                   <span className='font-medium'>
                     {shipping === 0
                       ? t('cartpage.freeshipping')
-                      : `$${shipping.toFixed(2)}`}
+                      : formatCurrency(shipping)}
                   </span>
                 </div>
                 <div className='flex justify-between'>
                   <span className='text-slate-600'>{t('cartpage.tax')}</span>
-                  <span className='font-medium'>${tax.toFixed(2)}</span>
+                  <span className='font-medium'>{formatCurrency(tax)}</span>
                 </div>
 
                 <Separator />
 
                 <div className='flex justify-between font-bold'>
                   <span>{t('cartpage.total')}</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>{formatCurrency(total)}</span>
                 </div>
               </div>
 

@@ -249,6 +249,7 @@ export default function ProductCard({ product }: { product: Product }) {
               quantity: selectedQuantity,
               selectedSize: selectedOptions?.size,
               selectedColor: selectedOptions?.color,
+              currentCurrency: selectedCurrency?.code, // Pass current currency
             }}
             cartItem={cartItem}
             addToCart={addToCart}

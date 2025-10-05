@@ -25,6 +25,7 @@ export default function WishlistPage() {
       quantity: 1,
       selectedSize: 'm', // Default size
       selectedColor: 'black', // Default color
+      originalCurrency: selectedCurrency?.code, // Store current currency
     });
     removeFromWishlist(item.id);
   };
@@ -62,11 +63,12 @@ export default function WishlistPage() {
                         <div className='aspect-[3/4] relative overflow-hidden'>
                           <Image
                             src={
-                              (item.images?.[0] && item.images[0].startsWith('http') 
+                              item.images?.[0] &&
+                              item.images[0].startsWith('http')
                                 ? item.images[0]
-                                : item.images?.[0] 
+                                : item.images?.[0]
                                 ? `${config.API_URL}${item.images[0]}`
-                                : '/placeholder.svg?height=96&width=96')
+                                : '/placeholder.svg?height=96&width=96'
                             }
                             alt={item.name}
                             fill

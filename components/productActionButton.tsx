@@ -1,5 +1,6 @@
 'use client';
 import { useTranslation } from '@/hooks/use-translation';
+import { useCurrency } from '@/contexts/currency-context';
 import { useUserSubscription } from '@/hooks/useSubscription';
 import { ShoppingBag } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -22,6 +23,7 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
   className = '',
 }) => {
   const router = useRouter();
+  const { selectedCurrency } = useCurrency();
   // User is viewing their own product - don't show any button
   if (user && user?.user?.id === product.user?.id) {
     return null;
@@ -44,6 +46,7 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
       selectedSize: product.selectedSize,
       selectedColor: product.selectedColor,
       quantity: product.quantity,
+      originalCurrency: product.currentCurrency, // Use currency from product context
       // Transform pictures array to images array for cart compatibility
       images:
         product.pictures?.map((pic: any) => {

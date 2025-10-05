@@ -204,6 +204,7 @@ export default function ProductList({
       originalPrice: product.originalPrice
         ? Number.parseFloat(product.originalPrice)
         : undefined,
+      originalCurrency: selectedCurrency?.code, // Store current currency
       quantity: 1,
       images:
         product.pictures?.map((pic: any) => pic.path || pic) || [

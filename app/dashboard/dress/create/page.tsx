@@ -107,8 +107,6 @@ export default function UploadPage() {
     defaultValues: {
       name: '',
       description: '',
-      price: 0,
-      oldPrice: 0,
       type: 'used',
       category: '',
       colors: [],
@@ -445,8 +443,8 @@ export default function UploadPage() {
         fd.append('name', String(payload.name));
         fd.append('description', String(payload.description));
         fd.append('category', String(payload.category));
-        fd.append('price', String(payload.price ?? ''));
-        fd.append('oldPrice', String(payload.oldPrice ?? ''));
+        fd.append('price', String(payload.price ?? 0));
+        fd.append('oldPrice', String(payload.oldPrice ?? 0));
         fd.append('type', String(payload.type));
         fd.append('sleeve', String(payload.sleeve));
         fd.append('underlay', String(payload.underlay));
@@ -949,14 +947,22 @@ export default function UploadPage() {
                           type='number'
                           min='0'
                           step='0.01'
-                          placeholder={t(
-                            'createProduct.basicInfo.price.placeholder'
-                          )}
+                          placeholder='0.00'
                           className='pl-9'
-                          // {...register("price", { valueAsNumber: true })}
                           {...register('price', {
                             required: 'Price is required',
                             valueAsNumber: true,
+                            setValueAs: (value) => {
+                              if (
+                                value === '' ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                return undefined;
+                              }
+                              const num = parseFloat(value);
+                              return isNaN(num) ? undefined : num;
+                            },
                           })}
                         />
                       </div>
@@ -996,7 +1002,20 @@ export default function UploadPage() {
                           step='0.01'
                           placeholder='0.00'
                           className='pl-9'
-                          {...register('oldPrice', { valueAsNumber: true })}
+                          {...register('oldPrice', {
+                            valueAsNumber: true,
+                            setValueAs: (value) => {
+                              if (
+                                value === '' ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                return undefined;
+                              }
+                              const num = parseFloat(value);
+                              return isNaN(num) ? undefined : num;
+                            },
+                          })}
                         />
                       </div>
                     </div>

@@ -17,6 +17,8 @@ type CartItem = {
   selectedSize?: string;
   selectedColor?: string;
   type?: string;
+  maxQuantity?: number; // Available stock for this item
+  sizeQuantity?: number; // Available stock for selected size
   vendor: {
     name: string;
     slug: string;
@@ -60,6 +62,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           ? item.selectedColor
           : item.selectedColor?.value || '',
       type: item.type,
+      maxQuantity: Number(item.maxQuantity) || Number(item.qty) || 1,
+      sizeQuantity:
+        Number(item.sizeQuantity) ||
+        Number(item.selectedSizeQuantity) ||
+        Number(item.maxQuantity) ||
+        Number(item.qty) ||
+        1,
       vendor: item.vendor || { name: 'Unknown', slug: 'unknown' },
     };
   };
@@ -70,6 +79,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (savedCart) {
       try {
         const parsedCart = JSON.parse(savedCart);
+        // Check if cart items have proper stock information
+        const hasOldItems = parsedCart.some(
+          (item: any) =>
+            !item.sizeQuantity ||
+            !item.maxQuantity ||
+            item.sizeQuantity === 999 ||
+            item.maxQuantity === 999
+        );
+
+        if (hasOldItems) {
+          console.log('Clearing old cart items without proper stock info');
+          localStorage.removeItem('cart');
+          setCart([]);
+          return;
+        }
+
         // Sanitize all cart items to ensure correct structure
         const sanitizedCart = parsedCart.map(sanitizeCartItem);
         setCart(sanitizedCart);
@@ -129,10 +154,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
-  // Update item quantity
+  // Update item quantity with stock validation
   const updateQuantity = (id: string, quantity: number) => {
     setCart((prevCart) =>
-      prevCart.map((item) => (item.id === id ? { ...item, quantity } : item))
+      prevCart.map((item) => {
+        if (item.id === id) {
+          // Get the maximum allowed quantity (prioritize size-specific quantity)
+          const maxAllowed = item.sizeQuantity || item.maxQuantity || 999;
+          // Ensure quantity is within valid range
+          const validQuantity = Math.max(1, Math.min(quantity, maxAllowed));
+          return { ...item, quantity: validQuantity };
+        }
+        return item;
+      })
     );
   };
 

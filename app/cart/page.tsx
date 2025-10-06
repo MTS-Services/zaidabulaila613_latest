@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -30,6 +30,13 @@ export default function CartPage() {
   const [promoCode, setPromoCode] = useState('');
 
   const router = useRouter();
+  const { t, language } = useTranslation();
+
+  // Function to get available stock for cart item
+  const getAvailableStock = (item: any) => {
+    // Use size-specific quantity if available, otherwise use general stock, minimum 1
+    return Math.max(1, item.sizeQuantity || item.maxQuantity || 1);
+  };
 
   // Calculate subtotal
   const subtotal = cartTotal();
@@ -63,12 +70,38 @@ export default function CartPage() {
     removeFromCart(item.id);
   };
 
-  // Handle quantity change
-  const handleQuantityChange = (id: any, newQuantity: any) => {
+  // Handle quantity change with actual stock validation
+  const handleQuantityChange = (id: any, newQuantity: any, item: any) => {
     if (newQuantity < 1) return;
-    updateQuantity(id, newQuantity);
+    const actualStock = getAvailableStock(item);
+    const validQuantity = Math.min(newQuantity, actualStock);
+    updateQuantity(id, validQuantity);
   };
-  const { t } = useTranslation();
+
+  // Validate cart quantities against available stock
+  useEffect(() => {
+    let needsUpdate = false;
+    const updatedCart = cart.map((item) => {
+      const availableStock = getAvailableStock(item);
+      if (item.quantity > availableStock) {
+        needsUpdate = true;
+        return { ...item, quantity: availableStock };
+      }
+      return item;
+    });
+
+    if (needsUpdate) {
+      // Update cart quantities that exceed available stock
+      updatedCart.forEach((item) => {
+        if (
+          cart.find((original) => original.id === item.id)?.quantity !==
+          item.quantity
+        ) {
+          updateQuantity(item.id, item.quantity);
+        }
+      });
+    }
+  }, [cart, updateQuantity]);
 
   return (
     <div className='min-h-screen bg-slate-50' key={selectedCurrency?.code}>
@@ -154,24 +187,43 @@ export default function CartPage() {
                         </div>
                       </div>
                       <div className='flex flex-wrap items-center justify-between mt-4 gap-3'>
-                        <div className='flex items-center border rounded-md'>
-                          <button
-                            className='px-3 py-1 text-slate-500 hover:text-slate-900'
-                            onClick={() =>
-                              handleQuantityChange(item.id, item.quantity - 1)
-                            }
-                          >
-                            -
-                          </button>
-                          <div className='w-8 text-center'>{item.quantity}</div>
-                          <button
-                            className='px-3 py-1 text-slate-500 hover:text-slate-900'
-                            onClick={() =>
-                              handleQuantityChange(item.id, item.quantity + 1)
-                            }
-                          >
-                            +
-                          </button>
+                        <div className='flex items-center gap-2'>
+                          <div className='flex items-center border rounded-md bg-white'>
+                            <button
+                              className='px-3 py-1 text-slate-500 hover:text-slate-900 disabled:opacity-50'
+                              onClick={() =>
+                                handleQuantityChange(
+                                  item.id,
+                                  item.quantity - 1,
+                                  item
+                                )
+                              }
+                              disabled={item.quantity <= 1}
+                            >
+                              -
+                            </button>
+                            <div className='w-8 text-center text-sm font-medium'>
+                              {item.quantity}
+                            </div>
+                            <button
+                              className='px-3 py-1 text-slate-500 hover:text-slate-900 disabled:opacity-50'
+                              onClick={() =>
+                                handleQuantityChange(
+                                  item.id,
+                                  item.quantity + 1,
+                                  item
+                                )
+                              }
+                              disabled={
+                                item.quantity >= getAvailableStock(item)
+                              }
+                            >
+                              +
+                            </button>
+                          </div>
+                          <span className='text-xs text-gray-500'>
+                            Max: {getAvailableStock(item)}
+                          </span>
                         </div>
                         <div className='flex items-center gap-2'>
                           <button

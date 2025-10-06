@@ -34,6 +34,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const { selectedCurrency } = useCurrency();
   const { user } = useAuth();
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<any | null>(null);
+  const [selectedColor, setSelectedColor] = useState<any | null>(null);
 
   // Helper function to extract language-specific text
   const getLocalizedText = (field: string | LanguageField): string => {
@@ -52,17 +54,92 @@ export default function ProductCard({ product }: { product: Product }) {
     return '';
   };
 
+  // Initialize selections like in product page
+  useState(() => {
+    const firstColor = getFirstColor();
+    setSelectedColor(firstColor);
+
+    // Find available sizes for first color
+    const getAvailableSizesForColor = (colorName: string) => {
+      const colorObj = product.availableColors?.find((color: any) => {
+        if (!color.color) return false;
+        const colorValue = language === 'AR' ? color.color.ar : color.color.en;
+        return colorValue?.toLowerCase() === colorName.toLowerCase();
+      });
+      return colorObj?.sizes || [];
+    };
+
+    const availableSizes = getAvailableSizesForColor(firstColor);
+    setSelectedSize(availableSizes[0] || null);
+  });
+
   const [selectedOptions, setSelectedOptions] = useState<SelectedOption>({
     productId: product.id,
     color: getFirstColor(),
     size: product.size?.[0]?.value,
   });
 
+  // Get available sizes for selected color (like in product page)
+  const getAvailableSizesForColor = (colorName: string) => {
+    const colorObj = product.availableColors?.find((color: any) => {
+      if (!color.color) return false;
+      const colorValue = language === 'AR' ? color.color.ar : color.color.en;
+      return colorValue?.toLowerCase() === colorName.toLowerCase();
+    });
+    return colorObj?.sizes || [];
+  };
+
+  // Handle color selection (like in product page)
+  const handleColorChange = (colorValue: string) => {
+    setSelectedColor(colorValue);
+    setSelectedOptions((prev) => ({ ...prev, color: colorValue }));
+
+    // Get available sizes for this color
+    const availableSizes = getAvailableSizesForColor(colorValue);
+
+    // If current selected size is not available in this color, select the first available size
+    const isCurrentSizeAvailable = availableSizes.some(
+      (size: any) => size._id === selectedSize?._id
+    );
+
+    if (!isCurrentSizeAvailable && availableSizes.length > 0) {
+      setSelectedSize(availableSizes[0]);
+      setSelectedOptions((prev) => ({
+        ...prev,
+        size: availableSizes[0]?.value,
+      }));
+      setSelectedQuantity(1);
+    } else if (availableSizes.length === 0) {
+      setSelectedSize(null);
+      setSelectedOptions((prev) => ({ ...prev, size: undefined }));
+      setSelectedQuantity(1);
+    }
+  };
+
+  // Handle size selection (like in product page)
+  const handleSizeChange = (size: any) => {
+    setSelectedSize(size);
+    setSelectedOptions((prev) => ({ ...prev, size: size?.value }));
+    setSelectedQuantity(Math.min(selectedQuantity, size?.quantity || 1));
+  };
+
   const handleOptionChange = (key: 'color' | 'size', value: string) => {
-    setSelectedOptions((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    if (key === 'color') {
+      handleColorChange(value);
+    } else {
+      const sizeObj = product.size?.find((s: any) => s.value === value);
+      handleSizeChange(sizeObj);
+    }
+  };
+
+  // Quantity controls
+  const incrementQuantity = () => {
+    const maxQty = selectedSize?.quantity || product.qty || 1;
+    setSelectedQuantity((prev) => Math.min(prev + 1, maxQty));
+  };
+
+  const decrementQuantity = () => {
+    setSelectedQuantity((prev) => Math.max(prev - 1, 1));
   };
 
   const getProductTypeBadgeColor = (type: string) => {
@@ -180,15 +257,15 @@ export default function ProductCard({ product }: { product: Product }) {
                       name={`color-${product.id}`}
                       value={color.value.toLowerCase()}
                       checked={
-                        selectedOptions?.color?.toLowerCase() ===
+                        selectedColor?.toLowerCase() ===
                         color.value.toLowerCase()
                       }
                       onChange={() =>
-                        handleOptionChange('color', color.value.toLowerCase())
+                        handleColorChange(color.value.toLowerCase())
                       }
                       className='hidden'
                     />
-                    {selectedOptions?.color.toLowerCase() ===
+                    {selectedColor?.toLowerCase() ===
                       color.value.toLowerCase() && (
                       <Check color='#fff' size={12} />
                     )}
@@ -214,7 +291,7 @@ export default function ProductCard({ product }: { product: Product }) {
                       key={value}
                       className={`cursor-pointer px-2 py-1 rounded border text-xs font-medium transition-colors flex-shrink-0
                       ${
-                        selectedOptions?.size === value
+                        selectedSize?.value === value
                           ? 'bg-black text-white border-black'
                           : 'bg-white text-black border-gray-400 hover:border-black'
                       }`}
@@ -223,8 +300,13 @@ export default function ProductCard({ product }: { product: Product }) {
                         type='radio'
                         name={`size-${product.id}`}
                         value={value}
-                        checked={selectedOptions?.size === value}
-                        onChange={() => handleOptionChange('size', value)}
+                        checked={selectedSize?.value === value}
+                        onChange={() => {
+                          const sizeObj = product.size?.find(
+                            (s: any) => s.value === value
+                          );
+                          handleSizeChange(sizeObj);
+                        }}
                         className='hidden'
                       />
                       {label}
@@ -240,6 +322,40 @@ export default function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
+        {/* Quantity Selector */}
+        <div className='mb-3'>
+          <div className='flex items-center gap-2'>
+            <span className='text-sm font-medium text-gray-700'>Qty:</span>
+            <div className='flex items-center border rounded-md bg-white'>
+              <button
+                className='px-2 py-1 text-gray-600 hover:text-gray-900 disabled:opacity-50'
+                onClick={decrementQuantity}
+                disabled={selectedQuantity <= 1}
+                type='button'
+              >
+                -
+              </button>
+              <div className='px-3 py-1 text-sm font-medium min-w-[2rem] text-center'>
+                {selectedQuantity}
+              </div>
+              <button
+                className='px-2 py-1 text-gray-600 hover:text-gray-900 disabled:opacity-50'
+                onClick={incrementQuantity}
+                disabled={
+                  selectedQuantity >=
+                  (selectedSize?.quantity || product.qty || 1)
+                }
+                type='button'
+              >
+                +
+              </button>
+            </div>
+            <span className='text-xs text-gray-500'>
+              Max: {selectedSize?.quantity || product.qty || 1}
+            </span>
+          </div>
+        </div>
+
         {/* Button Section - Always at Bottom */}
         <div className='mt-auto'>
           <ProductActionButton
@@ -247,9 +363,10 @@ export default function ProductCard({ product }: { product: Product }) {
             product={{
               ...product,
               quantity: selectedQuantity,
-              selectedSize: selectedOptions?.size,
-              selectedColor: selectedOptions?.color,
+              selectedSize: selectedSize?.value || selectedOptions?.size,
+              selectedColor: selectedColor || selectedOptions?.color,
               currentCurrency: selectedCurrency?.code, // Pass current currency
+              selectedSizeQuantity: selectedSize?.quantity || 1, // Pass selected size stock
             }}
             cartItem={cartItem}
             addToCart={addToCart}

@@ -59,6 +59,8 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
           : product.selectedColor?.value || '',
       type: product.type,
       originalCurrency: product.currentCurrency, // Use currency from product context
+      maxQuantity: product.qty || 1, // Include total stock
+      sizeQuantity: product.selectedSizeQuantity || 1, // Include size-specific stock
       vendor: {
         name:
           product.user?.firstName + ' ' + product.user?.lastName ||

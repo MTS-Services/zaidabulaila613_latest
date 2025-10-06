@@ -21,10 +21,18 @@ export default function WishlistPage() {
   // Handle move to cart
   const handleMoveToCart = (item: any) => {
     addToCart({
-      ...item,
+      id: item.id,
+      name: item.name,
+      price: Number(item.price),
+      originalPrice: item.originalPrice
+        ? Number(item.originalPrice)
+        : undefined,
       quantity: 1,
+      images: item.images || [],
       selectedSize: 'm', // Default size
       selectedColor: 'black', // Default color
+      type: item.type,
+      vendor: item.vendor || { name: 'Unknown', slug: 'unknown' },
       originalCurrency: selectedCurrency?.code, // Store current currency
     });
     removeFromWishlist(item.id);

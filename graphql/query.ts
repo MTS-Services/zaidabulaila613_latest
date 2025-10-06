@@ -66,9 +66,9 @@ export const GET_PRODUCTS = gql`
     $type: String
     $minPrice: Float
     $maxPrice: Float
-$userIds: [String]
-$categoryIds: [String]
-$colors: [String]
+    $userIds: [String]
+    $categoryIds: [String]
+    $colors: [String]
   ) {
     products(
       language: $language
@@ -77,13 +77,13 @@ $colors: [String]
       page: $page
       limit: $limit
       sort: $sort
-      categoryId:$categoryId
-type:$type
-minPrice: $minPrice
-maxPrice: $maxPrice
-userIds: $userIds
-categoryIds: $categoryIds
-colors: $colors
+      categoryId: $categoryId
+      type: $type
+      minPrice: $minPrice
+      maxPrice: $maxPrice
+      userIds: $userIds
+      categoryIds: $categoryIds
+      colors: $colors
     ) {
       total
       data {
@@ -164,11 +164,15 @@ colors: $colors
 // `;
 
 export const GET_USER_PRODUCT_BY_ID = gql`
-  query GetUserProductById($id: ID!, $language: LanguageEnum!, $currency: String!) {
+  query GetUserProductById(
+    $id: ID!
+    $language: LanguageEnum!
+    $currency: String!
+  ) {
     userProductById(id: $id, language: $language, currency: $currency) {
-     id
+      id
       name
-    description
+      description
       price
       oldPrice
       originalPrice
@@ -178,37 +182,37 @@ export const GET_USER_PRODUCT_BY_ID = gql`
       selectedColor
       origin
       qty
-    color
-      category{
+      color
+      category {
         id
         name
       }
       approve
-     
+
       state
-    material
-    careInstructions
-   
-    size{
-      label
-      value
-    }
-      
+      material
+      careInstructions
+
+      size {
+        label
+        value
+      }
+
       pictures {
         id
         path
         fileType
       }
-    sleeve
-    underlay
-    selectedColor
-    ref
-    shoulder
-    chest
-waist
-hip
-high
-length
+      sleeve
+      underlay
+      selectedColor
+      ref
+      shoulder
+      chest
+      waist
+      hip
+      high
+      length
     }
   }
 `;
@@ -337,41 +341,44 @@ export const GET_VENDOR_ORDERS = gql`
   }
 `;
 
-
-
 export const GET_CATEGORIES = gql`
-    query {
-        categories {
-            id
-            name {
-                ar
-                en
-            }
-        }
+  query {
+    categories {
+      id
+      name {
+        ar
+        en
+      }
     }
+  }
 `;
 
 export const GET_SHOP = gql`
-query FindOneShopByUser($language: LanguageEnum!) {
-  findOneShopByUser(language: $language) {
-    shopName
-    description
-    shopPhoneNumber
-    tags
-    coverImage {
-      id
-      path
-    }
-    profileImage {
-      id
-      path
+  query FindOneShopByUser($language: LanguageEnum!) {
+    findOneShopByUser(language: $language) {
+      shopName
+      description
+      shopPhoneNumber
+      tags
+      coverImage {
+        id
+        path
+      }
+      profileImage {
+        id
+        path
+      }
     }
   }
-}
 `;
 
 export const GET_SHOPS = gql`
-  query GetShops($language: LanguageEnum!, $search: String, $page: Int, $limit: Int) {
+  query GetShops(
+    $language: LanguageEnum!
+    $search: String
+    $page: Int
+    $limit: Int
+  ) {
     shops(language: $language, search: $search, page: $page, limit: $limit) {
       data {
         id
@@ -383,10 +390,10 @@ export const GET_SHOPS = gql`
         profileImage {
           path
         }
-          user{
+        user {
           id
-          }
-          tags
+        }
+        tags
       }
       total
     }
@@ -395,20 +402,20 @@ export const GET_SHOPS = gql`
 export const GET_SHOP_BY_ID = gql`
   query FindShopById($language: LanguageEnum!, $id: ID!) {
     findShopById(language: $language, id: $id) {
-       id
-        shopName
-        description
-        coverImage {
-          path
-        }
-        profileImage {
-          path
-        }
-          tags
-          shopPhoneNumber
-          user{
-          id
-          }
+      id
+      shopName
+      description
+      coverImage {
+        path
+      }
+      profileImage {
+        path
+      }
+      tags
+      shopPhoneNumber
+      user {
+        id
+      }
     }
   }
 `;
@@ -493,6 +500,25 @@ export const GET_PRODUCT_BY_ID = gql`
         label
         value
       }
+      availableColors {
+        color {
+          ar
+          en
+          _id
+        }
+        sizes {
+          size
+          sizeSpecific
+          quantity
+          colorDisction {
+            ar
+            en
+            _id
+          }
+          _id
+        }
+        _id
+      }
       pictures {
         id
         path
@@ -504,47 +530,46 @@ export const GET_PRODUCT_BY_ID = gql`
       ref
       shoulder
       chest
-    length
-    hip
-    high
-    waist
-    user {
-          id
-          account {
-            mobile
-          }
+      length
+      hip
+      high
+      waist
+      user {
+        id
+        account {
+          mobile
         }
+      }
     }
   }
 `;
 
 export const GET_DASHBOARD_DATA = gql`
-  query GetUserDashboard{
+  query GetUserDashboard {
     userDashboard {
       completed
-    pending
-    processing
-    total
+      pending
+      processing
+      total
     }
   }
 `;
 export const GET_USER_PROFILE = gql`
-  query GET_USER_PROFILE{
+  query GET_USER_PROFILE {
     userProfile {
       productsCount
-       subscription{
-      id
-    userId
-    status
-    plan
-    stripePriceId
-      currentPeriodStart
-      currentPeriodEnd
-      cancelAtPeriodEnd
-      canceledAt
+      subscription {
+        id
+        userId
+        status
+        plan
+        stripePriceId
+        currentPeriodStart
+        currentPeriodEnd
+        cancelAtPeriodEnd
+        canceledAt
+      }
     }
-    }
-    
   }
 `;
 

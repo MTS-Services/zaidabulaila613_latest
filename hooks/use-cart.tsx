@@ -39,14 +39,44 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const { selectedCurrency } = useCurrency();
 
+  // Sanitize cart item to ensure correct structure
+  const sanitizeCartItem = (item: any): CartItem => {
+    return {
+      id: item.id || item._id,
+      name: item.name,
+      price: Number(item.price) || 0,
+      originalPrice: item.originalPrice
+        ? Number(item.originalPrice)
+        : undefined,
+      originalCurrency: item.originalCurrency,
+      quantity: Number(item.quantity) || 1,
+      images: item.images || [],
+      selectedSize:
+        typeof item.selectedSize === 'string'
+          ? item.selectedSize
+          : item.selectedSize?.size || '',
+      selectedColor:
+        typeof item.selectedColor === 'string'
+          ? item.selectedColor
+          : item.selectedColor?.value || '',
+      type: item.type,
+      vendor: item.vendor || { name: 'Unknown', slug: 'unknown' },
+    };
+  };
+
   // Load cart from localStorage on initial render
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
       try {
-        setCart(JSON.parse(savedCart));
+        const parsedCart = JSON.parse(savedCart);
+        // Sanitize all cart items to ensure correct structure
+        const sanitizedCart = parsedCart.map(sanitizeCartItem);
+        setCart(sanitizedCart);
       } catch (error) {
         console.error('Failed to parse cart from localStorage', error);
+        // Clear corrupted cart data
+        localStorage.removeItem('cart');
       }
     }
   }, []);
@@ -59,15 +89,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Add item to cart
   const addToCart = (item: CartItem) => {
     setCart((prevCart) => {
+      // Sanitize the item first to ensure correct structure
+      const sanitizedItem = sanitizeCartItem(item);
+
       // Add current currency to the item and ensure we use the displayed price
       const itemWithCurrency = {
-        ...item,
+        ...sanitizedItem,
         originalCurrency:
-          item.originalCurrency || selectedCurrency?.code || 'USD',
+          sanitizedItem.originalCurrency || selectedCurrency?.code || 'USD',
         // Ensure price is stored as displayed (no additional conversion)
-        price: Number(item.price),
-        originalPrice: item.originalPrice
-          ? Number(item.originalPrice)
+        price: Number(sanitizedItem.price),
+        originalPrice: sanitizedItem.originalPrice
+          ? Number(sanitizedItem.originalPrice)
           : undefined,
       };
 

@@ -41,12 +41,30 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
   // Handle add to cart function
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    addToCart({
-      ...product,
-      selectedSize: product.selectedSize,
-      selectedColor: product.selectedColor,
-      quantity: product.quantity,
+
+    // Create proper CartItem object with only required fields
+    const cartItem = {
+      id: product._id || product.id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      quantity: product.quantity || 1,
+      selectedSize:
+        typeof product.selectedSize === 'string'
+          ? product.selectedSize
+          : product.selectedSize?.size || '',
+      selectedColor:
+        typeof product.selectedColor === 'string'
+          ? product.selectedColor
+          : product.selectedColor?.value || '',
+      type: product.type,
       originalCurrency: product.currentCurrency, // Use currency from product context
+      vendor: {
+        name:
+          product.user?.firstName + ' ' + product.user?.lastName ||
+          'Unknown Vendor',
+        slug: product.user?.slug || 'unknown',
+      },
       // Transform pictures array to images array for cart compatibility
       images:
         product.pictures?.map((pic: any) => {
@@ -54,7 +72,9 @@ const ProductActionButton: React.FC<ProductActionButtonProps> = ({
           // Return the path as-is since we'll handle API_URL prefix in the display components
           return imagePath;
         }) || [],
-    });
+    };
+
+    addToCart(cartItem);
   };
   const { t } = useTranslation();
 

@@ -15,6 +15,7 @@ import { useTranslation } from '@/hooks/use-translation';
 import { useWishlist } from '@/hooks/use-wishlist';
 import { useUpdateQueryParams } from '@/hooks/useSearchParams';
 import { arCurrencies, enCurrencies } from '@/lib/utils';
+import { isWhatsAppVerified } from '@/lib/whatsapp-utils';
 import { ShopsResponse } from '@/types/shop';
 import { useQuery } from '@apollo/client';
 import {
@@ -113,6 +114,19 @@ export default function Navbar() {
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  const handleUploadDressClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    // Check WhatsApp verification status
+    if (!isWhatsAppVerified()) {
+      // Redirect to WhatsApp verification page
+      window.location.href = '/verify-whatsapp';
+    } else {
+      // Redirect to dress upload page
+      window.location.href = '/dashboard/dress/create';
+    }
   };
 
   // Track scroll position to add background when scrolled
@@ -420,9 +434,9 @@ export default function Navbar() {
 
             {/* Upload Icon Button - Updated size and position */}
             {isAuthenticated && (
-              <Link
-                href='/dashboard/dress/create'
-                className='hidden lg:flex flex-col items-center justify-center relative p-2 rounded-full transition-colors'
+              <button
+                onClick={handleUploadDressClick}
+                className='hidden lg:flex flex-col items-center justify-center relative p-2 rounded-full transition-colors cursor-pointer'
               >
                 {/* ... বাটনের ভেতরের SVG এবং p ট্যাগ অপরিবর্তিত থাকবে ... */}
                 <div className='flex gap-2 items-center w-full'>
@@ -444,7 +458,7 @@ export default function Navbar() {
                     {t('common.uploadDress')}
                   </p>
                 </div>
-              </Link>
+              </button>
             )}
 
             <Link

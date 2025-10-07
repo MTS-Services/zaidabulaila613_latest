@@ -21,6 +21,7 @@ import { DrawerProvider } from '@/contexts/drawer-context';
 import Navbar from '@/components/navbar';
 import BackToTop from '@/components/back-to-top';
 import MobileBottomNav from '@/components/mobile-bottom-nav';
+import WhatsAppVerificationFixer from '@/components/WhatsAppVerificationFixer';
 import { Toaster } from '@/components/ui/use-toast';
 import { ApolloProvider } from '@apollo/client';
 import client from '@/lib/apolloClient';
@@ -59,6 +60,7 @@ export default function RootLayout({
                       <DrawerProvider>
                         <Suspense>
                           <AppLayout>
+                            <WhatsAppVerificationFixer />
                             <Navbar />
                             {children}
                             <BackToTop />

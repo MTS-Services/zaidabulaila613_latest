@@ -1,114 +1,131 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { useDrawer } from "@/contexts/drawer-context"
-import Link from "next/link"
-import { Home, Grid, ShoppingBag, User } from "lucide-react"
-import { useCart } from "@/hooks/use-cart"
-import { useWishlist } from "@/hooks/use-wishlist"
-import { useTranslation } from "@/hooks/use-translation"
+import { useState, useEffect } from 'react';
+import { useDrawer } from '@/contexts/drawer-context';
+import Link from 'next/link';
+import { Home, Grid, ShoppingBag, User } from 'lucide-react';
+import { useCart } from '@/hooks/use-cart';
+import { useWishlist } from '@/hooks/use-wishlist';
+import { useTranslation } from '@/hooks/use-translation';
+import { isWhatsAppVerified } from '@/lib/whatsapp-utils';
 
 export default function MobileBottomNav() {
-  const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
-  const { cartCount } = useCart()
-  const { wishlistCount } = useWishlist()
-  const { isDrawerOpen } = useDrawer()
-  const {t} = useTranslation()
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
+  const { isDrawerOpen } = useDrawer();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
+      const currentScrollY = window.scrollY;
 
       // Always show when at the top of the page (hero section)
       if (currentScrollY <= 100) {
-        setIsVisible(true)
+        setIsVisible(true);
       }
       // Show when scrolling up and not at the top
       else if (currentScrollY < lastScrollY) {
-        setIsVisible(true)
+        setIsVisible(true);
       }
       // Hide when scrolling down and not at the top
       else {
-        setIsVisible(false)
+        setIsVisible(false);
       }
 
-      setLastScrollY(currentScrollY)
-    }
+      setLastScrollY(currentScrollY);
+    };
 
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [lastScrollY])
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   // Only render on client-side to avoid hydration issues
-  const [isMounted, setIsMounted] = useState(false)
+  const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
+    setIsMounted(true);
+  }, []);
 
-  if (!isMounted) return null
+  const handleUploadDressClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    // Check WhatsApp verification status
+    if (!isWhatsAppVerified()) {
+      // Redirect to WhatsApp verification page
+      window.location.href = '/verify-whatsapp';
+    } else {
+      // Redirect to dress upload page
+      window.location.href = '/dashboard/dress/create';
+    }
+  };
+
+  if (!isMounted) return null;
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 transition-transform duration-300 md:hidden ${isVisible && !isDrawerOpen ? "translate-y-0" : "translate-y-full"
-        }`}
+      className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 transition-transform duration-300 md:hidden ${
+        isVisible && !isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
+      }`}
     >
-      <div className="flex justify-around items-center h-16">
+      <div className='flex justify-around items-center h-16'>
         <Link
-          href="/"
-          className="flex flex-col items-center justify-center w-full h-full text-slate-600 hover:text-gold"
+          href='/'
+          className='flex flex-col items-center justify-center w-full h-full text-slate-600 hover:text-gold'
         >
-          <Home className="h-5 w-5" />
-          <span className="text-xs mt-1">{t("dashboard.sidebar.home")}</span>
+          <Home className='h-5 w-5' />
+          <span className='text-xs mt-1'>{t('dashboard.sidebar.home')}</span>
         </Link>
 
         <Link
-          href="/products"
-          className="flex flex-col items-center justify-center w-full h-full text-slate-600 hover:text-gold"
+          href='/products'
+          className='flex flex-col items-center justify-center w-full h-full text-slate-600 hover:text-gold'
         >
-          <Grid className="h-5 w-5" />
-          <span className="text-xs mt-1">{t('dashboard.sidebar.shop')}</span>
+          <Grid className='h-5 w-5' />
+          <span className='text-xs mt-1'>{t('dashboard.sidebar.shop')}</span>
         </Link>
 
-        <Link href="/dashboard/dress/create" className="flex flex-col items-center justify-center w-full h-full relative">
-
-          <div className="group cursor-pointer outline-none hover:rotate-90 duration-300">
+        <button
+          onClick={handleUploadDressClick}
+          className='flex flex-col items-center justify-center w-full h-full relative cursor-pointer'
+        >
+          <div className='group cursor-pointer outline-none hover:rotate-90 duration-300'>
             <svg
-              className="stroke-gold fill-none group-hover:fill-gold/80 group-active:stroke-gold/50 group-active:fill-gold group-active:duration-0 duration-300 h-[50px] w-[50px]"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+              className='stroke-gold fill-none group-hover:fill-gold/80 group-active:stroke-gold/50 group-active:fill-gold group-active:duration-0 duration-300 h-[50px] w-[50px]'
+              viewBox='0 0 24 24'
+              xmlns='http://www.w3.org/2000/svg'
             >
               <path
-                strokeWidth="1.5"
-                d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                strokeWidth='1.5'
+                d='M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z'
               ></path>
-              <path strokeWidth="1.5" d="M8 12H16"></path>
-              <path strokeWidth="1.5" d="M12 16V8"></path>
+              <path strokeWidth='1.5' d='M8 12H16'></path>
+              <path strokeWidth='1.5' d='M12 16V8'></path>
             </svg>
           </div>
-        </Link>
+        </button>
 
         <Link
-          href="/cart"
-          className="flex flex-col items-center justify-center w-full h-full text-slate-600 hover:text-gold relative"
+          href='/cart'
+          className='flex flex-col items-center justify-center w-full h-full text-slate-600 hover:text-gold relative'
         >
-          <ShoppingBag className="h-5 w-5" />
+          <ShoppingBag className='h-5 w-5' />
           {cartCount() > 0 && (
-            <span className="absolute -top-1 -right-1 bg-gold text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+            <span className='absolute -top-1 -right-1 bg-gold text-white text-xs rounded-full h-4 w-4 flex items-center justify-center'>
               {cartCount()}
             </span>
           )}
-          <span className="text-xs mt-1">{t("common.cart")}</span>
+          <span className='text-xs mt-1'>{t('common.cart')}</span>
         </Link>
 
         <Link
-          href="/dashboard"
-          className="flex flex-col items-center justify-center w-full h-full text-slate-600 hover:text-gold"
+          href='/dashboard'
+          className='flex flex-col items-center justify-center w-full h-full text-slate-600 hover:text-gold'
         >
-          <User className="h-5 w-5" />
-          <span className="text-xs mt-1">{t("common.account")}</span>
+          <User className='h-5 w-5' />
+          <span className='text-xs mt-1'>{t('common.account')}</span>
         </Link>
       </div>
     </div>
-  )
+  );
 }

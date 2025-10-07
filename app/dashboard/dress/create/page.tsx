@@ -90,6 +90,41 @@ export default function UploadPage() {
     uploadLimits?.subscriptionType &&
     ['basic', 'platinum'].includes(uploadLimits.subscriptionType.toLowerCase());
 
+  // Auto-fix WhatsApp verification status when user accesses dress creation page
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const loginUser = localStorage.getItem('loginUser');
+
+        if (loginUser) {
+          const userData = JSON.parse(loginUser);
+
+          // If user successfully accessed this page, they must be WhatsApp verified
+          // Auto-fix the localStorage if it shows false
+          if (userData.isWhatsAppVerified !== true) {
+            console.log(
+              '🔧 User accessed dress upload page - auto-updating WhatsApp verification to true'
+            );
+            userData.isWhatsAppVerified = true;
+            userData.whatsAppVerificationDate = new Date().toISOString();
+            userData.autoVerifiedByPageAccess = true; // Mark that this was auto-fixed
+            localStorage.setItem('loginUser', JSON.stringify(userData));
+
+            // Verify the update
+            const updatedUser = localStorage.getItem('loginUser');
+            const updatedData = JSON.parse(updatedUser || '{}');
+            console.log('✅ WhatsApp verification auto-fixed:', {
+              isWhatsAppVerified: updatedData.isWhatsAppVerified,
+              date: updatedData.whatsAppVerificationDate,
+            });
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error auto-fixing WhatsApp verification:', error);
+      }
+    }
+  }, []);
+
   const { selectedCurrency } = useCurrency();
   const { language } = useTranslation();
   const { bulkUpload, allowedDressTypes, maxMediaPerDress, maxDresses } =

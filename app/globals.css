@@ -1925,3 +1925,37 @@ body {
   box-shadow: 0 4px 3px 1px #fcfcfc, 0 6px 8px #d6d7d9, 0 -4px 4px #cecfd1,
     0 -6px 4px #fefefe, inset 0 0 5px 3px #999, inset 0 0 30px #aaa;
 }
+
+/* Phone Input Custom Styles for WhatsApp Verification */
+.phone-input-custom .PhoneInputInput {
+  @apply w-full px-4 py-4 text-base border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none;
+}
+
+.phone-input-custom .PhoneInputInput:focus {
+  @apply border-gold ring-4 ring-gold ring-opacity-20;
+}
+
+.phone-input-custom .PhoneInputCountrySelect {
+  @apply border-2 border-gray-200 rounded-l-xl px-3 py-4 bg-gray-50 transition-all duration-200;
+}
+
+.phone-input-custom .PhoneInputCountrySelect:focus {
+  @apply border-gold ring-4 ring-gold ring-opacity-20 outline-none;
+}
+
+.phone-input-custom .PhoneInputCountrySelectArrow {
+  @apply text-gold;
+}
+
+/* Override react-phone-number-input default styles */
+.PhoneInputInput {
+  border-left: none !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.PhoneInputCountrySelect {
+  border-right: none !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
